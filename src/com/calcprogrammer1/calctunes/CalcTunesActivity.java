@@ -3,7 +3,6 @@ package com.calcprogrammer1.calctunes;
 import android.app.Activity;
 import android.view.*;
 import android.media.*;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.*;
@@ -15,7 +14,6 @@ import org.jaudiotagger.audio.*;
 import org.jaudiotagger.tag.*;
 
 import com.calcprogrammer1.calctunes.R;
-import com.calcprogrammer1.calctunes.FileOperations;
 import com.calcprogrammer1.calctunes.LibraryOperations;
 import com.calcprogrammer1.calctunes.libraryElementArtist;
 
@@ -90,17 +88,33 @@ public class CalcTunesActivity extends Activity
 		});
     }
     
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.layout.mainoptionsmenu, menu);
+        return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.createLibrary:
+                startActivityForResult(new Intent(this, LibraryBuilderActivity.class), 1);
+                break;
+                
+            case R.id.exitApplication:
+                this.finish();
+                break;
+        }
+        return true;
+    }
+    
     public void onConfigurationChanged(Configuration newConfig)
     {
     	super.onConfigurationChanged(newConfig);
     	setContentView(R.layout.main);
     	updateGuiElements();
-    }
-    
-    
-    public void ButtonNewLibraryClick(View view)
-    {
-    	startActivityForResult(new Intent(this, LibraryBuilderActivity.class), 1);
     }
     
     public void onActivityResult(int requestCode, int resultCode, Intent data)
