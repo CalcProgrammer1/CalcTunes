@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:orientation="vertical"
+     android:weightSum="1" >
+
+    <Button
+        android:id="@+id/button_selectfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:onClick="ButtonNewLibraryClick"
+        android:text="Create New Library" />
+
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:weightSum="1" >
+
+		<LinearLayout
+		    android:id="@+id/linearLayout1"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_weight="1" 
+		    android:layout_above="@+id/player_controls">
+
+		    <ListView
+		        android:id="@+id/listView1"
+		        android:layout_width="200dip"
+		        android:layout_height="match_parent"
+		        android:layout_weight="0"
+		        android:background="@color/dark_gray" >
+		    </ListView>
+
+		    <ListView
+		        android:id="@+id/listView2"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1" >
+		    </ListView>
+		</LinearLayout>
+
+	    <RelativeLayout
+	        android:id="@+id/player_controls"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_weight="0"
+	        android:background="@color/dark_gray" >
+
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:weightSum="0" >
+
+	            <TextView
+	                android:id="@+id/text_trackname"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	            <LinearLayout
+	                android:id="@+id/linearLayout3"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content" >
+
+	                <TextView
+	                    android:id="@+id/text_artistname"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:textAppearance="?android:attr/textAppearanceSmall"
+	                    android:paddingRight="20dip"/>
+
+	                <TextView
+	                    android:id="@+id/text_albumname"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	            </LinearLayout>
+	            
+	            <LinearLayout
+	                android:id="@+id/linearLayout4"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:weightSum="1" >
+
+	                <Button
+	                    android:id="@+id/button_back"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:text="Back" />
+
+	                <Button
+	                    android:id="@+id/button_stop"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:onClick="ButtonStopClick"
+	                    android:text="Stop" />
+
+	                <Button
+	                    android:id="@+id/button_playpause"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:onClick="ButtonPlayPauseClick"
+	                    android:text="Play/Pause" />
+
+	                <Button
+	                    android:id="@+id/button_next"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:text=">>" />
+
+	                <SeekBar
+	                    android:id="@+id/seekBar_track"
+	                    android:layout_width="0dip"
+	                    android:layout_height="wrap_content"
+	                    android:layout_gravity="center"
+	                    android:layout_weight="1" />
+
+	            </LinearLayout>
+	        </LinearLayout>
+	    </RelativeLayout>
+	</RelativeLayout>
+</LinearLayout>
