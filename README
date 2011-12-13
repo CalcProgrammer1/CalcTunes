@@ -1,0 +1,36 @@
+CalcTunes - An iTunes-ish Media Player For Android
+
+CalcTunes (working title) is a new media player for Android that is mainly targeted at tablets.  While many media players
+exist for phones and handhelds, most of these do not take advantage of the screen space provided by a larger tablet.
+To more efficiently use the space, I am creating a two-panel layout similar to iTunes, Songbird, Clementine, and other
+desktop media player applications.  On the left will be media sources (Libraries and Playlists).  The right (larger)
+panel is where media files will be listed (grouped by artist/album).
+
+Libraries
+---------
+The problem I have with Android's stock media player is the stupid auto-media-scan thing.  It scans only where it feels
+like scanning and you can't access any media that it doesn't find.  This sucks, because a lot of people have media
+stored in places not in /mnt/sdcard and would still like to use it.  Android's built in library will not accept this and
+the stock music player won't play these files.
+
+To solve this problem, other developers (such as MortPlayer, a great improvement over the stock player) have created
+customized library systems.  MortPlayer revolves around selecting a "master" root folder which is scanned for media.
+While this is a lot better than the stock player, my complaint is that there can only be one "master" folder, still
+limiting you to one source at a time.
+
+CalcTunes will remedy this problem by allowing any number of user-defined libraries, and also these libraries can contain
+more than just one "master" folder.  For instance, one library named "My FLAC" could contain both /mnt/storage/FLAC and
+/mnt/sdcard/FLAC and possibly even /mnt/networkdrive/FLAC.  The plan is to build library data from these folders by
+scanning the tags from the audio files, then caching this tag data locally so that you don't have to wait around for long
+media rescans, especially on network drives.
+
+Playlists
+---------
+In addition to libraries, CalcTunes will support playlists.  These will likely be stored in a standard playlist format and
+will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
+not sure whether or not playlists will be cached or not.
+
+Current Status - Version 0.1 Alpha (12/13/2011)
+--------------
+This is the first commit.  The program compiles and runs (Tested on Archos 43, OpenAOS CM7).  Libraries can be built and
+a basic scanning system is in place.  The media player can play and stop but not seek tracks yet.
