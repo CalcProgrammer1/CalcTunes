@@ -22,7 +22,7 @@ public class LibraryListHandler
     ArrayList<libraryElementArtist> libraryData;
     ListView libraryList;
     Context c;
-    SimpleAdapter adapter;
+    LibraryListAdapter adapter;
     LibraryListCallback cb;
     
     public LibraryListHandler(Context con, ListView lv)
@@ -55,40 +55,23 @@ public class LibraryListHandler
 
         // prepare the list of all records
         List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
+        adapter = new LibraryListAdapter(c);
         for(int i = 0; i < libraryData.size(); i++)
         {
-            HashMap<String, String> amap = new HashMap<String, String>();
-            amap.put("artist_index", ""+i);
-            amap.put("artist", libraryData.get(i).name);
-            amap.put("album", "");
-            amap.put("song", "");
-            fillMaps.add(amap);
-            if(i == artist)
+            adapter.addArtist(libraryData.get(i));
+            if(true)//i == artist)
             {
                 for(int j = 0; j < libraryData.get(i).albums.size(); j++)
                 {
-                    HashMap<String, String> bmap = new HashMap<String, String>();
-                    bmap.put("artist_index", ""+i);
-                    bmap.put("artist", "");
-                    bmap.put("album_index", ""+j);
-                    bmap.put("album", libraryData.get(i).albums.get(j).name);
-                    bmap.put("song", "");
-                    fillMaps.add(bmap);
+                    adapter.addAlbum(libraryData.get(i).albums.get(j));
+
                     for(int k = 0; k < libraryData.get(i).albums.get(j).songs.size(); k++)
                     {
-                        HashMap<String, String> cmap = new HashMap<String, String>();
-                        cmap.put("artist_index", ""+i);
-                        cmap.put("artist", "");
-                        cmap.put("album_index", ""+j);
-                        cmap.put("album", "");
-                        cmap.put("song_index", ""+k);
-                        cmap.put("song", libraryData.get(i).albums.get(j).songs.get(k).name);
-                        fillMaps.add(cmap); 
+                        adapter.addSong(libraryData.get(i).albums.get(j).songs.get(k));
                     }
                 }
             }
         }
-        adapter = new SimpleAdapter(c, fillMaps, R.layout.listentry, from, to);
     }
     
     public void drawList(int artist)
@@ -111,28 +94,20 @@ public class LibraryListHandler
 
     public void libraryClickHandler(AdapterView<?> parent, View view, int position, long id)
     {
-        String songStr = ((HashMap<String, String>) parent.getAdapter().getItem(position)).get("song");
-        String artStr =  ((HashMap<String, String>) parent.getAdapter().getItem(position)).get("artist");
-        String albStr =  ((HashMap<String, String>) parent.getAdapter().getItem(position)).get("album");
+        String type = ((libraryElementGeneric) parent.getAdapter().getItem(position)).type;
         
-        if(!songStr.equals(""))
+        if(type.equals("artist"))
         {
-            int i = Integer.parseInt(((HashMap<String, String>) parent.getAdapter().getItem(position)).get("artist_index"));
-            int j = Integer.parseInt(((HashMap<String, String>) parent.getAdapter().getItem(position)).get("album_index"));
-            int k = Integer.parseInt(((HashMap<String, String>) parent.getAdapter().getItem(position)).get("song_index"));
-            String filePath = libraryData.get(i).albums.get(j).songs.get(k).filename;
-            Toast.makeText(c, filePath, Toast.LENGTH_SHORT).show();
-            cb.callback(filePath);   
+            Toast.makeText(c, "artist selected", Toast.LENGTH_SHORT).show();
         }
-        else if(!albStr.equals(""))
+        else if (type.equals("album"))
         {
-            Toast.makeText(c, "Album Selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(c, "album selected", Toast.LENGTH_SHORT).show();
         }
-        else if(!artStr.equals(""))
+        else if (type.equals("song"))
         {
-            int i = Integer.parseInt(((HashMap<String, String>) parent.getAdapter().getItem(position)).get("artist_index"));
-            drawList(i);
-            Toast.makeText(c, "Artist Selected", Toast.LENGTH_SHORT).show();
+            String filepath = ((libraryElementGeneric) parent.getAdapter().getItem(position)).song.filename;
+            cb.callback(filepath);
         }
     }
 }

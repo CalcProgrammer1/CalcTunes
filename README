@@ -30,13 +30,17 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.12 Alpha (12/13/2011)
+Current Status - Version 0.13 Alpha (12/13/2011)
 --------------
-Cleaned up the interface backend code, instead of cramming it all into one class I created handler classes for the two main
-lists and for the seek bar.  This cleans up threading and makes the code more modular.
+Replaced the main list's adapter with a custom adapter.  This allows for much more customization of the library list,
+hopefully allowing things like album artwork and additional information fields to be displayed in the future.
 
 Release History
 ---------------
+Version 0.12 Alpha (12/13/2011)
+Cleaned up the interface backend code, instead of cramming it all into one class I created handler classes for the two main
+lists and for the seek bar.  This cleans up threading and makes the code more modular.
+
 Version 0.11 Alpha (12/13/2011)
 Added an Options Menu that moves the Add Library button off of the main screen to save space.  An exit button is partially
 implemented and a settings button is in place.

@@ -47,7 +47,7 @@ public class SourceListHandler
     {
         String[] libraryNames = LibraryOperations.getNamesFromList(libraryList);
         
-        adapter = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,libraryNames);
+        adapter = new ArrayAdapter<String>(c,R.layout.sourcelistentry,R.id.sourcelistentry_textview, libraryNames);
         sourceList.setAdapter(adapter);
         sourceList.setOnItemClickListener(new OnItemClickListener() 
         {
