@@ -50,6 +50,10 @@ public class CalcTunesActivity extends Activity
     	albumtext = (TextView) findViewById(R.id.text_albumname);
     	tracktext = (TextView) findViewById(R.id.text_trackname);
     	
+        artisttext.setText(mediaplayer.current_artist);
+        albumtext.setText(mediaplayer.current_album);
+        tracktext.setText(mediaplayer.current_title);
+        
     	trackseek = (SeekBar) findViewById(R.id.seekBar_track);
         trackseekhandler = new SeekHandler(trackseek, mediaplayer);
         

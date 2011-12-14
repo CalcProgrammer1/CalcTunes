@@ -18,18 +18,24 @@ public final class R {
         public static final int ic_menu_close_clear_cancel=0x7f020001;
         public static final int ic_menu_preferences=0x7f020002;
         public static final int icon=0x7f020003;
+        public static final int icon_android=0x7f020004;
+        public static final int media_play_pause=0x7f020005;
+        public static final int media_playback_stop=0x7f020006;
+        public static final int media_skip_backward=0x7f020007;
+        public static final int media_skip_forward=0x7f020008;
     }
     public static final class id {
         public static final int buttonLibAddFolder=0x7f060005;
         public static final int buttonLibDone=0x7f060007;
         public static final int buttonLibRemoveSelected=0x7f060006;
-        public static final int button_back=0x7f060016;
-        public static final int button_next=0x7f060019;
-        public static final int button_playpause=0x7f060018;
-        public static final int button_stop=0x7f060017;
+        public static final int button_back=0x7f060018;
+        public static final int button_next=0x7f06001b;
+        public static final int button_playpause=0x7f06001a;
+        public static final int button_stop=0x7f060019;
         public static final int checkBox1=0x7f060009;
-        public static final int createLibrary=0x7f06001b;
-        public static final int exitApplication=0x7f06001d;
+        public static final int createLibrary=0x7f06001d;
+        public static final int exitApplication=0x7f06001f;
+        public static final int imageAlbumArt=0x7f060013;
         public static final int libNameInput=0x7f060003;
         public static final int libraryListView=0x7f060008;
         public static final int librarylistalbum_text=0x7f06000a;
@@ -40,17 +46,18 @@ public final class R {
         public static final int linearLayout1=0x7f060000;
         public static final int linearLayout2=0x7f060004;
         public static final int linearLayout3=0x7f060001;
-        public static final int linearLayout4=0x7f060015;
+        public static final int linearLayout4=0x7f060017;
         public static final int listView1=0x7f060010;
         public static final int listView2=0x7f060011;
-        public static final int player_controls=0x7f06000f;
-        public static final int seekBar_track=0x7f06001a;
-        public static final int setting=0x7f06001c;
-        public static final int sourcelistentry_textview=0x7f06001e;
+        public static final int lower_frame=0x7f06000f;
+        public static final int player_controls=0x7f060012;
+        public static final int seekBar_track=0x7f06001c;
+        public static final int setting=0x7f06001e;
+        public static final int sourcelistentry_textview=0x7f060020;
         public static final int textView1=0x7f060002;
-        public static final int text_albumname=0x7f060014;
-        public static final int text_artistname=0x7f060013;
-        public static final int text_trackname=0x7f060012;
+        public static final int text_albumname=0x7f060016;
+        public static final int text_artistname=0x7f060015;
+        public static final int text_trackname=0x7f060014;
     }
     public static final class layout {
         public static final int librarybuilder=0x7f030000;

@@ -30,15 +30,19 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.15 Alpha (12/13/2011)
+Current Status - Version 0.16 Alpha (12/14/2011)
 --------------
+Replaced ugly text buttons with new icon buttons for play/next/prev/stop controls.  Also added a placeholder for album art
+and replaced the stock Android icon with a placeholder CalcTunes icon (vinyl record).
+
+Release History
+---------------
+Version 0.15 Alpha (12/13/2011)
 Rewrote the media player interface through a new class MediaPlayerHandler.  This performs sanity checking on all media
 player actions to make sure that nothing is called in the wrong state.  It also provides a wrapper for releasing media
 player resources (Stop) and pausing playback.  It uses asynchronous calls when possible to increase efficiency.
 The sources list now redraws properly when the screen is rotated as well.
 
-Release History
----------------
 Version 0.14 Alpha (12/13/2011)
 Added fields for track number and duration to song's list view.  Time is computed from seconds into MM:SS format and displayed
 to the right while track number is printed to the left of the song.  There is no sorting function yet, so songs, albums,
