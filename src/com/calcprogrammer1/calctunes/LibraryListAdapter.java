@@ -89,7 +89,11 @@ public class LibraryListAdapter extends BaseAdapter
             {
                 convertView = inflater.inflate(R.layout.librarylistentrysong, null);
                 TextView songText = (TextView) convertView.findViewById(R.id.librarylistsong_text);
+                TextView songNum = (TextView) convertView.findViewById(R.id.librarylistsong_num);
+                TextView songTime = (TextView) convertView.findViewById(R.id.librarylistsong_time);
                 songText.setText(listData.get(position).song.name);
+                songNum.setText(""+listData.get(position).song.num);
+                songTime.setText(LibraryOperations.formatTime(listData.get(position).song.length));
             }
         }
         else

@@ -49,12 +49,6 @@ public class LibraryListHandler
     
     public void rebuildListData(int artist)
     {
-        // create the grid item mapping
-        String[] from = new String[] {"artist", "album", "song"};
-        int[] to = new int[] { R.id.textView1, R.id.textView2, R.id.textView3};
-
-        // prepare the list of all records
-        List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
         adapter = new LibraryListAdapter(c);
         for(int i = 0; i < libraryData.size(); i++)
         {

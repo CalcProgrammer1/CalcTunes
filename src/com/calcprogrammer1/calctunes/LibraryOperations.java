@@ -140,6 +140,7 @@ public class LibraryOperations
             {
                 f = AudioFileIO.read(files[i]);
                 Tag tag = f.getTag();
+                int song_length = f.getAudioHeader().getTrackLength();
                 String song_artist = tag.getFirstArtist();
                 String song_album = tag.getFirstAlbum();
                 String song_title = tag.getFirstTitle();
@@ -203,6 +204,7 @@ public class LibraryOperations
                     newEntry.name = song_title;
                     newEntry.filename = files[i].getAbsolutePath();
                     newEntry.num = Integer.parseInt(song_num);
+                    newEntry.length = song_length;
                     libraryData.get(artistIndex).albums.get(albumIndex).songs.add(newEntry);
                 }
             }
@@ -235,5 +237,14 @@ public class LibraryOperations
                 }
             }
         }
+    }
+    
+    public static String formatTime(int duration)
+    {
+        String time = "";
+        int mins = duration / 60;
+        int secs = duration % 60;
+        time = mins + ":" + String.format("%02d", secs);
+        return time;
     }
 }
