@@ -26,7 +26,7 @@ public class CalcTunesActivity extends Activity
 {
 
 	//Class Variables
-	MediaPlayer mediaplayer;
+	MediaPlayerHandler mediaplayer;
 	TextView artisttext;
 	TextView albumtext;
 	TextView tracktext;
@@ -55,6 +55,7 @@ public class CalcTunesActivity extends Activity
         
     	sourcelist = (ListView) findViewById(R.id.listView1);
     	sourcelisthandler.setListView(sourcelist);
+    	sourcelisthandler.updateList();
     	
     	mainlist = (ListView) findViewById(R.id.listView2);
     	mainlisthandler.setListView(mainlist);
@@ -65,7 +66,7 @@ public class CalcTunesActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
     	
-        mediaplayer = new MediaPlayer();
+        mediaplayer = new MediaPlayerHandler();
     	
         mainlisthandler = new LibraryListHandler(this, mainlist);
     	mainlisthandler.setCallback(new LibraryListCallback(){
@@ -143,60 +144,27 @@ public class CalcTunesActivity extends Activity
     
     public void media_initialize(String filePath)
     {	
-		File song = new File(filePath);
-		AudioFile f;
-		try
-		{
-			f = AudioFileIO.read(song);
-			Tag tag = f.getTag();
-			String song_artist = tag.getFirstArtist();
-			String song_album = tag.getFirstAlbum();
-			String song_title = tag.getFirstTitle();
-			artisttext.setText(song_artist);
-			albumtext.setText(song_album);
-			tracktext.setText(song_title);
-		}
-		catch (Exception e)
-		{
-			
-		}
-		
-		mediaplayer.reset();
-		mediaplayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		try
-		{
-			mediaplayer.setDataSource(filePath);
-		} 
-		catch (Exception e)
-		{
-		}
-		
-		try
-		{
-			mediaplayer.prepare();
-		}
-		catch (Exception e)
-		{
-		}
+            mediaplayer.initialize(filePath);
+			artisttext.setText(mediaplayer.current_artist);
+			albumtext.setText(mediaplayer.current_album);
+			tracktext.setText(mediaplayer.current_title);
     }
    
     public void ButtonStopClick(View view)
     {
-    	mediaplayer.seekTo(0);
-    	mediaplayer.stop();
-    	try
-    	{
-			mediaplayer.prepare();
-	    	mediaplayer.seekTo(0);
-		}
-    	catch (Exception e)
-    	{
-    	}
+    	mediaplayer.stopPlayback();
     }
     
     public void ButtonPlayPauseClick(View view)
     {
-    	mediaplayer.start();
+        if(mediaplayer.isPlaying())
+        {
+            mediaplayer.pausePlayback();
+        }
+        else if(mediaplayer.prepared)
+        {
+            mediaplayer.startPlayback();
+        }
     }
  
 }

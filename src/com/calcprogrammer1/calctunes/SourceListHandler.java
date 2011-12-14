@@ -19,7 +19,7 @@ public class SourceListHandler
     ListView sourceList;
     Context c;
     ArrayAdapter<String> adapter;
-    ArrayList<libraryListElement> libraryList;
+    ArrayList<libraryListElement> libraryList = new ArrayList<libraryListElement>();
     SourceListCallback cb;
     
     public SourceListHandler(Context con, ListView listv)

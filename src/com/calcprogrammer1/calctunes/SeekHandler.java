@@ -6,11 +6,11 @@ import android.widget.SeekBar;
 public class SeekHandler implements Runnable
 {
     SeekBar sb;
-    MediaPlayer mp;
+    MediaPlayerHandler mp;
     Thread t;
     boolean running = false;
-    
-    public SeekHandler(SeekBar seekb, MediaPlayer mediap)
+    boolean touch = false;
+    public SeekHandler(SeekBar seekb, MediaPlayerHandler mediap)
     {
         sb = seekb;
         mp = mediap;
@@ -20,12 +20,14 @@ public class SeekHandler implements Runnable
             {
                 if(mp != null)
                 {
-                    mp.seekTo(sb.getProgress());
+                    mp.seekPlayback(sb.getProgress());
                 }
+                touch = false;
             }
             
             public void onStartTrackingTouch(SeekBar seekBar)
-            {           
+            {
+                touch = true;
             }
             
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
@@ -35,7 +37,7 @@ public class SeekHandler implements Runnable
         resume();
     }
     
-    public void updateMediaPlayer(MediaPlayer mediap)
+    public void updateMediaPlayer(MediaPlayerHandler mediap)
     {
         mp = mediap;
     }
@@ -53,10 +55,13 @@ public class SeekHandler implements Runnable
             {
                 while(mp != null)
                 {
-                    sb.setMax(mp.getDuration());
-                    int currentPosition = mp.getCurrentPosition();
-                    sb.setProgress(currentPosition);
-                    Thread.sleep(250);
+                    if(!touch)
+                    {
+                        sb.setMax(mp.getDuration());
+                        int currentPosition = mp.getCurrentPosition();
+                        sb.setProgress(currentPosition);
+                        Thread.sleep(250);
+                    }
                 }
                 
             }
