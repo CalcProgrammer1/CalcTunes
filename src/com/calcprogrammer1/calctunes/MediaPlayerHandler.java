@@ -39,7 +39,7 @@ public class MediaPlayerHandler
         AudioFile f;
         try
         {
-            f = AudioFileIO.read(song);
+            f = LibraryOperations.readAudioFileReadOnly(song);
             Tag tag = f.getTag();
             current_artist = tag.getFirstArtist();
             current_album = tag.getFirstAlbum();

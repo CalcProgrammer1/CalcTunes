@@ -10,6 +10,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.jaudiotagger.audio.*;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.*;
 
 import android.content.Context;
@@ -130,6 +133,24 @@ public class LibraryOperations
         return names.toArray(new String[names.size()]);
     }
     
+    public static AudioFile readAudioFileReadOnly(File inFile)
+    {
+        AudioFile f = null;
+        try
+        {
+
+                f = AudioFileIO.read(inFile);
+        }
+        catch(Exception e)
+        {
+                try
+                {
+                    f = new MP3File(inFile, MP3File.LOAD_IDV1TAG, true);
+                }catch (Exception ex){}
+        }
+        return f;
+    }
+    
     public static ArrayList<libraryElementArtist> scanMedia(File[] files)
     {
         ArrayList<libraryElementArtist> libraryData = new ArrayList<libraryElementArtist>();
@@ -138,7 +159,7 @@ public class LibraryOperations
             AudioFile f;
             try
             {
-                f = AudioFileIO.read(files[i]);
+                f = readAudioFileReadOnly(files[i]);
                 Tag tag = f.getTag();
                 int song_length = f.getAudioHeader().getTrackLength();
                 String song_artist = tag.getFirstArtist();
