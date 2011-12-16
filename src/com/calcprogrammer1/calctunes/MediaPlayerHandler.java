@@ -9,20 +9,36 @@ import org.jaudiotagger.tag.Tag;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
+interface MediaPlayerHandlerCallback
+{
+    void onSongFinished();
+    
+    void onStop();
+}
+
 public class MediaPlayerHandler
 {
     MediaPlayer mp;
     
     boolean running = false;
     boolean prepared = false;
+    boolean playonprepare = false;
     
     String current_path;
     String current_title;
     String current_album;
     String current_artist;
     
+    MediaPlayerHandlerCallback cb;
+    
     public MediaPlayerHandler()
     {
+
+    }
+    
+    public void setCallback(MediaPlayerHandlerCallback callback)
+    {
+        cb = callback;
     }
     
     public void initialize(String filePath)
@@ -54,6 +70,11 @@ public class MediaPlayerHandler
                 public void onPrepared(MediaPlayer arg0)
                 {
                     prepared = true;
+                    if(playonprepare)
+                    {
+                        mp.start();
+                        playonprepare = false;
+                    }
                 } 
             });
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
@@ -63,17 +84,21 @@ public class MediaPlayerHandler
                     mp.stop();
                     prepared = false;
                     mp.release();
-                    
+                    if(cb != null) cb.onSongFinished();
                 }
             });
         }catch (Exception e){}
     }
     
-    public void startPlayback()
+    public void startPlayback(boolean wait)
     {
         if(prepared)
         {
             mp.start();
+        }
+        else
+        {
+            playonprepare = true;
         }
     }
     
@@ -84,6 +109,11 @@ public class MediaPlayerHandler
             mp.stop();
             prepared = false;
             mp.release();
+            current_path = "";
+            current_title = "";
+            current_artist = "";
+            current_album = "";
+            if(cb != null) cb.onStop();
         }
     }
     

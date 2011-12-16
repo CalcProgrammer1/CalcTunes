@@ -13,6 +13,7 @@ import android.widget.TextView;
 public class LibraryListAdapter extends BaseAdapter
 {
     ArrayList<libraryElementGeneric> listData = new ArrayList<libraryElementGeneric>();
+    ArrayList<libraryElementArtist> libData = new ArrayList<libraryElementArtist>();
     LayoutInflater inflater;
     Context c;
     
@@ -22,33 +23,64 @@ public class LibraryListAdapter extends BaseAdapter
         inflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
-    public void addArtist(libraryElementArtist artist)
+    public void attachLibrary(ArrayList<libraryElementArtist> library)
+    {
+        libData = library;
+    }
+    
+    public void rebuildData()
+    {
+        for(int i = 0; i < libData.size(); i++)
+        {
+            addArtist(i);
+            if(true)
+            {
+                for(int j = 0; j < libData.get(i).albums.size(); j++)
+                {
+                    addAlbum(i, j);
+
+                    for(int k = 0; k < libData.get(i).albums.get(j).songs.size(); k++)
+                    {
+                        addSong(i, j, k);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void addArtist(int artistIndex)
     {
         libraryElementGeneric newData = new libraryElementGeneric();
+        newData.artistIndex = artistIndex;
         newData.type = "artist";
-        newData.artist = artist;
+        newData.artist = libData.get(artistIndex);
         newData.album = null;
         newData.song = null;
         listData.add(newData);
     }
     
-    public void addAlbum(libraryElementAlbum album)
+    public void addAlbum(int artistIndex, int albumIndex)
     {
         libraryElementGeneric newData = new libraryElementGeneric();
         newData.type = "album";
+        newData.artistIndex = artistIndex;
+        newData.albumIndex = albumIndex;
         newData.artist = null;
-        newData.album = album;
+        newData.album = libData.get(artistIndex).albums.get(albumIndex);
         newData.song = null;
         listData.add(newData);
     }
     
-    public void addSong(libraryElementSong song)
+    public void addSong(int artistIndex, int albumIndex, int songIndex)
     {
         libraryElementGeneric newData = new libraryElementGeneric();
         newData.type = "song";
+        newData.artistIndex = artistIndex;
+        newData.albumIndex = albumIndex;
+        newData.songIndex = songIndex;
         newData.artist = null;
         newData.album = null;
-        newData.song = song;
+        newData.song = libData.get(artistIndex).albums.get(albumIndex).songs.get(songIndex);
         listData.add(newData);
     }
     

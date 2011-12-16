@@ -268,4 +268,70 @@ public class LibraryOperations
         time = mins + ":" + String.format("%02d", secs);
         return time;
     }
+
+    public static libraryElementGeneric getNextSong(libraryElementGeneric currentSong, ArrayList<libraryElementArtist> currentLibrary)
+    {
+        libraryElementGeneric nextSong = currentSong;
+        if(currentSong.songIndex < (currentLibrary.get(currentSong.artistIndex).albums.get(currentSong.albumIndex).songs.size()-1))
+        {
+            nextSong = new libraryElementGeneric();
+            nextSong.type = "song";
+            nextSong.artistIndex = currentSong.artistIndex;
+            nextSong.albumIndex = currentSong.albumIndex;
+            nextSong.songIndex = currentSong.songIndex + 1;
+            nextSong.song = currentLibrary.get(nextSong.artistIndex).albums.get(nextSong.albumIndex).songs.get(nextSong.songIndex);
+        }
+        else if(currentSong.albumIndex < (currentLibrary.get(currentSong.artistIndex).albums.size()-1))
+        {
+            nextSong = new libraryElementGeneric();
+            nextSong.type = "song";
+            nextSong.artistIndex = currentSong.artistIndex;
+            nextSong.albumIndex = currentSong.albumIndex + 1;
+            nextSong.songIndex = 0;
+            nextSong.song = currentLibrary.get(nextSong.artistIndex).albums.get(nextSong.albumIndex).songs.get(nextSong.songIndex);
+        }
+        else if(currentSong.artistIndex < (currentLibrary.size()-1))
+        {
+            nextSong = new libraryElementGeneric();
+            nextSong.type = "song";
+            nextSong.artistIndex = currentSong.artistIndex + 1;
+            nextSong.albumIndex = 0;
+            nextSong.songIndex = 0;
+            nextSong.song = currentLibrary.get(nextSong.artistIndex).albums.get(nextSong.albumIndex).songs.get(nextSong.songIndex);
+        }
+        return nextSong;
+    }
+    
+    public static libraryElementGeneric getPrevSong(libraryElementGeneric currentSong, ArrayList<libraryElementArtist> currentLibrary)
+    {
+        libraryElementGeneric prevSong = currentSong;
+        if(currentSong.songIndex > 0)
+        {
+            prevSong = new libraryElementGeneric();
+            prevSong.type = "song";
+            prevSong.artistIndex = currentSong.artistIndex;
+            prevSong.albumIndex = currentSong.albumIndex;
+            prevSong.songIndex = currentSong.songIndex - 1;
+            prevSong.song = currentLibrary.get(prevSong.artistIndex).albums.get(prevSong.albumIndex).songs.get(prevSong.songIndex);
+        }
+        else if(currentSong.albumIndex > 0)
+        {
+            prevSong = new libraryElementGeneric();
+            prevSong.type = "song";
+            prevSong.artistIndex = currentSong.artistIndex;
+            prevSong.albumIndex = currentSong.albumIndex - 1;
+            prevSong.songIndex = currentLibrary.get(prevSong.artistIndex).albums.get(prevSong.albumIndex).songs.size() - 1;
+            prevSong.song = currentLibrary.get(prevSong.artistIndex).albums.get(prevSong.albumIndex).songs.get(prevSong.songIndex);
+        }
+        else if(currentSong.artistIndex > 0)
+        {
+            prevSong = new libraryElementGeneric();
+            prevSong.type = "song";
+            prevSong.artistIndex = currentSong.artistIndex -1;
+            prevSong.albumIndex = currentLibrary.get(prevSong.artistIndex).albums.size() - 1;
+            prevSong.songIndex = currentLibrary.get(prevSong.artistIndex).albums.get(prevSong.albumIndex).songs.size() - 1;
+            prevSong.song = currentLibrary.get(prevSong.artistIndex).albums.get(prevSong.albumIndex).songs.get(prevSong.songIndex);
+        }
+        return prevSong;
+    }
 }

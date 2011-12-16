@@ -14,7 +14,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 interface LibraryListCallback
 {
-    void callback(String filename);
+    void callback(libraryElementGeneric song);
 }
 
 public class LibraryListHandler
@@ -29,6 +29,7 @@ public class LibraryListHandler
     {
         libraryList = lv;
         c = con;
+        adapter = new LibraryListAdapter(c);
     }
     
     public void setCallback(LibraryListCallback callback)
@@ -39,6 +40,7 @@ public class LibraryListHandler
     public void setLibrary(ArrayList<libraryElementArtist> newLibrary)
     {
         libraryData = newLibrary;
+        adapter.attachLibrary(libraryData);
     }
     
     public void setListView(ListView lv)
@@ -49,23 +51,7 @@ public class LibraryListHandler
     
     public void rebuildListData(int artist)
     {
-        adapter = new LibraryListAdapter(c);
-        for(int i = 0; i < libraryData.size(); i++)
-        {
-            adapter.addArtist(libraryData.get(i));
-            if(true)//i == artist)
-            {
-                for(int j = 0; j < libraryData.get(i).albums.size(); j++)
-                {
-                    adapter.addAlbum(libraryData.get(i).albums.get(j));
-
-                    for(int k = 0; k < libraryData.get(i).albums.get(j).songs.size(); k++)
-                    {
-                        adapter.addSong(libraryData.get(i).albums.get(j).songs.get(k));
-                    }
-                }
-            }
-        }
+        adapter.rebuildData();
     }
     
     public void drawList(int artist)
@@ -101,7 +87,7 @@ public class LibraryListHandler
         else if (type.equals("song"))
         {
             String filepath = ((libraryElementGeneric) parent.getAdapter().getItem(position)).song.filename;
-            cb.callback(filepath);
+            cb.callback((libraryElementGeneric) parent.getAdapter().getItem(position));
         }
     }
 }
