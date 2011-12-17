@@ -5,6 +5,9 @@
     <item android:id="@+id/setting"
         android:icon="@drawable/ic_menu_preferences"
         android:title="Settings" />
+    <item android:id="@+id/collapseSidebar"
+        android:icon="@drawable/ic_menu_preferences"
+        android:title="Show/Hide Sidebar" />
     <item android:id="@+id/exitApplication"
         android:title="Exit"
         android:icon="@drawable/ic_menu_close_clear_cancel" />

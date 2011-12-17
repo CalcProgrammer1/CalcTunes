@@ -1,7 +1,9 @@
 package com.calcprogrammer1.calctunes;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.*;
+import android.view.ViewGroup.LayoutParams;
 import android.media.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +46,10 @@ public class CalcTunesActivity extends Activity
     ArrayList<libraryListElement> libraryList;
     
     libraryElementGeneric currentTrack;
+
+    MediaButtonsHandler buttons;
+    
+    boolean sidebarHidden = false;
     
 	public void updateGuiElements()
 	{
@@ -66,11 +72,34 @@ public class CalcTunesActivity extends Activity
     	mainlisthandler.setListView(mainlist);
 	}
 	
+	@Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-    	
+
+        buttons = new MediaButtonsHandler(this);
+        buttons.setCallback(new MediaButtonsHandlerCallback(){
+
+            public void onMediaNextPressed()
+            {
+                tracktext.setText("Button Pressed");
+                ButtonNextClick(null);
+            }
+
+            public void onMediaPrevPressed()
+            { 
+            }
+
+            public void onMediaPlayPausePressed()
+            {
+            }
+
+            public void onMediaStopPressed()
+            {
+            }    
+        });
+        
         mediaplayer = new MediaPlayerHandler();
         mediaplayer.setCallback(new MediaPlayerHandlerCallback(){
 
@@ -120,6 +149,13 @@ public class CalcTunesActivity extends Activity
     	sourcelisthandler.updateList();
     }
     
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        buttons.registerButtons();
+    }
+    
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
@@ -144,6 +180,19 @@ public class CalcTunesActivity extends Activity
                 
             case R.id.exitApplication:
                 this.finish();
+                break;
+                
+            case R.id.collapseSidebar:
+                if(sidebarHidden)
+                {
+                    sourcelist.setVisibility(View.VISIBLE);
+                    sidebarHidden = false;
+                }
+                else
+                {
+                    sourcelist.setVisibility(View.GONE);
+                    sidebarHidden = true;
+                }
                 break;
         }
         return true;
@@ -202,5 +251,30 @@ public class CalcTunesActivity extends Activity
         media_initialize(LibraryOperations.getPrevSong(currentTrack, currentLibrary));
         mediaplayer.startPlayback(true);
     }
- 
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if(keyCode == KeyEvent.KEYCODE_MEDIA_NEXT)
+        {
+            ButtonNextClick(null);
+            return true;
+        }
+        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+        {
+            ButtonPrevClick(null);
+            return true;
+        }
+        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+        {
+            ButtonPlayPauseClick(null);
+            return true;
+        }
+        else if(keyCode == KeyEvent.KEYCODE_MEDIA_STOP)
+        {
+            ButtonStopClick(null);
+        }
+        return false;       
+    }
+
 }

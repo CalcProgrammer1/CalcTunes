@@ -169,6 +169,7 @@ public class LibraryOperations
                 String song_num = tag.getFirstTrack();
                 
                 int artistIndex = -1;
+                int newArtistIndex = 0;
                 int j = 0;
                 
                 //check if artist exists
@@ -178,6 +179,10 @@ public class LibraryOperations
                     {
                         artistIndex = j;
                     }
+                    else if(song_artist.compareTo(libraryData.get(j).name) > 0)
+                    {
+                        newArtistIndex = j+1;
+                    }
                 }
                 //if artist not in list
                 if(artistIndex == -1)
@@ -185,18 +190,23 @@ public class LibraryOperations
                     libraryElementArtist newEntry = new libraryElementArtist();
                     newEntry.name = song_artist;
                     newEntry.albums = new ArrayList<libraryElementAlbum>();
-                    libraryData.add(newEntry);
-                    artistIndex = j;
+                    libraryData.add(newArtistIndex, newEntry);
+                    artistIndex = newArtistIndex;
                 }
                 
                 //check if album exists
                 int albumIndex = -1;
+                int newAlbumIndex = 0;
                 j = 0; 
                 for(; j < libraryData.get(artistIndex).albums.size(); j++)
                 {
                     if(libraryData.get(artistIndex).albums.get(j).name.equals(song_album))
                     {
                         albumIndex = j;
+                    }
+                    else if(song_album.compareTo(libraryData.get(artistIndex).albums.get(j).name) > 0)
+                    {
+                        newAlbumIndex = j+1;
                     }
                 }
                 if(albumIndex == -1)
@@ -205,18 +215,23 @@ public class LibraryOperations
                     newEntry.name = song_album;
                     newEntry.year = song_year;
                     newEntry.songs = new ArrayList<libraryElementSong>();
-                    libraryData.get(artistIndex).albums.add(newEntry);
-                    albumIndex = j;
+                    libraryData.get(artistIndex).albums.add(newAlbumIndex, newEntry);
+                    albumIndex = newAlbumIndex;
                 }
                 
                 //check if song exists
                 int songIndex = -1;
+                int newSongIndex = 0;
                 j = 0;
                 for(; j < libraryData.get(artistIndex).albums.get(albumIndex).songs.size(); j++)
                 {
                     if(libraryData.get(artistIndex).albums.get(albumIndex).songs.get(j).name.equals(song_title))
                     {
                         songIndex = j;
+                    }
+                    if(Integer.parseInt(song_num) > libraryData.get(artistIndex).albums.get(albumIndex).songs.get(j).num)
+                    {
+                        newSongIndex = j+1;
                     }
                 }
                 if(songIndex == -1)
@@ -226,7 +241,7 @@ public class LibraryOperations
                     newEntry.filename = files[i].getAbsolutePath();
                     newEntry.num = Integer.parseInt(song_num);
                     newEntry.length = song_length;
-                    libraryData.get(artistIndex).albums.get(albumIndex).songs.add(newEntry);
+                    libraryData.get(artistIndex).albums.get(albumIndex).songs.add(newSongIndex, newEntry);
                 }
             }
             catch(Exception e)

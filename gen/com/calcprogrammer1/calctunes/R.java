@@ -33,8 +33,9 @@ public final class R {
         public static final int button_playpause=0x7f06001a;
         public static final int button_stop=0x7f060019;
         public static final int checkBox1=0x7f060009;
+        public static final int collapseSidebar=0x7f06001f;
         public static final int createLibrary=0x7f06001d;
-        public static final int exitApplication=0x7f06001f;
+        public static final int exitApplication=0x7f060020;
         public static final int imageAlbumArt=0x7f060013;
         public static final int libNameInput=0x7f060003;
         public static final int libraryListView=0x7f060008;
@@ -53,7 +54,7 @@ public final class R {
         public static final int player_controls=0x7f060012;
         public static final int seekBar_track=0x7f06001c;
         public static final int setting=0x7f06001e;
-        public static final int sourcelistentry_textview=0x7f060020;
+        public static final int sourcelistentry_textview=0x7f060021;
         public static final int textView1=0x7f060002;
         public static final int text_albumname=0x7f060016;
         public static final int text_artistname=0x7f060015;

@@ -30,6 +30,7 @@ public class LibraryListAdapter extends BaseAdapter
     
     public void rebuildData()
     {
+        listData = new ArrayList<libraryElementGeneric>();
         for(int i = 0; i < libData.size(); i++)
         {
             addArtist(i);
