@@ -1,14 +1,10 @@
 package com.calcprogrammer1.calctunes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -86,7 +82,6 @@ public class LibraryListHandler
         }
         else if (type.equals("song"))
         {
-            String filepath = ((libraryElementGeneric) parent.getAdapter().getItem(position)).song.filename;
             cb.callback((libraryElementGeneric) parent.getAdapter().getItem(position));
         }
     }

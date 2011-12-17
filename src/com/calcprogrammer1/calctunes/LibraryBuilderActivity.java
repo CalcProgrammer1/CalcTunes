@@ -1,10 +1,6 @@
 package com.calcprogrammer1.calctunes;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.calcprogrammer1.calctunes.R;
 
 import android.app.Activity;
@@ -17,14 +13,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 public class LibraryBuilderActivity extends Activity
 {
     ListView librarylist;
     EditText libNameInput;
     ArrayList<String> libraryFolders;
+    Intent i;
     
     public void onCreate(Bundle savedInstanceState)
     {
@@ -32,7 +27,19 @@ public class LibraryBuilderActivity extends Activity
         setContentView(R.layout.librarybuilder);
         librarylist = (ListView) findViewById(R.id.libraryListView);
         libNameInput = (EditText) findViewById(R.id.libNameInput);
+        
+        i = getIntent();
+        Bundle extras = i.getExtras();
         libraryFolders = new ArrayList<String>();
+        if(extras != null)
+        {
+            String filename = extras.getString("EditFilename");
+            String name = extras.getString("EditName");
+            libraryFolders = LibraryOperations.readLibraryFile(filename);
+            libNameInput.setText(name);
+            updateFolderList();
+        }
+
     }
     
     public void AddFolderClick(View view)
@@ -119,10 +126,9 @@ public class LibraryBuilderActivity extends Activity
         }
         else
         {
-            Intent data = new Intent();
-            data.putStringArrayListExtra("libraryFolders", libraryFolders);
-            data.putExtra("libraryName", libNameInput.getText().toString());
-            setResult(Activity.RESULT_OK, data);
+            i.putStringArrayListExtra("libraryFolders", libraryFolders);
+            i.putExtra("libraryName", libNameInput.getText().toString());
+            setResult(Activity.RESULT_OK, i);
             finish();
         }
     }

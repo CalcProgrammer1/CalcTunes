@@ -16,7 +16,6 @@
 		    android:id="@+id/linearLayout1"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-		    android:layout_weight="1" 
 		    android:layout_above="@+id/lower_frame">
 
 		    <ListView
@@ -49,7 +48,6 @@
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentLeft="true"
 		        android:layout_toLeftOf="@+id/imageAlbumArt"
-		        android:layout_weight="0"
 		        android:background="@color/dark_gray" >
 	
 		        <LinearLayout
@@ -138,7 +136,6 @@
 		        android:layout_width="90dip"
 		        android:layout_height="90dip"
 		        android:layout_alignParentRight="true"
-		        android:layout_weight="0"
 		        android:scaleType="centerInside"
 		        android:background="@color/dark_gray"
 		        android:src="@drawable/icon" />

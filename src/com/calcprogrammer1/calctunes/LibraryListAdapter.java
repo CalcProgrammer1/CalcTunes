@@ -129,10 +129,7 @@ public class LibraryListAdapter extends BaseAdapter
                 songTime.setText(LibraryOperations.formatTime(listData.get(position).song.length));
             }
         }
-        else
-        {
 
-        }
         return convertView;
     }
 

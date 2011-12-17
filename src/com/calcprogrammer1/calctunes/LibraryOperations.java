@@ -2,16 +2,14 @@ package com.calcprogrammer1.calctunes;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.jaudiotagger.audio.*;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.*;
 
@@ -31,7 +29,7 @@ public class LibraryOperations
         libDir.setExecutable(true, false);
         try
         {
-            FileWriter outFile = new FileWriter(libPath+"/"+libName+".txt");
+            FileWriter outFile = new FileWriter(libPath+"/"+getLibraryFilename(libName));
             PrintWriter out = new PrintWriter(outFile);
             out.println(libName);
             for(int i=0; i < libData.size(); i++)
@@ -42,11 +40,9 @@ public class LibraryOperations
         }catch(Exception e){}
     }
     
-    public static ArrayList<libraryElementArtist> readLibraryFile(String libFilePath)
+    public static ArrayList<String> readLibraryFile(String libFilePath)
     {
-        ArrayList<libraryElementArtist> libData = new ArrayList<libraryElementArtist>();
         ArrayList<String> libraryFolders = new ArrayList<String>();
-        
         BufferedReader inFile = null;
         
         //Create BufferedReader to read file, include useless try/catch to make Java happy
@@ -79,6 +75,13 @@ public class LibraryOperations
                 break;
             }
         }
+        return libraryFolders;
+    }
+    
+    public static ArrayList<libraryElementArtist> readLibraryData(String libFilePath)
+    {
+        ArrayList<libraryElementArtist> libData = new ArrayList<libraryElementArtist>();
+        ArrayList<String> libraryFolders = readLibraryFile(libFilePath);
         
         //Recursively loop through directories and build list of files
         ArrayList<File> myFiles = new ArrayList<File>();
@@ -94,9 +97,6 @@ public class LibraryOperations
         return libData;
     }
     
-    //saveLibraryFile
-    //  Reads all library files from library directory
-    //  libPath - Path to read libraries from
     public static ArrayList<libraryListElement> readLibraryList(String libPath)
     {
         try
@@ -106,7 +106,6 @@ public class LibraryOperations
             ArrayList<libraryListElement> libData = new ArrayList<libraryListElement>();
             for(int i = 0; i < libFiles.length; i++)
             {
-                String mypath = libFiles[i].getAbsolutePath();
                 BufferedReader inFile = new BufferedReader(new FileReader(libFiles[i].getAbsolutePath()));
                 String name = inFile.readLine();
                 libraryListElement newLib = new libraryListElement();
@@ -349,4 +348,26 @@ public class LibraryOperations
         }
         return prevSong;
     }
+    
+    public static String getLibraryPath(Context c)
+    {
+        return c.getApplicationContext().getExternalFilesDir(null).getPath() + "/libraries";
+    }
+    
+    public static String getLibraryFilename(String libName)
+    {
+        String fileName = "";
+        
+        try{
+            fileName = URLEncoder.encode(libName, "UTF-8");
+        }catch(Exception e){}
+        
+        return fileName + ".txt";
+    }
+    
+    public static String getLibraryFullPath(Context c, String libName)
+    {
+        return getLibraryPath(c) + "/" + getLibraryFilename(libName);
+    }
+    
 }

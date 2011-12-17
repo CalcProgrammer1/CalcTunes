@@ -1,6 +1,5 @@
 package com.calcprogrammer1.calctunes;
 
-import android.media.MediaPlayer;
 import android.widget.SeekBar;
 
 public class SeekHandler implements Runnable

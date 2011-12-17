@@ -30,14 +30,19 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.19 Alpha (12/16/2011)
+Current Status - Version 0.20 Alpha (12/17/2011)
 --------------
+Cleaned up the main activity code to get the lengthy callback routines out of onCreate.  Created a context menu for editing
+and deleting libraries.  Restructured the library passing system and library filename routines.  Sidebar now stays hidden
+during rotation.
+
+Release History
+---------------
+Version 0.19 Alpha (12/16/2011)
 Media library now sorted alphabetically for artists and albums, sorted by track number for songs.  Added an option to show
 and hide the sidebar.  Preliminary support for hardware media buttons (such as Bluetooth headsets, car systems, etc) - works
 when application is open but does not yet work during background play.
 
-Release History
----------------
 Version 0.18 Alpha (12/16/2011)
 Simple previous/next track functionality implemented and working.  Next song plays when current song finishes.  When playback
 reaches either end of library, next returns last and prev returns first track of library.  Prev and Next buttons are functional.
