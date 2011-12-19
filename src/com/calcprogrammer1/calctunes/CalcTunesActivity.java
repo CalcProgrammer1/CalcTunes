@@ -100,7 +100,7 @@ public class CalcTunesActivity extends Activity
     SourceListCallback sourcelisthandlerCallback = new SourceListCallback(){
         public void callback(String filename)
         {
-            currentLibrary = LibraryOperations.readLibraryData(filename);
+            currentLibrary = LibraryOperations.readLibraryData(getApplicationContext(), filename);
             mainlisthandler.setLibrary(currentLibrary);
             mainlisthandler.drawList(-1);
             
@@ -198,9 +198,10 @@ public class CalcTunesActivity extends Activity
             String libraryName = data.getStringExtra("libraryName");
             
             LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
-            
+
+            LibraryOperations.scanMediaIntoDatabase(this, LibraryOperations.getLibraryFullPath(this, libraryName));
             refreshLibraryList();
-            currentLibrary = LibraryOperations.readLibraryData(LibraryOperations.getLibraryFullPath(this, libraryName));
+            currentLibrary = LibraryOperations.readLibraryData(this, LibraryOperations.getLibraryFullPath(this, libraryName));
             mainlisthandler.setLibrary(currentLibrary);
             mainlisthandler.drawList(-1);
         }

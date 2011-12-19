@@ -30,14 +30,19 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.20 Alpha (12/17/2011)
+Current Status - Version 0.21 Alpha (12/19/2011)
 --------------
+Added preliminary support for SQLite database system.  The library data is now stored in a SQLite database and the library data
+is populated from this database.  This is the beginning of a library data caching system that should improve loading performance
+especially for network-based libraries.  It already shows a decent speed boost on a small local library.
+
+Release History
+---------------
+Version 0.20 Alpha (12/17/2011)
 Cleaned up the main activity code to get the lengthy callback routines out of onCreate.  Created a context menu for editing
 and deleting libraries.  Restructured the library passing system and library filename routines.  Sidebar now stays hidden
 during rotation.
 
-Release History
----------------
 Version 0.19 Alpha (12/16/2011)
 Media library now sorted alphabetically for artists and albums, sorted by track number for songs.  Added an option to show
 and hide the sidebar.  Preliminary support for hardware media buttons (such as Bluetooth headsets, car systems, etc) - works

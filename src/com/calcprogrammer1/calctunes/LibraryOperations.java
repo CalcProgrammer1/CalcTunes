@@ -2,6 +2,8 @@ package com.calcprogrammer1.calctunes;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,8 +14,13 @@ import java.util.ArrayList;
 import org.jaudiotagger.audio.*;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.*;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Xml;
 
 public class LibraryOperations
 {
@@ -78,22 +85,42 @@ public class LibraryOperations
         return libraryFolders;
     }
     
-    public static ArrayList<libraryElementArtist> readLibraryData(String libFilePath)
+    public static String readLibraryName(String libFilePath)
     {
-        ArrayList<libraryElementArtist> libData = new ArrayList<libraryElementArtist>();
-        ArrayList<String> libraryFolders = readLibraryFile(libFilePath);
+        BufferedReader inFile = null;
+        String name = null;
         
-        //Recursively loop through directories and build list of files
-        ArrayList<File> myFiles = new ArrayList<File>();
+        try{
+            
+            inFile = new BufferedReader(new FileReader(libFilePath));
+            name = inFile.readLine();
+            inFile.close();
+            
+        }catch (Exception e){}
+        
+        return name;
+    }
+    
+    public static void scanMediaIntoDatabase(Context c, String libFilePath)
+    {
+        ArrayList<String> libraryFolders = readLibraryFile(libFilePath);
+        String libName = readLibraryName(libFilePath);
+        ArrayList<File> libFiles = new ArrayList<File>();
+        
         for(int i = 0; i < libraryFolders.size(); i++)
         {
             File f = new File(libraryFolders.get(i));
-            FileOperations.addFilesRecursively(f, myFiles);
+            FileOperations.addFilesRecursively(f, libFiles);
         }
         
-        //Scan resulting file list into media library
-        libData = scanMedia(myFiles.toArray(new File[myFiles.size()]));
-        
+        writeMediaDatabase(c, libFiles.toArray(new File[libFiles.size()]), libName);
+    }
+    
+    public static ArrayList<libraryElementArtist> readLibraryData(Context c, String libFilePath)
+    {
+        ArrayList<libraryElementArtist> libData = new ArrayList<libraryElementArtist>();
+        String libName = readLibraryName(libFilePath);
+        libData = readMediaDatabase(c, libName);
         return libData;
     }
     
@@ -369,5 +396,57 @@ public class LibraryOperations
     {
         return getLibraryPath(c) + "/" + getLibraryFilename(libName);
     }
+ 
+    public static void writeMediaDatabase(Context c, File[] files, String libName)
+    {
+       LibraryDatabaseHelper db = new LibraryDatabaseHelper(c, libName + ".db");
+       db.startDatabase();
+       for(int i = 0; i < files.length; i++)
+       {
+           db.addFileToDatabase(files[i]);
+       }
+    }
     
+    public static ArrayList<libraryElementArtist> readMediaDatabase(Context c, String libName)
+    {
+        ArrayList<libraryElementArtist> libraryData = new ArrayList<libraryElementArtist>();
+        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + libName + ".db", null);
+        
+        Cursor artists = db.rawQuery("SELECT DISTINCT ARTIST FROM MYLIBRARY;", null);
+
+        for(int i = 0; i < artists.getCount(); i++)
+        {
+            artists.moveToNext();
+            
+            libraryElementArtist artistData = new libraryElementArtist();
+            artistData.name = artists.getString(0);
+            Cursor albums = db.rawQuery("SELECT DISTINCT ALBUM FROM MYLIBRARY WHERE ARTIST = '" + artists.getString(0).replaceAll("'", "''") + "';", null);
+            for(int j = 0; j < albums.getCount(); j++)
+            {
+                albums.moveToNext();
+                
+                libraryElementAlbum albumData = new libraryElementAlbum();
+                albumData.name = albums.getString(0);
+                Cursor songs = db.rawQuery("SELECT DISTINCT TITLE, PATH, YEAR, TRACK, TIME FROM MYLIBRARY WHERE ARTIST = '" + artists.getString(0).replaceAll("'", "''") + "' AND ALBUM = '" + albums.getString(0).replaceAll("'","''") +"' ORDER BY TRACK;", null);
+                for(int k = 0; k < songs.getCount(); k++)
+                {
+                    songs.moveToNext();
+                    
+                    libraryElementSong songData = new libraryElementSong();
+                    songData.name = songs.getString(0);
+                    songData.filename = songs.getString(1);
+                    songData.year = songs.getString(2);
+                    songData.num = songs.getInt(3);
+                    songData.length = songs.getInt(4);
+                    albumData.songs.add(songData);
+                }
+                artistData.albums.add(albumData);
+                songs.close();
+            }
+            libraryData.add(artistData);
+            albums.close();
+        }
+        artists.close();
+        return libraryData;
+    }
 }

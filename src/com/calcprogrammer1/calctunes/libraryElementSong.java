@@ -6,4 +6,5 @@ public class libraryElementSong
     public int num;
     public int length;
     public String filename;
+    public String year;
 }

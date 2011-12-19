@@ -6,5 +6,5 @@ public class libraryElementAlbum
 {
     public String name;
     public String year;
-    public ArrayList<libraryElementSong> songs;
+    public ArrayList<libraryElementSong> songs = new ArrayList<libraryElementSong>();
 }
