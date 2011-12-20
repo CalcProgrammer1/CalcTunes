@@ -19,10 +19,11 @@ public final class R {
         public static final int ic_menu_preferences=0x7f020002;
         public static final int icon=0x7f020003;
         public static final int icon_android=0x7f020004;
-        public static final int media_play_pause=0x7f020005;
-        public static final int media_playback_stop=0x7f020006;
-        public static final int media_skip_backward=0x7f020007;
-        public static final int media_skip_forward=0x7f020008;
+        public static final int icon_library_warning=0x7f020005;
+        public static final int media_play_pause=0x7f020006;
+        public static final int media_playback_stop=0x7f020007;
+        public static final int media_skip_backward=0x7f020008;
+        public static final int media_skip_forward=0x7f020009;
     }
     public static final class id {
         public static final int buttonLibAddFolder=0x7f070005;
@@ -37,7 +38,6 @@ public final class R {
         public static final int createLibrary=0x7f070022;
         public static final int exitApplication=0x7f070025;
         public static final int imageAlbumArt=0x7f070018;
-        public static final int imageView1=0x7f070026;
         public static final int layout=0x7f07000f;
         public static final int libNameInput=0x7f070003;
         public static final int libraryListView=0x7f070008;
@@ -59,7 +59,8 @@ public final class R {
         public static final int player_controls=0x7f070017;
         public static final int seekBar_track=0x7f070021;
         public static final int setting=0x7f070023;
-        public static final int sourcelistentry_textview=0x7f070027;
+        public static final int sourcelistentry_icon=0x7f070026;
+        public static final int sourcelistentry_text=0x7f070027;
         public static final int text=0x7f070013;
         public static final int textView1=0x7f070002;
         public static final int text_albumname=0x7f07001b;

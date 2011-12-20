@@ -2,8 +2,6 @@ package com.calcprogrammer1.calctunes;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,13 +12,9 @@ import java.util.ArrayList;
 import org.jaudiotagger.audio.*;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.*;
-import org.xmlpull.v1.XmlSerializer;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Xml;
 
 public class LibraryOperations
 {
@@ -146,7 +140,7 @@ public class LibraryOperations
                     for(int j = 0; j < libDirs.size(); j++)
                     {
                         File directory = new File(libDirs.get(j));
-                        if(directory.isDirectory() && (directory.list().length == 0))
+                        if(!directory.exists() || (directory.isDirectory() && (directory.list().length == 0)))
                         {
                             newLib.status = libraryListElement.LIBRARY_OFFLINE;
                         }

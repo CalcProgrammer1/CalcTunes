@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -18,7 +17,7 @@ public class SourceListHandler
 {
     ListView sourceList;
     Context c;
-    ArrayAdapter<String> adapter;
+    SourceListAdapter adapter;
     ArrayList<libraryListElement> libraryList = new ArrayList<libraryListElement>();
     SourceListCallback cb;
     
@@ -26,6 +25,8 @@ public class SourceListHandler
     {
         sourceList = listv;
         c = con;
+        adapter = new SourceListAdapter(con);
+        adapter.attachLibraryList(libraryList);
     }
     
     public void setListView(ListView listv)
@@ -52,9 +53,7 @@ public class SourceListHandler
     
     public void updateList()
     {
-        String[] libraryNames = LibraryOperations.getNamesFromList(libraryList);
-        
-        adapter = new ArrayAdapter<String>(c,R.layout.sourcelistentry,R.id.sourcelistentry_textview, libraryNames);
+        adapter.attachLibraryList(libraryList);
         sourceList.setAdapter(adapter);
         sourceList.setOnItemClickListener(new OnItemClickListener() 
         {

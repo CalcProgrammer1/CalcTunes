@@ -1,16 +1,11 @@
 package com.calcprogrammer1.calctunes;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.tag.Tag;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class LibraryDatabaseHelper extends SQLiteOpenHelper

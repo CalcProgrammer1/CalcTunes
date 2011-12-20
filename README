@@ -30,14 +30,19 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.22 Alpha (12/20/2011)
+Current Status - Version 0.23 Alpha (12/20/2011)
 --------------
+Source list now has a custom adapter that handles library status and displays the appropriate icon.  The callback needs
+to be modified to display warnings should the user select an unavailable or offline/partially offline library, possibly
+giving the option to re-scan or delete the library.
+
+Release History
+---------------
+Version 0.22 Alpha (12/20/2011)
 Library scanner now runs asynchronously and displays a notification showing scan progress.  Other libraries may still be
 used while scanning.  Added the beginnings of a library status system which will detect offline, unavailable, and updating
 libraries and restrict access/force updates to ones that do not have a database built.
 
-Release History
----------------
 Version 0.21 Alpha (12/19/2011)
 Added preliminary support for SQLite database system.  The library data is now stored in a SQLite database and the library data
 is populated from this database.  This is the beginning of a library data caching system that should improve loading performance
