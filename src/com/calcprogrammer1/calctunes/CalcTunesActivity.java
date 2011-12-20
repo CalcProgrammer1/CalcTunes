@@ -43,7 +43,6 @@ public class CalcTunesActivity extends Activity
     LibraryListHandler mainlisthandler;
 	
     ArrayList<libraryElementArtist> currentLibrary;
-    ArrayList<libraryListElement> libraryList;
     
     libraryElementGeneric currentTrack;
 
@@ -131,7 +130,7 @@ public class CalcTunesActivity extends Activity
     	
         updateGuiElements();
  
-        refreshLibraryList();
+        sourcelisthandler.refreshLibraryList();
     }
     
     @Override
@@ -199,11 +198,13 @@ public class CalcTunesActivity extends Activity
             
             LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
 
-            LibraryOperations.scanMediaIntoDatabase(this, LibraryOperations.getLibraryFullPath(this, libraryName));
-            refreshLibraryList();
-            currentLibrary = LibraryOperations.readLibraryData(this, LibraryOperations.getLibraryFullPath(this, libraryName));
-            mainlisthandler.setLibrary(currentLibrary);
-            mainlisthandler.drawList(-1);
+            LibraryScannerTask task = new LibraryScannerTask(this);
+            task.execute(libraryName);
+            //LibraryOperations.scanMediaIntoDatabase(this, LibraryOperations.getLibraryFullPath(this, libraryName));
+            sourcelisthandler.refreshLibraryList();
+            //currentLibrary = LibraryOperations.readLibraryData(this, LibraryOperations.getLibraryFullPath(this, libraryName));
+            //mainlisthandler.setLibrary(currentLibrary);
+            //mainlisthandler.drawList(-1);
         }
     }
     
@@ -252,15 +253,15 @@ public class CalcTunesActivity extends Activity
         {
             case 1:
                 Intent intent = new Intent(getBaseContext(), LibraryBuilderActivity.class);
-                intent.putExtra("EditFilename", libraryList.get(id).filename);
-                intent.putExtra("EditName", libraryList.get(id).name);
+                intent.putExtra("EditFilename", sourcelisthandler.getLibraryList().get(id).filename);
+                intent.putExtra("EditName", sourcelisthandler.getLibraryList().get(id).name);
                 startActivityForResult(intent, 1);
                 break;
             
             case 2:
-                File libraryToDelete = new File(libraryList.get(id).filename);
+                File libraryToDelete = new File(sourcelisthandler.getLibraryList().get(id).filename);
                 libraryToDelete.delete();
-                refreshLibraryList();
+                sourcelisthandler.refreshLibraryList();
                 Toast.makeText(this, "Library Deleted", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -272,14 +273,7 @@ public class CalcTunesActivity extends Activity
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    public void refreshLibraryList()
-    {
-        libraryList = new ArrayList<libraryListElement>();
-        libraryList = LibraryOperations.readLibraryList(LibraryOperations.getLibraryPath(this));
 
-        sourcelisthandler.setLibraryList(libraryList);
-        sourcelisthandler.updateList();
-    }
     
     public void updateGuiElements()
     {
@@ -311,6 +305,7 @@ public class CalcTunesActivity extends Activity
     {	
             currentTrack = song;
             String filePath = currentTrack.song.filename;
+            mediaplayer.stopPlayback();
             mediaplayer.initialize(filePath);
 			artisttext.setText(mediaplayer.current_artist);
 			albumtext.setText(mediaplayer.current_album);

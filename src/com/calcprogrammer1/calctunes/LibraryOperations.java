@@ -24,11 +24,6 @@ import android.util.Xml;
 
 public class LibraryOperations
 {
-    //saveLibraryFile
-    //  Saves a library playlist to a file in the application's data directory
-    //  libName - name of library
-    //  libData - ArrayList containing all the paths included in the library
-    //  libPath - Path to store the library files
     public static void saveLibraryFile(String libName, ArrayList<String> libData, String libPath)
     {
         File libDir = new File(libPath);
@@ -138,6 +133,25 @@ public class LibraryOperations
                 libraryListElement newLib = new libraryListElement();
                 newLib.name = name;
                 newLib.filename = libFiles[i].getAbsolutePath();
+                newLib.status = libraryListElement.LIBRARY_OK;
+                
+                File file = new File("/data/data/com.calcprogrammer1.calctunes/databases/" + newLib.name + ".db");
+                if(!file.exists())
+                {
+                    newLib.status = libraryListElement.LIBRARY_UNAVAILABLE;
+                }
+                else
+                {
+                    ArrayList<String> libDirs = readLibraryFile(newLib.filename);
+                    for(int j = 0; j < libDirs.size(); j++)
+                    {
+                        File directory = new File(libDirs.get(j));
+                        if(directory.isDirectory() && (directory.list().length == 0))
+                        {
+                            newLib.status = libraryListElement.LIBRARY_OFFLINE;
+                        }
+                    }
+                }
                 libData.add(newLib);
             }
             return libData;

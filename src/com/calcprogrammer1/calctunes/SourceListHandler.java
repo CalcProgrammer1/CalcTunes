@@ -33,14 +33,21 @@ public class SourceListHandler
         sourceList = listv;
     }
     
-    public void setLibraryList(ArrayList<libraryListElement> libList)
+    public ArrayList<libraryListElement> getLibraryList()
     {
-        libraryList = libList;
+        return libraryList;
     }
     
     public void setCallback(SourceListCallback callb)
     {
         cb = callb;
+    }
+    
+    public void refreshLibraryList()
+    {
+        libraryList = new ArrayList<libraryListElement>();
+        libraryList = LibraryOperations.readLibraryList(LibraryOperations.getLibraryPath(c));
+        updateList();
     }
     
     public void updateList()

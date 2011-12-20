@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dp" >
+    <ImageView android:id="@+id/libupdatenotification_image"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="10dp" />
+    <TextView android:id="@+id/libupdatenotification_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/libupdatenotification_image"
+        style="@style/NotificationTitle" />
+    <ProgressBar
+        android:id="@+id/libupdatenotification_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/text"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/text" 
+        android:layout_toRightOf="@id/libupdatenotification_image"
+        android:layout_below="@id/libupdatenotification_title"/>
+</RelativeLayout>
