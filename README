@@ -30,14 +30,17 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.24 Alpha (12/21/2011)
+Current Status - Version 0.25 Alpha (12/21/2011)
 --------------
+Added a clean gradient effect to the source and now playing areas and added some minor fixes to the navigation buttons.
+
+Release History
+---------------
+Version 0.24 Alpha (12/21/2011)
 Library list adapter replaced with a new CursorAdapter-based adapter that attaches to the library SQL database directly.
 This greatly improves loading speed and scrolling efficiency, plus it makes it simplifies previous/next track seeking.
 Also implemented with this adapter is current track highlighting, the current track is highlighted in dark gray.
 
-Release History
----------------
 Version 0.23 Alpha (12/20/2011)
 Source list now has a custom adapter that handles library status and displays the appropriate icon.  The callback needs
 to be modified to display warnings should the user select an unavailable or offline/partially offline library, possibly

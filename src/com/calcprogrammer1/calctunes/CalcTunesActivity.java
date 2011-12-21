@@ -77,8 +77,6 @@ public class CalcTunesActivity extends Activity
 
         public void onStop()
         {
-            now_playing = -1;
-            mainlisthandler.setHighlightedTrack(now_playing);
             artisttext.setText(mediaplayer.current_artist);
             albumtext.setText(mediaplayer.current_album);
             tracktext.setText(mediaplayer.current_title);
@@ -309,6 +307,8 @@ public class CalcTunesActivity extends Activity
    
     public void ButtonStopClick(View view)
     {
+        now_playing = -1;
+        mainlisthandler.setHighlightedTrack(now_playing);
     	mediaplayer.stopPlayback();
     }
     
