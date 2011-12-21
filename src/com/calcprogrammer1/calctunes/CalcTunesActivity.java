@@ -72,12 +72,13 @@ public class CalcTunesActivity extends Activity
     MediaPlayerHandlerCallback mediaplayerCallback = new MediaPlayerHandlerCallback(){
         public void onSongFinished()
         {
-            //media_initialize(LibraryOperations.getNextSong(currentTrack, currentLibrary));
-            mediaplayer.startPlayback(true);
+            ButtonNextClick(null);
         }
 
         public void onStop()
         {
+            now_playing = -1;
+            mainlisthandler.setHighlightedTrack(now_playing);
             artisttext.setText(mediaplayer.current_artist);
             albumtext.setText(mediaplayer.current_album);
             tracktext.setText(mediaplayer.current_title);
