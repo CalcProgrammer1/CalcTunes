@@ -18,8 +18,6 @@ import android.content.res.Configuration;
 
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.LibraryOperations;
-import com.calcprogrammer1.calctunes.libraryElementArtist;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -41,13 +39,10 @@ public class CalcTunesActivity extends Activity
 	
 	ListView mainlist;
     LibraryListHandler mainlisthandler;
-	
-    ArrayList<libraryElementArtist> currentLibrary;
-    
-    libraryElementGeneric currentTrack;
 
     MediaButtonsHandler buttons;
     
+    int now_playing = -1;
     boolean sidebarHidden = false;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +72,7 @@ public class CalcTunesActivity extends Activity
     MediaPlayerHandlerCallback mediaplayerCallback = new MediaPlayerHandlerCallback(){
         public void onSongFinished()
         {
-            media_initialize(LibraryOperations.getNextSong(currentTrack, currentLibrary));
+            //media_initialize(LibraryOperations.getNextSong(currentTrack, currentLibrary));
             mediaplayer.startPlayback(true);
         }
 
@@ -90,17 +85,18 @@ public class CalcTunesActivity extends Activity
     };
     
     LibraryListCallback mainlisthandlerCallback = new LibraryListCallback(){
-        public void callback(libraryElementGeneric song)
+        public void callback(int position)
         {
-            media_initialize(song);
+            now_playing = position;
+            media_initialize(mainlisthandler.getTrack(now_playing));
+            mainlisthandler.setHighlightedTrack(now_playing);
         }
     };
     
     SourceListCallback sourcelisthandlerCallback = new SourceListCallback(){
         public void callback(String filename)
         {
-            currentLibrary = LibraryOperations.readLibraryData(getApplicationContext(), filename);
-            mainlisthandler.setLibrary(currentLibrary);
+            mainlisthandler.setLibrary(LibraryOperations.readLibraryName(filename));
             mainlisthandler.drawList(-1);
             
         }
@@ -301,12 +297,10 @@ public class CalcTunesActivity extends Activity
         mainlisthandler.setListView(mainlist);
     }
     
-    public void media_initialize(libraryElementGeneric song)
+    public void media_initialize(String filename)
     {	
-            currentTrack = song;
-            String filePath = currentTrack.song.filename;
             mediaplayer.stopPlayback();
-            mediaplayer.initialize(filePath);
+            mediaplayer.initialize(filename);
 			artisttext.setText(mediaplayer.current_artist);
 			albumtext.setText(mediaplayer.current_album);
 			tracktext.setText(mediaplayer.current_title);
@@ -332,15 +326,18 @@ public class CalcTunesActivity extends Activity
     public void ButtonNextClick(View view)
     {
         mediaplayer.stopPlayback();
-        media_initialize(LibraryOperations.getNextSong(currentTrack, currentLibrary));
+        now_playing += 1;
+        media_initialize(mainlisthandler.getTrack(now_playing));
+        mainlisthandler.setHighlightedTrack(now_playing);
         mediaplayer.startPlayback(true);
     }
     
     public void ButtonPrevClick(View view)
     {
         mediaplayer.stopPlayback();
-        media_initialize(LibraryOperations.getPrevSong(currentTrack, currentLibrary));
+        now_playing -= 1;
+        media_initialize(mainlisthandler.getTrack(now_playing));
+        mainlisthandler.setHighlightedTrack(now_playing);
         mediaplayer.startPlayback(true);
     }
-    
 }

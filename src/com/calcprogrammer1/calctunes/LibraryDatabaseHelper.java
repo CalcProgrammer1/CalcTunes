@@ -22,7 +22,7 @@ public class LibraryDatabaseHelper extends SQLiteOpenHelper
     public void startDatabase()
     {
         myDataBase.execSQL("DROP TABLE IF EXISTS MYLIBRARY;");
-        myDataBase.execSQL("CREATE TABLE MYLIBRARY (ARTIST TEXT, ALBUM TEXT, YEAR TEXT, TRACK INTEGER, TITLE TEXT, PATH TEXT, TIME INTEGER);");
+        myDataBase.execSQL("CREATE TABLE MYLIBRARY (_id INTEGER PRIMARY KEY AUTOINCREMENT, ARTIST TEXT, ALBUM TEXT, YEAR TEXT, TRACK INTEGER, TITLE TEXT, PATH TEXT, TIME INTEGER);");
     }
     
     public void addFileToDatabase(File file)
@@ -44,7 +44,7 @@ public class LibraryDatabaseHelper extends SQLiteOpenHelper
             song_title = song_title.replaceAll("'", "''");
             song_year = song_year.replaceAll("'", "''");
             song_path = song_path.replaceAll("'", "''");
-            myDataBase.execSQL("INSERT INTO 'MYLIBRARY' VALUES ('" + song_artist + "', '" + song_album + "', '" + song_year + "', " + song_num + ", '" + song_title + "', '" + song_path + "', " + song_length + ");");
+            myDataBase.execSQL("INSERT INTO 'MYLIBRARY' VALUES (NULL, '" + song_artist + "', '" + song_album + "', '" + song_year + "', " + song_num + ", '" + song_title + "', '" + song_path + "', " + song_length + ");");
         }catch(Exception e){}
     }
 

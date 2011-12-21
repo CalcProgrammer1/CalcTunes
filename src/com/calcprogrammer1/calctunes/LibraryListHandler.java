@@ -1,31 +1,30 @@
 package com.calcprogrammer1.calctunes;
 
-import java.util.ArrayList;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 interface LibraryListCallback
 {
-    void callback(libraryElementGeneric song);
+    void callback(int position);
 }
 
 public class LibraryListHandler
 {
-    ArrayList<libraryElementArtist> libraryData;
     ListView libraryList;
     Context c;
-    LibraryListAdapter adapter;
+    Cursor cursor;
+    LibraryDatabaseAdapter adapter;
     LibraryListCallback cb;
     
     public LibraryListHandler(Context con, ListView lv)
     {
         libraryList = lv;
         c = con;
-        adapter = new LibraryListAdapter(c);
     }
     
     public void setCallback(LibraryListCallback callback)
@@ -33,10 +32,11 @@ public class LibraryListHandler
         cb = callback;
     }
     
-    public void setLibrary(ArrayList<libraryElementArtist> newLibrary)
+    public void setLibrary(String libName)
     {
-        libraryData = newLibrary;
-        adapter.attachLibrary(libraryData);
+        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + libName + ".db", null);
+        cursor = db.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, TRACK", null);// ORDER BY ARTIST, ALBUM, TRACK;", null);
+        adapter = new LibraryDatabaseAdapter(c, cursor);
     }
     
     public void setListView(ListView lv)
@@ -45,14 +45,8 @@ public class LibraryListHandler
         redrawList();
     }
     
-    public void rebuildListData(int artist)
-    {
-        adapter.rebuildData();
-    }
-    
     public void drawList(int artist)
     {
-        rebuildListData(artist);
         redrawList();
     }
     
@@ -70,19 +64,30 @@ public class LibraryListHandler
 
     public void libraryClickHandler(AdapterView<?> parent, View view, int position, long id)
     {
-        String type = ((libraryElementGeneric) parent.getAdapter().getItem(position)).type;
-        
-        if(type.equals("artist"))
-        {
-            Toast.makeText(c, "artist selected", Toast.LENGTH_SHORT).show();
-        }
-        else if (type.equals("album"))
-        {
-            Toast.makeText(c, "album selected", Toast.LENGTH_SHORT).show();
-        }
-        else if (type.equals("song"))
-        {
-            cb.callback((libraryElementGeneric) parent.getAdapter().getItem(position));
-        }
+        cb.callback(position);
+    }
+    
+    public String getTrack(int position)
+    {
+        cursor.moveToPosition(position);
+        return cursor.getString(cursor.getColumnIndex("PATH"));
+    }
+    
+    public String getNextTrack(int position)
+    {
+        cursor.moveToPosition(position+1);
+        return cursor.getString(cursor.getColumnIndex("PATH"));
+    }
+    
+    public String getPrevTrack(int position)
+    {
+        cursor.moveToPosition(position-1);
+        return cursor.getString(cursor.getColumnIndex("PATH"));
+    }
+    
+    public void setHighlightedTrack(int position)
+    {
+        adapter.setNowPlaying(position);
+        adapter.notifyDataSetChanged();
     }
 }
