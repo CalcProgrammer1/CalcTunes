@@ -18,16 +18,17 @@
 		    android:layout_height="match_parent"
 		    android:layout_above="@+id/lower_frame">
 
-		    <ListView
-		        android:id="@+id/listView1"
+		    <ExpandableListView
+		        android:id="@+id/sourceListView"
 		        android:layout_width="120dip"
 		        android:layout_height="match_parent"
 		        android:layout_weight="0"
-		        android:background="@drawable/dark_gray_gradient_horizontal" >
-		    </ListView>
+		        android:background="@drawable/dark_gray_gradient_horizontal"
+		        android:groupIndicator="@null" >
+		    </ExpandableListView>
 
 		    <ListView
-		        android:id="@+id/listView2"
+		        android:id="@+id/libraryListView"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="1"
@@ -47,7 +48,7 @@
 			<View
 			    android:layout_width="match_parent"
 			    android:layout_height="1px"
-			    android:background="@color/dark_gray" />
+			    android:background="@color/interface_color" />
 		    
 		    <RelativeLayout
 		        android:id="@+id/player_controls"

@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 
 interface SourceListCallback
 {
@@ -15,13 +14,13 @@ interface SourceListCallback
 
 public class SourceListHandler
 {
-    ListView sourceList;
+    ExpandableListView sourceList;
     Context c;
     SourceListAdapter adapter;
     ArrayList<libraryListElement> libraryList = new ArrayList<libraryListElement>();
     SourceListCallback cb;
     
-    public SourceListHandler(Context con, ListView listv)
+    public SourceListHandler(Context con, ExpandableListView listv)
     {
         sourceList = listv;
         c = con;
@@ -29,7 +28,7 @@ public class SourceListHandler
         adapter.attachLibraryList(libraryList);
     }
     
-    public void setListView(ListView listv)
+    public void setListView(ExpandableListView listv)
     {
         sourceList = listv;
     }
@@ -55,11 +54,15 @@ public class SourceListHandler
     {
         adapter.attachLibraryList(libraryList);
         sourceList.setAdapter(adapter);
-        sourceList.setOnItemClickListener(new OnItemClickListener() 
+        sourceList.setOnChildClickListener(new OnChildClickListener() 
         {
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
             {
-                cb.callback(libraryList.get(arg2).filename);
+                if(groupPosition == 0)
+                {
+                    cb.callback(libraryList.get(childPosition).filename);
+                }
+                return true;
             }       
         });
     }

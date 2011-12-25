@@ -2,7 +2,7 @@
     <item android:id="@+id/createLibrary"
         android:icon="@drawable/ic_menu_add"
         android:title="Create Library" />
-    <item android:id="@+id/setting"
+    <item android:id="@+id/openSettings"
         android:icon="@drawable/ic_menu_preferences"
         android:title="Settings" />
     <item android:id="@+id/collapseSidebar"

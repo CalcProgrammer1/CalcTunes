@@ -3,6 +3,7 @@ package com.calcprogrammer1.calctunes;
 import java.io.File;
 
 import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -55,9 +56,9 @@ public class MediaPlayerHandler
         {
             f = LibraryOperations.readAudioFileReadOnly(song);
             Tag tag = f.getTag();
-            current_artist = tag.getFirstArtist();
-            current_album = tag.getFirstAlbum();
-            current_title = tag.getFirstTitle();
+            current_artist = tag.getFirst(FieldKey.ARTIST);
+            current_album = tag.getFirst(FieldKey.ALBUM);
+            current_title = tag.getFirst(FieldKey.TITLE);
             
             mp.reset();
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);

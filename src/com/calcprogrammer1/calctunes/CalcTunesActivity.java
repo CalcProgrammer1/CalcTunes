@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.widget.*;
 import android.content.*;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.LibraryOperations;
@@ -34,7 +36,7 @@ public class CalcTunesActivity extends Activity
 	SeekBar trackseek;
 	SeekHandler trackseekhandler;
 	
-	ListView sourcelist;
+	ExpandableListView sourcelist;
 	SourceListHandler sourcelisthandler;
 	
 	ListView mainlist;
@@ -43,6 +45,7 @@ public class CalcTunesActivity extends Activity
     MediaButtonsHandler buttons;
     
     int now_playing = -1;
+    int interfaceColor;
     boolean sidebarHidden = false;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +113,9 @@ public class CalcTunesActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
+        
+        SharedPreferences appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+        interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         buttons = new MediaButtonsHandler(this);
         buttons.setCallback(buttonsCallback);
         
@@ -173,6 +178,10 @@ public class CalcTunesActivity extends Activity
                     sidebarHidden = true;
                 }
                 break;
+                
+            case R.id.openSettings:
+                startActivityForResult(new Intent(this, CalcTunesSettingsActivity.class), 2);
+                break;
         }
         return true;
     }
@@ -181,25 +190,32 @@ public class CalcTunesActivity extends Activity
     {
         if(resultCode == Activity.RESULT_OK)
         {
-            ArrayList<String> libraryFolders = data.getStringArrayListExtra("libraryFolders");
-            
-            if(data.getStringExtra("EditFilename") != null)
+            if(requestCode == 1)
             {
-                File deleteFile = new File(data.getStringExtra("EditFilename"));
-                deleteFile.delete();
-            }
-            
-            String libraryName = data.getStringExtra("libraryName");
-            
-            LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
+                ArrayList<String> libraryFolders = data.getStringArrayListExtra("libraryFolders");
+                
+                if(data.getStringExtra("EditFilename") != null)
+                {
+                    File deleteFile = new File(data.getStringExtra("EditFilename"));
+                    deleteFile.delete();
+                }
+                
+                String libraryName = data.getStringExtra("libraryName");
+                
+                LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
+    
+                LibraryScannerTask task = new LibraryScannerTask(this);
+                task.execute(libraryName);
 
-            LibraryScannerTask task = new LibraryScannerTask(this);
-            task.execute(libraryName);
-            //LibraryOperations.scanMediaIntoDatabase(this, LibraryOperations.getLibraryFullPath(this, libraryName));
-            sourcelisthandler.refreshLibraryList();
-            //currentLibrary = LibraryOperations.readLibraryData(this, LibraryOperations.getLibraryFullPath(this, libraryName));
-            //mainlisthandler.setLibrary(currentLibrary);
-            //mainlisthandler.drawList(-1);
+                sourcelisthandler.refreshLibraryList();
+            }
+            else if(requestCode == 2)
+            {
+
+                SharedPreferences appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+                interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
+                updateInterfaceColor(interfaceColor);
+            }
         }
     }
     
@@ -231,7 +247,7 @@ public class CalcTunesActivity extends Activity
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
-        if(v == findViewById(R.id.listView1))
+        if(v == findViewById(R.id.sourceListView))
         {
             menu.add(1, 1, Menu.NONE, "Edit Library");
             menu.add(1, 2, Menu.NONE, "Delete Library");
@@ -283,7 +299,7 @@ public class CalcTunesActivity extends Activity
         trackseek = (SeekBar) findViewById(R.id.seekBar_track);
         trackseekhandler = new SeekHandler(trackseek, mediaplayer);
         
-        sourcelist = (ListView) findViewById(R.id.listView1);
+        sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
         sourcelisthandler.setListView(sourcelist);
         sourcelisthandler.updateList();
         registerForContextMenu(sourcelist);
@@ -292,8 +308,9 @@ public class CalcTunesActivity extends Activity
             sourcelist.setVisibility(View.GONE);
         }
         
-        mainlist = (ListView) findViewById(R.id.listView2);
+        mainlist = (ListView) findViewById(R.id.libraryListView);
         mainlisthandler.setListView(mainlist);
+        updateInterfaceColor(interfaceColor);
     }
     
     public void media_initialize(String filename)
@@ -340,5 +357,16 @@ public class CalcTunesActivity extends Activity
         media_initialize(mainlisthandler.getTrack(now_playing));
         mainlisthandler.setHighlightedTrack(now_playing);
         mediaplayer.startPlayback(true);
+    }
+    
+    public void updateInterfaceColor(int color)
+    {
+        int[] colors = {Color.BLACK, color};
+        GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
+        back.setShape(GradientDrawable.RECTANGLE);
+        sourcelist.setBackgroundDrawable(back);
+        back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+        findViewById(R.id.lower_frame).setBackgroundDrawable(back);
+        mainlisthandler.setHighlightColor(color);
     }
 }

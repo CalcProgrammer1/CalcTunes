@@ -25,6 +25,7 @@ public class LibraryListHandler
     {
         libraryList = lv;
         c = con;
+        adapter = new LibraryDatabaseAdapter(c, null);
     }
     
     public void setCallback(LibraryListCallback callback)
@@ -35,8 +36,8 @@ public class LibraryListHandler
     public void setLibrary(String libName)
     {
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + libName + ".db", null);
-        cursor = db.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, TRACK", null);// ORDER BY ARTIST, ALBUM, TRACK;", null);
-        adapter = new LibraryDatabaseAdapter(c, cursor);
+        cursor = db.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK", null);
+        adapter.changeCursor(cursor);
     }
     
     public void setListView(ListView lv)
@@ -88,6 +89,12 @@ public class LibraryListHandler
     public void setHighlightedTrack(int position)
     {
         adapter.setNowPlaying(position);
+        adapter.notifyDataSetChanged();
+    }
+    
+    public void setHighlightColor(int color)
+    {
+        adapter.setNowPlayingColor(color);
         adapter.notifyDataSetChanged();
     }
 }

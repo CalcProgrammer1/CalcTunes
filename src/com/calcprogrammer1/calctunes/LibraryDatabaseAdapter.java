@@ -15,6 +15,7 @@ public class LibraryDatabaseAdapter extends CursorAdapter
     static int NEW_ALBUM = 1;
     static int NEW_ARTIST = 2;
     int now_playing = -1;
+    int highlightColor = Color.DKGRAY;
     Context con;
     
     public LibraryDatabaseAdapter(Context context, Cursor c)
@@ -61,7 +62,7 @@ public class LibraryDatabaseAdapter extends CursorAdapter
         
         if(cursor.getPosition() == now_playing)
         {
-            view.findViewById(R.id.librarylistsong_frame).setBackgroundColor(Color.DKGRAY);
+            view.findViewById(R.id.librarylistsong_frame).setBackgroundColor(highlightColor);
         }
         else
         {
@@ -137,5 +138,10 @@ public class LibraryDatabaseAdapter extends CursorAdapter
                 return NEW_ARTIST;
             }
         }
+    }
+    
+    public void setNowPlayingColor(int color)
+    {
+        highlightColor = color;
     }
 }

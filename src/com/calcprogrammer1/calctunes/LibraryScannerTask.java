@@ -51,6 +51,7 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
                 updateNotification(libraryFiles.size(), i);
             }
         }
+        db.closeDatabase();
         updateNotification(libraryFiles.size(), libraryFiles.size());
         notificationManager.cancel(notificationId);
         return null;
