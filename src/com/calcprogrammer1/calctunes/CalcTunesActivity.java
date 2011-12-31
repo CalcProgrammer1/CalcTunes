@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.view.*;
 import android.os.Bundle;
 import android.widget.*;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -102,6 +103,14 @@ public class CalcTunesActivity extends Activity
             mainlisthandler.drawList(-1);
             
         }
+    };
+    
+    LibraryScannerTaskCallback scanCompleteCallback = new LibraryScannerTaskCallback(){
+        public void onScanComplete()
+        {
+            updateGuiElements();
+            sourcelisthandler.refreshLibraryList();
+        }        
     };
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,6 +214,7 @@ public class CalcTunesActivity extends Activity
                 LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
     
                 LibraryScannerTask task = new LibraryScannerTask(this);
+                task.setCallback(scanCompleteCallback);
                 task.execute(libraryName);
 
                 sourcelisthandler.refreshLibraryList();
@@ -251,13 +261,14 @@ public class CalcTunesActivity extends Activity
         {
             menu.add(1, 1, Menu.NONE, "Edit Library");
             menu.add(1, 2, Menu.NONE, "Delete Library");
+            menu.add(1, 3, Menu.NONE, "Rescan Library");
         }
     }
     
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
-        AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        ExpandableListContextMenuInfo info= (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
         int id = (int) info.id;
 
         switch(item.getItemId())
@@ -274,6 +285,12 @@ public class CalcTunesActivity extends Activity
                 libraryToDelete.delete();
                 sourcelisthandler.refreshLibraryList();
                 Toast.makeText(this, "Library Deleted", Toast.LENGTH_SHORT).show();
+                break;
+            
+            case 3:
+                LibraryScannerTask task = new LibraryScannerTask(this);
+                task.setCallback(scanCompleteCallback);
+                task.execute(sourcelisthandler.getLibraryList().get(id).name);
                 break;
         }
         
@@ -302,6 +319,7 @@ public class CalcTunesActivity extends Activity
         sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
         sourcelisthandler.setListView(sourcelist);
         sourcelisthandler.updateList();
+        
         registerForContextMenu(sourcelist);
         if(sidebarHidden)
         {

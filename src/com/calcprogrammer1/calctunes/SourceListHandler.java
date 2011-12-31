@@ -65,5 +65,6 @@ public class SourceListHandler
                 return true;
             }       
         });
+        sourceList.expandGroup(0);
     }
 }

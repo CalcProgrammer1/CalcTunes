@@ -3,6 +3,7 @@ package com.calcprogrammer1.calctunes;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,11 @@ public class LibraryDatabaseAdapter extends CursorAdapter
         
         if(cursor.getPosition() == now_playing)
         {
-            view.findViewById(R.id.librarylistsong_frame).setBackgroundColor(highlightColor);
+            int[] colors = {Color.BLACK, highlightColor, Color.BLACK};
+            GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+            back.setShape(GradientDrawable.RECTANGLE);
+            view.findViewById(R.id.librarylistsong_frame).setBackgroundDrawable(back);
+            //view.findViewById(R.id.librarylistsong_frame).setBackgroundColor(highlightColor);
         }
         else
         {

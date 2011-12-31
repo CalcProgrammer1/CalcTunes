@@ -11,6 +11,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.RemoteViews;
 
+interface LibraryScannerTaskCallback
+{
+    void onScanComplete();
+}
+
 public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
 {
     private Context con;
@@ -19,11 +24,17 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
     private RemoteViews notificationView;
     private Notification notification;
     private NotificationManager notificationManager;
-    
+    private LibraryScannerTaskCallback cb;
     
     public LibraryScannerTask(Context c)
     {
         con = c;
+        cb = null;
+    }
+    
+    public void setCallback(LibraryScannerTaskCallback call)
+    {
+        cb = call;
     }
     
     @Override
@@ -57,6 +68,15 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
         return null;
     }
 
+    @Override
+    protected void onPostExecute(Long result)
+    {
+        if(cb != null)
+        {
+            cb.onScanComplete();
+        }
+    }
+    
     private void initializeNotification(int length)
     {
         int icon = R.drawable.icon;
