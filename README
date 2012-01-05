@@ -30,12 +30,16 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Status - Version 0.27 Alpha (12/31/2011)
+Current Status - Version 0.28 Alpha (1/4/2012)
 --------------
-Fixed some bugs with the new ExpandableListView library list, library status now refreshed after library scan is complete.
+Added some native code from the AndLess project to provide lossless playback on devices that don't support these codecs
+natively.  The interface is still unfinished, as the seek bar doesn't function correctly and it can crash at times.
 
 Release History
 ---------------
+Version 0.27 Alpha (12/31/2011)
+Fixed some bugs with the new ExpandableListView library list, library status now refreshed after library scan is complete.
+
 Version 0.26 Alpha (12/24/2011)
 Changed source list from ListView to ExpandableListView so that playlists can be grouped separately from libraries.
 Settings menu implemented which can adjust color, will add more options as they are needed.

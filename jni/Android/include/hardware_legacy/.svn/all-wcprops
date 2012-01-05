@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy
+END
+gps.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/gps.h
+END
+AudioHardwareBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/AudioHardwareBase.h
+END
+IMountService.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/IMountService.h
+END
+power.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/power.h
+END
+qemu_tracing.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/qemu_tracing.h
+END
+wifi.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/wifi.h
+END
+AudioHardwareInterface.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/AudioHardwareInterface.h
+END
+flashlight.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/flashlight.h
+END
+uevent.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/uevent.h
+END
+vibrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/jni/Android/include/hardware_legacy/vibrator.h
+END

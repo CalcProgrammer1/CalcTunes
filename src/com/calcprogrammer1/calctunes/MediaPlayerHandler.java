@@ -18,6 +18,7 @@ interface MediaPlayerHandlerCallback
 public class MediaPlayerHandler
 {
     MediaPlayer mp;
+    LosslessMediaCodecHandler ls;
     
     boolean running = false;
     boolean prepared = false;
@@ -86,14 +87,41 @@ public class MediaPlayerHandler
                     if(cb != null) cb.onSongFinished();
                 }
             });
-        }catch (Exception e){}
+            mp.setOnErrorListener(new MediaPlayer.OnErrorListener()
+            {
+
+                public boolean onError(MediaPlayer arg0, int arg1, int arg2)
+                {
+                    ls = new LosslessMediaCodecHandler();
+                    ls.setDataSource(current_path);
+                    ls.start();
+                    return false;
+                }
+                
+            });
+        }
+        catch (Exception e)
+        {
+            mp.release();
+            mp = null;
+            ls = new LosslessMediaCodecHandler();
+            ls.setDataSource(current_path);
+            prepared = true;
+        }
     }
     
     public void startPlayback(boolean wait)
     {
         if(prepared)
         {
-            mp.start();
+            if(mp != null)
+            {
+                mp.start();
+            }
+            else if(ls != null)
+            {
+                ls.start();
+            }
         }
         else
         {
@@ -105,9 +133,19 @@ public class MediaPlayerHandler
     {
         if(prepared)
         {
-            mp.stop();
-            prepared = false;
-            mp.release();
+            if(mp != null)
+            {
+                mp.stop();
+                prepared = false;
+                mp.release();
+                mp = null;
+            }
+            else if(ls != null)
+            {
+                ls.stop();
+                prepared = false;
+                ls = null;
+            }
             current_path = "";
             current_title = "";
             current_artist = "";
@@ -128,7 +166,18 @@ public class MediaPlayerHandler
     {
         if(prepared)
         {
-            return mp.isPlaying();
+            if(mp != null)
+            {
+                return mp.isPlaying();
+            }
+            else if(ls != null)
+            {
+                return ls.isPlaying();
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
@@ -140,15 +189,22 @@ public class MediaPlayerHandler
     {
         if(prepared)
         {
-            mp.pause();
-            mp.seekTo(seekto);
-            mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener()
+            if(mp != null)
             {
-                public void onSeekComplete(MediaPlayer arg0)
+                mp.pause();
+                mp.seekTo(seekto);
+                mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener()
                 {
-                    mp.start();
-                }
-            });
+                    public void onSeekComplete(MediaPlayer arg0)
+                    {
+                        mp.start();
+                    }
+                });
+            }
+            else if(ls != null)
+            {
+                ls.seekTo(seekto);
+            }
         }
     }
     
@@ -156,7 +212,18 @@ public class MediaPlayerHandler
     {
         if(prepared)
         {
-            return mp.getCurrentPosition();
+            if(mp != null)
+            {
+                return mp.getCurrentPosition();
+            }
+            else if(ls != null)
+            {
+                return ls.getCurrentPosition();
+            }
+            else
+            {
+                return 0;
+            }
         }
         else
         {
@@ -168,7 +235,18 @@ public class MediaPlayerHandler
     {
         if(prepared)
         {
-            return mp.getDuration();
+            if(mp != null)
+            {
+                return mp.getDuration();
+            }
+            else if(ls != null)
+            {
+                return ls.getDuration();
+            }
+            else
+            {
+                return 0;
+            }
         }
         else
         {

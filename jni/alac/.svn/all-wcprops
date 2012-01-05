@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/88/trunk/jni/alac
+END
+m4a.c
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/29/trunk/jni/alac/m4a.c
+END
+README.rockbox
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/79/trunk/jni/alac/README.rockbox
+END
+demux.c
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/29/trunk/jni/alac/demux.c
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/88/trunk/jni/alac/main.c
+END
+alac_decoder.c
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/29/trunk/jni/alac/alac_decoder.c
+END
+Android.mk
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/29/trunk/jni/alac/Android.mk
+END
+m4a.h
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/29/trunk/jni/alac/m4a.h
+END
+decomp.h
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/29/trunk/jni/alac/decomp.h
+END

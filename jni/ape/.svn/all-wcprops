@@ -1,0 +1,185 @@
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/88/trunk/jni/ape
+END
+vector_math32_armv4.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/jni/ape/vector_math32_armv4.h
+END
+filter_64_11.c
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/jni/ape/filter_64_11.c
+END
+vector_math16_cf.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/2/trunk/jni/ape/vector_math16_cf.h
+END
+entropy.c
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/2/trunk/jni/ape/entropy.c
+END
+predictor.h
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/2/trunk/jni/ape/predictor.h
+END
+parser.h
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/2/trunk/jni/ape/parser.h
+END
+vector_math16_armv6.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/jni/ape/vector_math16_armv6.h
+END
+demac_config.h
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/jni/ape/demac_config.h
+END
+filter_1280_15.c
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/jni/ape/filter_1280_15.c
+END
+entropy.h
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/2/trunk/jni/ape/entropy.h
+END
+Android.mk
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/2/trunk/jni/ape/Android.mk
+END
+crc.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/2/trunk/jni/ape/crc.c
+END
+demac.c
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/2/trunk/jni/ape/demac.c
+END
+decoder.h
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/2/trunk/jni/ape/decoder.h
+END
+vector_math_generic.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/jni/ape/vector_math_generic.h
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/79/trunk/jni/ape/README
+END
+demac.h
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/2/trunk/jni/ape/demac.h
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/88/trunk/jni/ape/main.c
+END
+filter_256_13.c
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/2/trunk/jni/ape/filter_256_13.c
+END
+filter.c
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/2/trunk/jni/ape/filter.c
+END
+COPYING
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/79/trunk/jni/ape/COPYING
+END
+predictor-arm.S
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/2/trunk/jni/ape/predictor-arm.S
+END
+filter_32_10.c
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/jni/ape/filter_32_10.c
+END
+ape_decoder.c
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/2/trunk/jni/ape/ape_decoder.c
+END
+filter.h
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/2/trunk/jni/ape/filter.h
+END
+vector_math16_armv5te.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/jni/ape/vector_math16_armv5te.h
+END
+predictor.c
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/2/trunk/jni/ape/predictor.c
+END
+parser.c
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/2/trunk/jni/ape/parser.c
+END
+filter_16_11.c
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/jni/ape/filter_16_11.c
+END
+main.c.ok
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/2/trunk/jni/ape/main.c.ok
+END

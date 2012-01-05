@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/83/trunk/jni/Android/include/media
+END
+MediaMetadataRetrieverInterface.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/2/trunk/jni/Android/include/media/MediaMetadataRetrieverInterface.h
+END
+mediascanner.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/media/mediascanner.h
+END
+thread_init.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/media/thread_init.h
+END
+mediaplayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/media/mediaplayer.h
+END
+IAudioTrack.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IAudioTrack.h
+END
+JetPlayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/jni/Android/include/media/JetPlayer.h
+END
+AudioRecord.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/media/AudioRecord.h
+END
+PVPlayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/jni/Android/include/media/PVPlayer.h
+END
+IMediaPlayerClient.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IMediaPlayerClient.h
+END
+mediarecorder.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/jni/Android/include/media/mediarecorder.h
+END
+IMediaPlayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IMediaPlayer.h
+END
+AudioSystem.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/media/AudioSystem.h
+END
+mediametadataretriever.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/2/trunk/jni/Android/include/media/mediametadataretriever.h
+END
+IAudioRecord.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IAudioRecord.h
+END
+PVMediaRecorder.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/jni/Android/include/media/PVMediaRecorder.h
+END
+ToneGenerator.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/jni/Android/include/media/ToneGenerator.h
+END
+MediaPlayerInterface.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/2/trunk/jni/Android/include/media/MediaPlayerInterface.h
+END
+IMediaRecorder.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IMediaRecorder.h
+END
+PVMetadataRetriever.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/2/trunk/jni/Android/include/media/PVMetadataRetriever.h
+END
+AudioTrack9.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/83/trunk/jni/Android/include/media/AudioTrack9.h
+END
+IAudioFlingerClient.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IAudioFlingerClient.h
+END
+IMediaMetadataRetriever.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IMediaMetadataRetriever.h
+END
+IAudioFlinger.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IAudioFlinger.h
+END
+AudioTrack.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/media/AudioTrack.h
+END
+IMediaPlayerService.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/2/trunk/jni/Android/include/media/IMediaPlayerService.h
+END

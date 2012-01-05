@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec
+END
+math.h
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/math.h
+END
+config_types.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/config_types.h
+END
+mpcdec.h
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/mpcdec.h
+END
+internal.h
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/internal.h
+END
+config_types.h.in
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/config_types.h.in
+END
+requant.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/requant.h
+END
+reader.h
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/reader.h
+END
+mpc_types.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/mpc_types.h
+END
+huffman.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/huffman.h
+END
+decoder.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/decoder.h
+END
+config_win32.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/config_win32.h
+END
+streaminfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/2/trunk/jni/mpc/mpcdec/streaminfo.h
+END

@@ -1,0 +1,365 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/2/trunk/jni/Android/include/utils
+END
+misc.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/misc.h
+END
+ported.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ported.h
+END
+String8.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/String8.h
+END
+ByteOrder.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ByteOrder.h
+END
+SharedBuffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/SharedBuffer.h
+END
+MemoryHeapBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/MemoryHeapBase.h
+END
+CallStack.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/CallStack.h
+END
+Vector.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Vector.h
+END
+Binder.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Binder.h
+END
+ZipFileRO.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ZipFileRO.h
+END
+inet_address.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/inet_address.h
+END
+string_array.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/string_array.h
+END
+IPermissionController.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/IPermissionController.h
+END
+TextOutput.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/TextOutput.h
+END
+Parcel.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Parcel.h
+END
+IInterface.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/IInterface.h
+END
+Buffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Buffer.h
+END
+ashmem.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ashmem.h
+END
+List.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/List.h
+END
+IBinder.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/IBinder.h
+END
+ResourceTypes.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ResourceTypes.h
+END
+Atomic.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Atomic.h
+END
+FileMap.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/FileMap.h
+END
+AssetDir.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/AssetDir.h
+END
+ProcessState.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ProcessState.h
+END
+Asset.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Asset.h
+END
+Log.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Log.h
+END
+IMemory.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/IMemory.h
+END
+ZipUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ZipUtils.h
+END
+ZipEntry.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ZipEntry.h
+END
+MemoryDealer.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/MemoryDealer.h
+END
+MemoryHeapPmem.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/MemoryHeapPmem.h
+END
+BackupHelpers.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/BackupHelpers.h
+END
+Socket.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Socket.h
+END
+threads.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/threads.h
+END
+LogSocket.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/LogSocket.h
+END
+Pipe.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Pipe.h
+END
+Endian.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Endian.h
+END
+executablepath.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/executablepath.h
+END
+SystemClock.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/SystemClock.h
+END
+ZipFile.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ZipFile.h
+END
+MemoryBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/MemoryBase.h
+END
+Timers.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Timers.h
+END
+IPCThreadState.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/IPCThreadState.h
+END
+IServiceManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/IServiceManager.h
+END
+TypeHelpers.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/TypeHelpers.h
+END
+ZipFileCRO.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/ZipFileCRO.h
+END
+RefBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/RefBase.h
+END
+BufferedTextOutput.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/BufferedTextOutput.h
+END
+TimerProbe.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/TimerProbe.h
+END
+AssetManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/AssetManager.h
+END
+StopWatch.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/StopWatch.h
+END
+Errors.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Errors.h
+END
+String16.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/String16.h
+END
+SortedVector.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/SortedVector.h
+END
+KeyedVector.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/KeyedVector.h
+END
+VectorImpl.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/VectorImpl.h
+END
+BpBinder.h
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/BpBinder.h
+END
+Debug.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/Debug.h
+END
+AndroidUnicode.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/jni/Android/include/utils/AndroidUnicode.h
+END

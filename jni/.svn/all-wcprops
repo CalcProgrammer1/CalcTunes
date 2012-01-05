@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/svn/!svn/ver/89/trunk/jni
+END
+std_audio.h
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/88/trunk/jni/std_audio.h
+END
+msm_audio.h
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/2/trunk/jni/msm_audio.h
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/89/trunk/jni/main.c
+END
+Android.mk
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/83/trunk/jni/Android.mk
+END
+main.h
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/88/trunk/jni/main.h
+END
+std_audio.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/89/trunk/jni/std_audio.cpp
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/2/trunk/jni/README
+END

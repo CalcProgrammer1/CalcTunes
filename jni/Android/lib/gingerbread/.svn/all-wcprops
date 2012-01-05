@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/83/trunk/jni/Android/lib/gingerbread
+END
+libmedia.so
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/83/trunk/jni/Android/lib/gingerbread/libmedia.so
+END
+libutils.so
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/83/trunk/jni/Android/lib/gingerbread/libutils.so
+END

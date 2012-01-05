@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/88/trunk/jni/wv
+END
+words.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/2/trunk/jni/wv/words.c
+END
+arm.S
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/2/trunk/jni/wv/arm.S
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/2/trunk/jni/wv/LICENSE
+END
+wavpack.h
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/2/trunk/jni/wv/wavpack.h
+END
+SOURCES
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/2/trunk/jni/wv/SOURCES
+END
+float.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/2/trunk/jni/wv/float.c
+END
+Android.mk
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/2/trunk/jni/wv/Android.mk
+END
+wputils.c
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/2/trunk/jni/wv/wputils.c
+END
+arml.S
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/2/trunk/jni/wv/arml.S
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/2/trunk/jni/wv/README
+END
+pack.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/2/trunk/jni/wv/pack.c
+END
+metadata.c
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/2/trunk/jni/wv/metadata.c
+END
+unpack.c
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/2/trunk/jni/wv/unpack.c
+END
+README.rockbox
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/2/trunk/jni/wv/README.rockbox
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/88/trunk/jni/wv/main.c
+END
