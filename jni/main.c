@@ -87,7 +87,7 @@ int audio_start(msm_ctx *ctx, int channels, int samplerate) {
 void audio_stop(msm_ctx *ctx) {
 	
     if(!ctx || ctx->state == MSM_STOPPED) return;
-    if(ctx->state != MSM_PAUSED) pthread_mutex_lock(&ctx->mutex);
+    //if(ctx->state != MSM_PAUSED) pthread_mutex_lock(&ctx->mutex);
     if(ctx->fd >= 0) {
 	close(ctx->fd); ctx->fd = -1;
     }	
@@ -102,7 +102,7 @@ void audio_stop(msm_ctx *ctx) {
            break;
     }
     ctx->state = MSM_STOPPED;	
-    pthread_mutex_unlock(&ctx->mutex);
+    //pthread_mutex_unlock(&ctx->mutex);
 }
 
 void audio_wait_done(msm_ctx *ctx) {

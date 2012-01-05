@@ -8,6 +8,12 @@ import java.io.File;
 
 import android.os.Build;
 import android.os.Process;
+import android.util.Log;
+
+interface LosslessMediaCodecHandlerCallback
+{
+    public void onCompletion();
+}
 
 public class LosslessMediaCodecHandler
 {
@@ -64,17 +70,20 @@ public class LosslessMediaCodecHandler
     private static int ctx = 0;
     private static PlayThread th;
     private static boolean stopped = true;
+    public static int tracklen;
     
     boolean running;
     String file;
     private boolean paused;
-    private int driver_mode = MODE_CALLBACK;    // driver mode in client preferences
+    private int driver_mode = MODE_LIBMEDIA;    // driver mode in client preferences
     private boolean permsOkay = false;
 
     final private String MSM_DEVICE = "/dev/msm_pcm_out";
     // Ad hoc value. 0x2000 seems to be a maximum used by the driver. MSM datasheets needed. 
     private int volume = 0x1000;
     int startpos;
+    
+    LosslessMediaCodecHandlerCallback cb;
     
     private class PlayThread extends Thread
     {
@@ -83,6 +92,7 @@ public class LosslessMediaCodecHandler
             running = true;
             stopped = false;
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
+            Log.i(getClass().getSimpleName(), "PlayThread starting");
             try
             {               
                 if(file.endsWith(".ape") || file.endsWith(".APE"))
@@ -91,7 +101,7 @@ public class LosslessMediaCodecHandler
                 }
                 else if(file.endsWith(".flac") || file.endsWith(".FLAC"))
                 {
-                    if(initAudioMode(driver_mode)) flacPlay(ctx,file,0);
+                    if(initAudioMode(driver_mode)) flacPlay(ctx,file,startpos);
                 }
                 else if(file.endsWith(".m4a") || file.endsWith(".M4A"))
                 {
@@ -109,15 +119,30 @@ public class LosslessMediaCodecHandler
                 {
                     if(initAudioMode(driver_mode)) mpcPlay(ctx,file,0);
                 }
+                initAudioMode(driver_mode);
+                Log.i(getClass().getSimpleName(), "PlayThread exiting");
+                //{
+                  //  if(cb != null)
+                    //{
+                      //  Log.i(getClass().getSimpleName(), "Callback onCompletion() executing");
+                        //cb.onCompletion();
+                    //}
+                //}
             }
             catch(Exception e)
             { 
             }
-            audioStop(ctx);
-            stopped = true;
-            running = false;
-            interrupt();
         }
+    }
+    
+    public void playStop()
+    {
+        stop();
+    }
+    
+    public void setCallback(LosslessMediaCodecHandlerCallback call)
+    {
+        cb = call;
     }
     
     private boolean initAudioMode(int mode)
@@ -195,16 +220,13 @@ public class LosslessMediaCodecHandler
         running = false;
         if(th != null)
         { 
-            int i = Process.getThreadPriority(Process.myTid()); 
-            Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);  
+            //int i = Process.getThreadPriority(Process.myTid()); 
+            //Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);  
             
             if(ctx != 0)
             {
-                if(!stopped)
-                {
-                    audioStop(ctx);
-                    stopped = true;
-                }
+                Log.i(getClass().getSimpleName(), "audioStop called from stop()");
+                audioStop(ctx);
             }
 
             if(paused)
@@ -214,12 +236,12 @@ public class LosslessMediaCodecHandler
 
             try
             {
-                th.interrupt();
+                th.join();
             }
             catch(Exception e){}
             
             th = null;
-            Process.setThreadPriority(i);
+            //Process.setThreadPriority(i);
         }
         return true;
     }
@@ -288,7 +310,7 @@ public class LosslessMediaCodecHandler
     {
         if(running)
         {
-            return audioGetCurPosition(ctx);
+            return startpos + audioGetCurPosition(ctx);
         }
         return 0;
     }
@@ -297,7 +319,7 @@ public class LosslessMediaCodecHandler
     {
         if(running)
         {
-            return audioGetDuration(ctx);
+            return tracklen; //audioGetDuration(ctx);
         }
         return 0;
     }
@@ -316,5 +338,6 @@ public class LosslessMediaCodecHandler
     
     public static void updateTrackLen(int time)
     {
+        tracklen = time;
     }
 }

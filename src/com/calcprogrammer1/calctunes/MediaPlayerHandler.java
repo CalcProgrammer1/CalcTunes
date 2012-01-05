@@ -7,6 +7,7 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 interface MediaPlayerHandlerCallback
 {
@@ -87,24 +88,23 @@ public class MediaPlayerHandler
                     if(cb != null) cb.onSongFinished();
                 }
             });
-            mp.setOnErrorListener(new MediaPlayer.OnErrorListener()
-            {
-
-                public boolean onError(MediaPlayer arg0, int arg1, int arg2)
-                {
-                    ls = new LosslessMediaCodecHandler();
-                    ls.setDataSource(current_path);
-                    ls.start();
-                    return false;
-                }
-                
-            });
         }
         catch (Exception e)
         {
             mp.release();
             mp = null;
             ls = new LosslessMediaCodecHandler();
+            ls.setCallback(new LosslessMediaCodecHandlerCallback()
+            {
+                public void onCompletion()
+                {
+                    Log.i(getClass().getSimpleName(), "Lossless Callback Executing");
+                    //ls.stop();
+                    //prepared = false;
+                    //ls = null;
+                    //if(cb != null) cb.onSongFinished();
+                }
+            });
             ls.setDataSource(current_path);
             prepared = true;
         }
