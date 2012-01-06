@@ -76,7 +76,13 @@ public class CalcTunesActivity extends Activity
     MediaPlayerHandlerCallback mediaplayerCallback = new MediaPlayerHandlerCallback(){
         public void onSongFinished()
         {
-            ButtonNextClick(null);
+            runOnUiThread(new Runnable()
+            {
+                public void run()
+                {
+                    ButtonNextClick(null);
+                }
+            });
         }
 
         public void onStop()
@@ -355,7 +361,7 @@ public class CalcTunesActivity extends Activity
         }
         else if(mediaplayer.prepared)
         {
-            mediaplayer.startPlayback(true);
+            mediaplayer.startPlayback();
         }
     }
     
@@ -365,7 +371,7 @@ public class CalcTunesActivity extends Activity
         now_playing += 1;
         media_initialize(mainlisthandler.getTrack(now_playing));
         mainlisthandler.setHighlightedTrack(now_playing);
-        mediaplayer.startPlayback(true);
+        mediaplayer.startPlayback();
     }
     
     public void ButtonPrevClick(View view)
@@ -374,7 +380,7 @@ public class CalcTunesActivity extends Activity
         now_playing -= 1;
         media_initialize(mainlisthandler.getTrack(now_playing));
         mainlisthandler.setHighlightedTrack(now_playing);
-        mediaplayer.startPlayback(true);
+        mediaplayer.startPlayback();
     }
     
     public void updateInterfaceColor(int color)

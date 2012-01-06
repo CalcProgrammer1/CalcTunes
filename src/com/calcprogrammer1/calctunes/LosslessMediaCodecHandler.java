@@ -8,7 +8,6 @@ import java.io.File;
 
 import android.os.Build;
 import android.os.Process;
-import android.util.Log;
 
 interface LosslessMediaCodecHandlerCallback
 {
@@ -72,7 +71,6 @@ public class LosslessMediaCodecHandler
     private static boolean stopped = true;
     public static int tracklen;
     
-    boolean running;
     String file;
     private boolean paused;
     private int driver_mode = MODE_LIBMEDIA;    // driver mode in client preferences
@@ -89,10 +87,8 @@ public class LosslessMediaCodecHandler
     {
         public void run()
         {
-            running = true;
             stopped = false;
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
-            Log.i(getClass().getSimpleName(), "PlayThread starting");
             try
             {               
                 if(file.endsWith(".ape") || file.endsWith(".APE"))
@@ -119,25 +115,17 @@ public class LosslessMediaCodecHandler
                 {
                     if(initAudioMode(driver_mode)) mpcPlay(ctx,file,0);
                 }
-                initAudioMode(driver_mode);
-                Log.i(getClass().getSimpleName(), "PlayThread exiting");
-                //{
-                  //  if(cb != null)
-                    //{
-                      //  Log.i(getClass().getSimpleName(), "Callback onCompletion() executing");
-                        //cb.onCompletion();
-                    //}
-                //}
+                if(cb != null && !stopped)
+                {
+                      audioStop(ctx);
+                      stopped = true;
+                      cb.onCompletion();
+                }
             }
             catch(Exception e)
             { 
             }
         }
-    }
-    
-    public void playStop()
-    {
-        stop();
     }
     
     public void setCallback(LosslessMediaCodecHandlerCallback call)
@@ -163,7 +151,7 @@ public class LosslessMediaCodecHandler
             ctx = audioInit(ctx,mode);
         }
         catch(Exception e)
-        { 
+        {
             return false;
         }
         if(ctx == 0)
@@ -217,15 +205,11 @@ public class LosslessMediaCodecHandler
     
     public boolean stop()
     {
-        running = false;
+        stopped = true;
         if(th != null)
         { 
-            //int i = Process.getThreadPriority(Process.myTid()); 
-            //Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);  
-            
             if(ctx != 0)
             {
-                Log.i(getClass().getSimpleName(), "audioStop called from stop()");
                 audioStop(ctx);
             }
 
@@ -241,7 +225,6 @@ public class LosslessMediaCodecHandler
             catch(Exception e){}
             
             th = null;
-            //Process.setThreadPriority(i);
         }
         return true;
     }
@@ -256,7 +239,7 @@ public class LosslessMediaCodecHandler
     {
         stop();
         th = new PlayThread();
-        startpos = p;
+        startpos = p / 1000;
         th.start();
         return true;
     }
@@ -308,25 +291,25 @@ public class LosslessMediaCodecHandler
     
     public int getCurrentPosition()
     {
-        if(running)
+        if(!stopped)
         {
-            return startpos + audioGetCurPosition(ctx);
+            return (startpos + audioGetCurPosition(ctx))*1000;
         }
         return 0;
     }
     
     public int getDuration()
     {
-        if(running)
+        if(!stopped)
         {
-            return tracklen; //audioGetDuration(ctx);
+            return tracklen*1000;
         }
         return 0;
     }
     
     public boolean isPlaying()
     {
-        if(running)
+        if(!stopped)
         {
             return paused;
         }
