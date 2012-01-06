@@ -119,6 +119,7 @@ public class LosslessMediaCodecHandler
                 {
                       audioStop(ctx);
                       stopped = true;
+                      paused = false;
                       cb.onCompletion();
                 }
             }
@@ -231,14 +232,11 @@ public class LosslessMediaCodecHandler
     
     public boolean start()
     {
-        if(th != null)
+        if(!stopped)
         {
-            if(!stopped)
+            if(paused)
             {
-                if(paused)
-                {
-                    resume();
-                }
+                resume();
             }
         }
         else
