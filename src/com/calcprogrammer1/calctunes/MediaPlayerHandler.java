@@ -160,7 +160,14 @@ public class MediaPlayerHandler
     {
         if(prepared)
         {
-            mp.pause();
+            if(mp != null)
+            {
+                mp.pause();
+            }
+            else if(ls != null)
+            {
+                ls.pause();
+            }
         }
     }
     

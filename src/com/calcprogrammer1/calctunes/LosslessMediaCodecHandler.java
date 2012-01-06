@@ -231,7 +231,20 @@ public class LosslessMediaCodecHandler
     
     public boolean start()
     {
-        seekTo(0);
+        if(th != null)
+        {
+            if(!stopped)
+            {
+                if(paused)
+                {
+                    resume();
+                }
+            }
+        }
+        else
+        {
+            seekTo(0);
+        }
         return true;
     }
     
@@ -311,7 +324,7 @@ public class LosslessMediaCodecHandler
     {
         if(!stopped)
         {
-            return paused;
+            return !paused;
         }
         else
         {
