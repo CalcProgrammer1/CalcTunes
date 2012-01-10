@@ -26,12 +26,18 @@
 		        android:background="@drawable/dark_gray_gradient_horizontal"
 		        android:groupIndicator="@null" >
 		    </ExpandableListView>
-
+		    
+			<View
+			    android:layout_height="match_parent"
+			    android:layout_width="1px"
+			    android:background="#555" />
+			
 		    <ListView
 		        android:id="@+id/libraryListView"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="1"
+		        android:divider="#000000"
 		        android:fastScrollEnabled="true" >
 		    </ListView>
 		</LinearLayout>
@@ -48,7 +54,7 @@
 			<View
 			    android:layout_width="match_parent"
 			    android:layout_height="1px"
-			    android:background="@color/interface_color" />
+			    android:background="#555" />
 		    
 		    <RelativeLayout
 		        android:id="@+id/player_controls"

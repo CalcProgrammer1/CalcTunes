@@ -41,11 +41,10 @@ public class CalcTunesActivity extends Activity
 	SourceListHandler sourcelisthandler;
 	
 	ListView mainlist;
-    LibraryListHandler mainlisthandler;
+    ContentListHandler mainlisthandler;
 
     MediaButtonsHandler buttons;
     
-    int now_playing = -1;
     int interfaceColor;
     boolean sidebarHidden = false;
     
@@ -93,20 +92,18 @@ public class CalcTunesActivity extends Activity
         }
     };
     
-    LibraryListCallback mainlisthandlerCallback = new LibraryListCallback(){
-        public void callback(int position)
+    ContentListCallback mainlisthandlerCallback = new ContentListCallback(){
+        public void callback(String file)
         {
-            now_playing = position;
-            media_initialize(mainlisthandler.getTrack(now_playing));
-            mainlisthandler.setHighlightedTrack(now_playing);
+            media_initialize(file);
         }
     };
     
     SourceListCallback sourcelisthandlerCallback = new SourceListCallback(){
         public void callback(String filename)
         {
-            mainlisthandler.setLibrary(LibraryOperations.readLibraryName(filename));
-            mainlisthandler.drawList(-1);
+            mainlisthandler.setContentSource(LibraryOperations.readLibraryName(filename), ContentListHandler.CONTENT_TYPE_LIBRARY);
+            mainlisthandler.drawList();
             
         }
     };
@@ -137,7 +134,7 @@ public class CalcTunesActivity extends Activity
         mediaplayer = new MediaPlayerHandler();
         mediaplayer.setCallback(mediaplayerCallback);
     	
-        mainlisthandler = new LibraryListHandler(this, mainlist);
+        mainlisthandler = new ContentListHandler(this, mainlist);
     	mainlisthandler.setCallback(mainlisthandlerCallback);
 
     	sourcelisthandler = new SourceListHandler(this, sourcelist);
@@ -348,8 +345,7 @@ public class CalcTunesActivity extends Activity
    
     public void ButtonStopClick(View view)
     {
-        now_playing = -1;
-        mainlisthandler.setHighlightedTrack(now_playing);
+        mainlisthandler.StopNotify();
     	mediaplayer.stopPlayback();
     }
     
@@ -368,18 +364,14 @@ public class CalcTunesActivity extends Activity
     public void ButtonNextClick(View view)
     {
         mediaplayer.stopPlayback();
-        now_playing += 1;
-        media_initialize(mainlisthandler.getTrack(now_playing));
-        mainlisthandler.setHighlightedTrack(now_playing);
+        media_initialize(mainlisthandler.NextTrack());
         mediaplayer.startPlayback();
     }
     
     public void ButtonPrevClick(View view)
     {
         mediaplayer.stopPlayback();
-        now_playing -= 1;
-        media_initialize(mainlisthandler.getTrack(now_playing));
-        mainlisthandler.setHighlightedTrack(now_playing);
+        media_initialize(mainlisthandler.PrevTrack());
         mediaplayer.startPlayback();
     }
     

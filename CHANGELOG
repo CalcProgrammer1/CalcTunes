@@ -1,5 +1,10 @@
 Release History
 ---------------
+Version 0.30 Alpha (1/6/2012)
+AndLess lossless library integration complete.  Playback, next/prev, seekbar, stopping, and song finished callbacks are all
+implemented and tested.  It should be virtually indistinguishable between MediaPlayer and liblossless playback, allowing
+CalcTunes to support additional codecs on additional devices.  Tested with HP Touchpad CM7 which lacks native FLAC playback.
+
 Version 0.29 Alpha (1/5/2012)
 More work on AndLess native lossless integration, there is now basic seek functionality and it doesn't crash as easily
 as it did before.  Now it needs a callback interface to let the mediaplayer handler know when the track has finished.

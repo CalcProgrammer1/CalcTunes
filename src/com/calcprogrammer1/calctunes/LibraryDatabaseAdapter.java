@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LibraryDatabaseAdapter extends CursorAdapter
@@ -15,7 +16,7 @@ public class LibraryDatabaseAdapter extends CursorAdapter
     static int NO_CHANGE = 0;
     static int NEW_ALBUM = 1;
     static int NEW_ARTIST = 2;
-    int now_playing = -1;
+    String now_playing = new String();
     int highlightColor = Color.DKGRAY;
     Context con;
     
@@ -39,9 +40,9 @@ public class LibraryDatabaseAdapter extends CursorAdapter
         return isNewSection(cursor, position);
     }
     
-    public void setNowPlaying(int nowPlayingPosition)
+    public void setNowPlaying(String nowPlayingFile)
     {
-        now_playing = nowPlayingPosition;
+        now_playing = nowPlayingFile;
     }
     
     @Override
@@ -52,16 +53,23 @@ public class LibraryDatabaseAdapter extends CursorAdapter
         {
             final String artist = cursor.getString(cursor.getColumnIndex("ARTIST"));
             artistName.setText(artist);
+            int[] colors = {Color.BLACK, highlightColor};
+            GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
+            back.setShape(GradientDrawable.RECTANGLE);
+            artistName.setBackgroundDrawable(back);
         }
         
         final TextView albumName = (TextView) view.findViewById(R.id.librarylistalbum_text);
         if(albumName != null)
         {
+            ((ImageView)view.findViewById(R.id.librarylistalbum_artwork)).setImageBitmap(AlbumArtDownloader.findAlbumArtBitmap(cursor.getString(cursor.getColumnIndex("ARTIST")), cursor.getString(cursor.getColumnIndex("ALBUM")), context));
             final String album = cursor.getString(cursor.getColumnIndex("ALBUM"));
             albumName.setText(album);
+            ((TextView)view.findViewById(R.id.librarylistalbum_artist)).setText(cursor.getString(cursor.getColumnIndex("ARTIST")));
+            ((TextView)view.findViewById(R.id.librarylistalbum_year)).setText(cursor.getString(cursor.getColumnIndex("YEAR")));
         }
         
-        if(cursor.getPosition() == now_playing)
+        if(cursor.getString(cursor.getColumnIndex("PATH")).equals(now_playing))
         {
             int[] colors = {Color.BLACK, highlightColor, Color.BLACK};
             GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);

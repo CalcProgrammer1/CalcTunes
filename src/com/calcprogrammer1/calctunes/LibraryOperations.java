@@ -188,6 +188,16 @@ public class LibraryOperations
         return c.getApplicationContext().getExternalFilesDir(null).getPath() + "/libraries";
     }
     
+    public static String getAlbumArtPath(Context c)
+    {
+        return c.getApplicationContext().getExternalFilesDir(null).getPath() + "/albumart";
+    }
+    
+    public static String makeFilename(String s)
+    {
+        return s.replaceAll("[^a-zA-Z0-9]", "");
+    }
+    
     public static String getLibraryFilename(String libName)
     {
         String fileName = "";
