@@ -17,9 +17,30 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class AlbumArtDownloader
+public class AlbumArtManager
 {
-    static public Bitmap findAlbumArtBitmap(String artist, String album, Context c)
+    //Checks cache for album art, if it is not found return default icon
+    static public Bitmap getAlbumArtFromCache(String artist, String album, Context c)
+    {
+        Bitmap artwork = null;
+        String artfilepath = LibraryOperations.getAlbumArtPath(c) + File.separator + LibraryOperations.makeFilename(artist) + "_" + LibraryOperations.makeFilename(album) + ".png";
+        File infile = new File(artfilepath);
+        try
+        {
+            artwork = BitmapFactory.decodeFile(infile.getAbsolutePath());
+        }catch(Exception e){}
+        if(artwork == null)
+        {
+            try
+            {
+                artwork = BitmapFactory.decodeResource(c.getResources(), R.drawable.icon);
+            }catch(Exception ex){}
+        }
+        return artwork;
+    }
+
+    //Check cache for album art, if not found then check Last.fm, if still not found then return default icon
+    static public Bitmap getAlbumArt(String artist, String album, Context c)
     {
         Bitmap artwork = null;
         String artfilepath = LibraryOperations.getAlbumArtPath(c) + File.separator + LibraryOperations.makeFilename(artist) + "_" + LibraryOperations.makeFilename(album) + ".png";

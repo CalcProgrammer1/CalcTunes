@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.widget.*;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.content.*;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -33,7 +34,12 @@ public class CalcTunesActivity extends Activity
 	TextView artisttext;
 	TextView albumtext;
 	TextView tracktext;
+	TextView trackyear;
+	ImageView albumartview;
 	
+
+    SharedPreferences appSettings;
+    
 	SeekBar trackseek;
 	SeekHandler trackseekhandler;
 	
@@ -89,6 +95,8 @@ public class CalcTunesActivity extends Activity
             artisttext.setText(mediaplayer.current_artist);
             albumtext.setText(mediaplayer.current_album);
             tracktext.setText(mediaplayer.current_title);
+            trackyear.setText(mediaplayer.current_year);
+            albumartview.setImageResource(R.drawable.icon);
         }
     };
     
@@ -116,6 +124,15 @@ public class CalcTunesActivity extends Activity
         }        
     };
     
+    OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
+        public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
+        {
+            appSettings = arg0;
+            interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
+            updateInterfaceColor(interfaceColor);
+        }
+    };
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Class Overrides////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,8 +143,10 @@ public class CalcTunesActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        SharedPreferences appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+        appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+        appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
+        
         buttons = new MediaButtonsHandler(this);
         buttons.setCallback(buttonsCallback);
         
@@ -192,7 +211,7 @@ public class CalcTunesActivity extends Activity
                 break;
                 
             case R.id.openSettings:
-                startActivityForResult(new Intent(this, CalcTunesSettingsActivity.class), 2);
+                startActivity(new Intent(this, CalcTunesSettingsActivity.class));
                 break;
         }
         return true;
@@ -221,13 +240,6 @@ public class CalcTunesActivity extends Activity
                 task.execute(libraryName);
 
                 sourcelisthandler.refreshLibraryList();
-            }
-            else if(requestCode == 2)
-            {
-
-                SharedPreferences appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
-                interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-                updateInterfaceColor(interfaceColor);
             }
         }
     }
@@ -311,10 +323,14 @@ public class CalcTunesActivity extends Activity
         artisttext = (TextView) findViewById(R.id.text_artistname);
         albumtext = (TextView) findViewById(R.id.text_albumname);
         tracktext = (TextView) findViewById(R.id.text_trackname);
+        trackyear = (TextView) findViewById(R.id.text_trackyear);
+        albumartview = (ImageView) findViewById(R.id.imageAlbumArt);
         
         artisttext.setText(mediaplayer.current_artist);
         albumtext.setText(mediaplayer.current_album);
         tracktext.setText(mediaplayer.current_title);
+        trackyear.setText(mediaplayer.current_year);
+        albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaplayer.current_artist, mediaplayer.current_album, this));
         
         trackseek = (SeekBar) findViewById(R.id.seekBar_track);
         trackseekhandler = new SeekHandler(trackseek, mediaplayer);
@@ -341,6 +357,8 @@ public class CalcTunesActivity extends Activity
 			artisttext.setText(mediaplayer.current_artist);
 			albumtext.setText(mediaplayer.current_album);
 			tracktext.setText(mediaplayer.current_title);
+			trackyear.setText(mediaplayer.current_year);
+			albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaplayer.current_artist, mediaplayer.current_album, this));
     }
    
     public void ButtonStopClick(View view)

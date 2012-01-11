@@ -62,7 +62,7 @@ public class LibraryDatabaseAdapter extends CursorAdapter
         final TextView albumName = (TextView) view.findViewById(R.id.librarylistalbum_text);
         if(albumName != null)
         {
-            ((ImageView)view.findViewById(R.id.librarylistalbum_artwork)).setImageBitmap(AlbumArtDownloader.findAlbumArtBitmap(cursor.getString(cursor.getColumnIndex("ARTIST")), cursor.getString(cursor.getColumnIndex("ALBUM")), context));
+            ((ImageView)view.findViewById(R.id.librarylistalbum_artwork)).setImageBitmap(AlbumArtManager.getAlbumArt(cursor.getString(cursor.getColumnIndex("ARTIST")), cursor.getString(cursor.getColumnIndex("ALBUM")), context));
             final String album = cursor.getString(cursor.getColumnIndex("ALBUM"));
             albumName.setText(album);
             ((TextView)view.findViewById(R.id.librarylistalbum_artist)).setText(cursor.getString(cursor.getColumnIndex("ARTIST")));
@@ -75,7 +75,6 @@ public class LibraryDatabaseAdapter extends CursorAdapter
             GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
             back.setShape(GradientDrawable.RECTANGLE);
             view.findViewById(R.id.librarylistsong_frame).setBackgroundDrawable(back);
-            //view.findViewById(R.id.librarylistsong_frame).setBackgroundColor(highlightColor);
         }
         else
         {

@@ -24,10 +24,11 @@ public class MediaPlayerHandler
     boolean prepared = false;
     boolean playonprepare = false;
     
-    String current_path;
-    String current_title;
-    String current_album;
-    String current_artist;
+    String current_path = "";
+    String current_title = "";
+    String current_album = "";
+    String current_artist = "";
+    String current_year = "";
     
     MediaPlayerHandlerCallback cb;
     
@@ -60,6 +61,7 @@ public class MediaPlayerHandler
             current_artist = tag.getFirst(FieldKey.ARTIST);
             current_album = tag.getFirst(FieldKey.ALBUM);
             current_title = tag.getFirst(FieldKey.TITLE);
+            current_year = tag.getFirst(FieldKey.YEAR);
             
             mp.reset();
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -152,6 +154,7 @@ public class MediaPlayerHandler
             current_title = "";
             current_artist = "";
             current_album = "";
+            current_year = "";
             if(cb != null) cb.onStop();
         }
     }

@@ -28,16 +28,17 @@ public final class R {
         public static final int media_skip_forward=0x7f02000b;
     }
     public static final class id {
+        public static final int buttonFrame=0x7f07001c;
         public static final int buttonLibAddFolder=0x7f070005;
         public static final int buttonLibDone=0x7f070007;
         public static final int buttonLibRemoveSelected=0x7f070006;
-        public static final int button_back=0x7f070020;
-        public static final int button_next=0x7f070023;
-        public static final int button_playpause=0x7f070022;
-        public static final int button_stop=0x7f070021;
-        public static final int collapseSidebar=0x7f070027;
-        public static final int createLibrary=0x7f070025;
-        public static final int exitApplication=0x7f070028;
+        public static final int button_back=0x7f070021;
+        public static final int button_next=0x7f070022;
+        public static final int button_playpause=0x7f07001f;
+        public static final int button_stop=0x7f07001e;
+        public static final int collapseSidebar=0x7f07002b;
+        public static final int createLibrary=0x7f070029;
+        public static final int exitApplication=0x7f07002c;
         public static final int imageAlbumArt=0x7f07001b;
         public static final int layout=0x7f070013;
         public static final int libNameInput=0x7f070003;
@@ -58,24 +59,22 @@ public final class R {
         public static final int linearLayout1=0x7f070000;
         public static final int linearLayout2=0x7f070004;
         public static final int linearLayout3=0x7f070001;
-        public static final int linearLayout4=0x7f07001f;
         public static final int lower_frame=0x7f070018;
-        public static final int openSettings=0x7f070026;
+        public static final int nextprevFrame=0x7f070020;
+        public static final int openSettings=0x7f07002a;
         public static final int player_controls=0x7f07001a;
-        public static final int seekBar_track=0x7f070024;
-        public static final int settingsPlaybackModeSpinner=0x7f07002d;
-        public static final int settingsSave=0x7f070029;
-        public static final int settingsSeekBarBlue=0x7f07002c;
-        public static final int settingsSeekBarGreen=0x7f07002b;
-        public static final int settingsSeekBarRed=0x7f07002a;
+        public static final int seekBar_track=0x7f070028;
         public static final int sourceListView=0x7f070019;
-        public static final int sourcelistentry_icon=0x7f07002e;
-        public static final int sourcelistentry_text=0x7f07002f;
+        public static final int sourcelistentry_icon=0x7f07002d;
+        public static final int sourcelistentry_text=0x7f07002e;
+        public static final int stopplaypauseFrame=0x7f07001d;
         public static final int text=0x7f070017;
         public static final int textView1=0x7f070002;
-        public static final int text_albumname=0x7f07001e;
-        public static final int text_artistname=0x7f07001d;
-        public static final int text_trackname=0x7f07001c;
+        public static final int text_albumname=0x7f070026;
+        public static final int text_artistname=0x7f070025;
+        public static final int text_trackname=0x7f070024;
+        public static final int text_trackyear=0x7f070027;
+        public static final int trackinfoFrame=0x7f070023;
     }
     public static final class layout {
         public static final int librarybuilder=0x7f030000;

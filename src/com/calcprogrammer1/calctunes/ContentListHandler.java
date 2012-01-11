@@ -134,10 +134,16 @@ public class ContentListHandler
     {
         nowPlayingCursorPos = -1;
         nowPlayingFile = "";
-        playbackCursor.close();
-        playbackCursor = null;
-        adapter.setNowPlaying(nowPlayingFile);
-        adapter.notifyDataSetChanged();
+        if(playbackCursor != null)
+        {
+            playbackCursor.close();
+            playbackCursor = null;
+        }
+        if(adapter != null)
+        {
+            adapter.setNowPlaying(nowPlayingFile);
+            adapter.notifyDataSetChanged();
+        }
     }
     
     public String NextTrack()
