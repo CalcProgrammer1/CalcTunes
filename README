@@ -30,11 +30,8 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.32 Alpha (1/10/2012)
+Current Version - Version 0.33 Alpha (1/11/2012)
 ---------------
-More interface tweaks to improve the overall look and feel of the program.  The now playing frame has been reorganized
-to more efficiently use the available space and provide room for a time display (not yet implemented).  The control
-buttons have been condensed into a square block on the left, and the album art placeholder on the right is now
-functional, displaying cached album art when a track is loaded.  New changes have been made to the settings activity
-which now uses the PreferenceActivity system to provide a nicer UI.  The Android API Demos Color Picker is now available
-to select the interface color.  More integration with SharedPreferences which will allow more persistent settings.
+LibraryDatabaseAdapter has been completely redone yet again, this time back to a BaseAdapter backed by not one but THREE
+different Cursors.  The first cursor holds the first N entries and the other two jump around the dataset.  This improves
+performance on large datasets (my FLAC library is ~9000 songs) and prevents Application Not Responding messages.

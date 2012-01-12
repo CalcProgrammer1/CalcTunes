@@ -38,7 +38,7 @@ public class ContentListHandler
     
     //Cursors - one for content list view and one for playback
     private SQLiteDatabase libraryDatabase;
-    private Cursor viewCursor;
+
     private String viewCursorQuery;
     private Cursor playbackCursor;
     private String playbackCursorQuery;
@@ -78,9 +78,8 @@ public class ContentListHandler
         {
             contentViewMode = CONTENT_VIEW_LIBRARY_ALL;
             libraryDatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + contentName + ".db", null);
-            viewCursorQuery = "SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK";
-            viewCursor = libraryDatabase.rawQuery(viewCursorQuery, null);
-            adapter = new LibraryDatabaseAdapter(c, viewCursor);
+            viewCursorQuery = "SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;";
+            adapter = new LibraryDatabaseAdapter(c, libraryDatabase, viewCursorQuery);
             adapter.setNowPlayingColor(interfaceColor);
         }
         else if(contentViewType == CONTENT_TYPE_FILESYSTEM)
@@ -165,7 +164,7 @@ public class ContentListHandler
         adapter.notifyDataSetChanged();
         return nowPlayingFile;
     }
-    
+
     public void setHighlightColor(int color)
     {
         interfaceColor = color;
