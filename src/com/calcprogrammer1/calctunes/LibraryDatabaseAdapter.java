@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,8 +50,6 @@ public class LibraryDatabaseAdapter extends BaseAdapter
         tmp.moveToPosition(0);
         total_rows = Integer.parseInt(tmp.getString(0));
         tmp.close();
-        
-        Log.d("constructor", ""+total_rows);
         
         cur0 = db.rawQuery(query.replace(";", "") + " LIMIT " + QUERY_LIMIT + " OFFSET 0;", null);
         cur0.moveToPosition(0);
@@ -236,6 +233,9 @@ public class LibraryDatabaseAdapter extends BaseAdapter
         Cursor cursor = getCursorForPosition(position);
         
         final TextView  artistName  = (TextView)  view.findViewById(R.id.librarylistartist_text);
+        final View      artistline1 =             view.findViewById(R.id.librarylistartist_line1);
+        final View      artistline2 =             view.findViewById(R.id.librarylistartist_line2);
+        final View      artistline3 =             view.findViewById(R.id.librarylistartist_line3);
         final TextView  albumName   = (TextView)  view.findViewById(R.id.librarylistalbum_text);
         final TextView  albumArtist = (TextView)  view.findViewById(R.id.librarylistalbum_artist);
         final TextView  albumYear   = (TextView)  view.findViewById(R.id.librarylistalbum_year);
@@ -270,9 +270,13 @@ public class LibraryDatabaseAdapter extends BaseAdapter
             {   
                 artistName.setText(artist);
                 int[] colors = {Color.BLACK, highlightColor};
-                GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
-                back.setShape(GradientDrawable.RECTANGLE);
-                artistName.setBackgroundDrawable(back);
+                GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
+                GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
+                back1.setShape(GradientDrawable.RECTANGLE);
+                back2.setShape(GradientDrawable.RECTANGLE);
+                artistline1.setBackgroundDrawable(back1);
+                artistline2.setBackgroundColor(highlightColor);
+                artistline3.setBackgroundDrawable(back2);
             }
         }
         

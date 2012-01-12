@@ -6,15 +6,44 @@
 	
     <View
         android:layout_width="match_parent"
-        android:layout_height="10dip" />
-    <TextView
-        android:id="@+id/librarylistartist_text"
+        android:layout_height="10dip" />	
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Artist"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:background="@color/interface_color" />
+        android:orientation="horizontal" >
 
+        <View
+            android:id="@+id/librarylistartist_line1"
+            android:layout_width="40dip"
+            android:layout_height="2dip"
+            android:layout_gravity="center_vertical"
+            android:background="@color/interface_color" />
+
+        <TextView
+            android:id="@+id/librarylistartist_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Artist"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View
+            android:id="@+id/librarylistartist_line2"
+            android:layout_width="0dip"
+            android:layout_height="2dip"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.33"
+            android:background="@color/interface_color" />
+
+        <View
+            android:id="@+id/librarylistartist_line3"
+            android:layout_width="40dip"
+            android:layout_height="2dip"
+            android:layout_gravity="center_vertical"
+            android:background="@color/interface_color" />
+    </LinearLayout>
+	
 	<LinearLayout
 	    android:id="@+id/librarylistalbum_frame"
 	    android:layout_width="match_parent"

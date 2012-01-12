@@ -30,8 +30,7 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.33 Alpha (1/11/2012)
+Current Version - Version 0.34 Alpha (1/12/2012)
 ---------------
-LibraryDatabaseAdapter has been completely redone yet again, this time back to a BaseAdapter backed by not one but THREE
-different Cursors.  The first cursor holds the first N entries and the other two jump around the dataset.  This improves
-performance on large datasets (my FLAC library is ~9000 songs) and prevents Application Not Responding messages.
+Filesystem browser is implemented but is not feature-complete and needs work.  It can do basic browsing and play media files,
+but there is no filtering or sanity checking on permissions.  Also did some tweaking to mediaplayer and interface to fix bugs.

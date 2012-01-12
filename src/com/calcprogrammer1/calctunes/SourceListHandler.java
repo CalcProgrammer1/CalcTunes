@@ -9,7 +9,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 
 interface SourceListCallback
 {
-    void callback(String filename);
+    void callback(int ContentType, String filename);
 }
 
 public class SourceListHandler
@@ -60,7 +60,14 @@ public class SourceListHandler
             {
                 if(groupPosition == 0)
                 {
-                    cb.callback(libraryList.get(childPosition).filename);
+                    if(childPosition == 0)
+                    {
+                        cb.callback(ContentListHandler.CONTENT_TYPE_FILESYSTEM, null);
+                    }
+                    else
+                    {
+                        cb.callback(ContentListHandler.CONTENT_TYPE_LIBRARY, libraryList.get(childPosition-1).filename);
+                    }
                 }
                 return true;
             }       

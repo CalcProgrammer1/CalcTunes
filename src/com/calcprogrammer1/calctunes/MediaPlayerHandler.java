@@ -86,6 +86,12 @@ public class MediaPlayerHandler
                     mp.stop();
                     prepared = false;
                     mp.release();
+                    mp = null;
+                    current_path = "";
+                    current_title = "";
+                    current_artist = "";
+                    current_album = "";
+                    current_year = "";
                     if(cb != null) cb.onSongFinished();
                 }
             });
@@ -101,6 +107,11 @@ public class MediaPlayerHandler
                 {
                     prepared = false;
                     ls = null;
+                    current_path = "";
+                    current_title = "";
+                    current_artist = "";
+                    current_album = "";
+                    current_year = "";
                     if(cb != null) cb.onSongFinished();
                 }
             });
@@ -155,8 +166,8 @@ public class MediaPlayerHandler
             current_artist = "";
             current_album = "";
             current_year = "";
-            if(cb != null) cb.onStop();
         }
+        if(cb != null) cb.onStop();
     }
     
     public void pausePlayback()

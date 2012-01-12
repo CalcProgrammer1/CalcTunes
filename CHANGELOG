@@ -1,5 +1,10 @@
 Release History
 ---------------
+Version 0.33 Alpha (1/11/2012)
+LibraryDatabaseAdapter has been completely redone yet again, this time back to a BaseAdapter backed by not one but THREE
+different Cursors.  The first cursor holds the first N entries and the other two jump around the dataset.  This improves
+performance on large datasets (my FLAC library is ~9000 songs) and prevents Application Not Responding messages.
+
 Version 0.32 Alpha (1/10/2012)
 More interface tweaks to improve the overall look and feel of the program.  The now playing frame has been reorganized
 to more efficiently use the available space and provide room for a time display (not yet implemented).  The control

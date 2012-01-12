@@ -85,6 +85,7 @@ public class CalcTunesActivity extends Activity
             {
                 public void run()
                 {
+                    onStop();
                     ButtonNextClick(null);
                 }
             });
@@ -108,11 +109,18 @@ public class CalcTunesActivity extends Activity
     };
     
     SourceListCallback sourcelisthandlerCallback = new SourceListCallback(){
-        public void callback(String filename)
+        public void callback(int contentType, String filename)
         {
-            mainlisthandler.setContentSource(LibraryOperations.readLibraryName(filename), ContentListHandler.CONTENT_TYPE_LIBRARY);
-            mainlisthandler.drawList();
-            
+            if(contentType == ContentListHandler.CONTENT_TYPE_FILESYSTEM)
+            {
+                mainlisthandler.setContentSource("/mnt/sdcard", contentType);
+                mainlisthandler.drawList();
+            }
+            else if(contentType == ContentListHandler.CONTENT_TYPE_LIBRARY)
+            {
+                mainlisthandler.setContentSource(LibraryOperations.readLibraryName(filename), ContentListHandler.CONTENT_TYPE_LIBRARY);
+                mainlisthandler.drawList();
+            }
         }
     };
     
@@ -382,15 +390,33 @@ public class CalcTunesActivity extends Activity
     public void ButtonNextClick(View view)
     {
         mediaplayer.stopPlayback();
-        media_initialize(mainlisthandler.NextTrack());
-        mediaplayer.startPlayback();
+        String nextFile = mainlisthandler.NextTrack();
+        if(nextFile != null)
+        {
+            media_initialize(nextFile);
+            mediaplayer.startPlayback();
+        }
+        else
+        {
+            mainlisthandler.StopNotify();
+            mediaplayer.stopPlayback();
+        }
     }
     
     public void ButtonPrevClick(View view)
     {
         mediaplayer.stopPlayback();
-        media_initialize(mainlisthandler.PrevTrack());
-        mediaplayer.startPlayback();
+        String prevFile = mainlisthandler.PrevTrack();
+        if(prevFile != null)
+        {
+            media_initialize(prevFile);
+            mediaplayer.startPlayback();
+        }
+        else
+        {
+            mainlisthandler.StopNotify();
+            mediaplayer.stopPlayback();
+        }
     }
     
     public void updateInterfaceColor(int color)

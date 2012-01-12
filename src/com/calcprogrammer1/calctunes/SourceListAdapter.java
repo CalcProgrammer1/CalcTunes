@@ -50,24 +50,34 @@ public class SourceListAdapter extends BaseExpandableListAdapter
         {
             convertView = inflater.inflate(R.layout.sourcelistlibraryentry, null);
         }
+        
         TextView sourceText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
         ImageView sourceImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
-        sourceText.setText(libraryList.get(childPosition).name);
-        if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_OK)
+        
+        if(childPosition == 0)
         {
-            sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon));
+            sourceText.setText("Filesystem");
+            sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_folder));
         }
-        else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_UNAVAILABLE)
+        else
         {
-            sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
-        }
-        else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_OFFLINE)
-        {
-            sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
-        }
-        else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_UPDATING)
-        {
-            sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+            sourceText.setText(libraryList.get(childPosition-1).name);
+            if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_OK)
+            {
+                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon));
+            }
+            else if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_UNAVAILABLE)
+            {
+                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+            }
+            else if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_OFFLINE)
+            {
+                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+            }
+            else if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_UPDATING)
+            {
+                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+            }
         }
         return convertView;
     }
@@ -76,7 +86,7 @@ public class SourceListAdapter extends BaseExpandableListAdapter
     {
         if(groupPosition == 0)
         {
-            return libraryList.size();
+            return libraryList.size() + 1;
         }
         else
         {
