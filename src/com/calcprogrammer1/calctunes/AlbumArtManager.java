@@ -23,6 +23,8 @@ public class AlbumArtManager
     static public Bitmap getAlbumArtFromCache(String artist, String album, Context c)
     {
         Bitmap artwork = null;
+        File dirfile = new File(LibraryOperations.getAlbumArtPath(c));
+        dirfile.mkdirs();
         String artfilepath = LibraryOperations.getAlbumArtPath(c) + File.separator + LibraryOperations.makeFilename(artist) + "_" + LibraryOperations.makeFilename(album) + ".png";
         File infile = new File(artfilepath);
         try

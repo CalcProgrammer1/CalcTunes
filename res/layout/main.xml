@@ -18,20 +18,25 @@
 		    android:layout_height="match_parent"
 		    android:layout_above="@+id/lower_frame">
 
-		    <ExpandableListView
-		        android:id="@+id/sourceListView"
-		        android:layout_width="120dip"
+		    <LinearLayout
+		        android:id="@+id/sourceListFrame"
+		        android:layout_width="wrap_content"
 		        android:layout_height="match_parent"
-		        android:layout_weight="0"
-		        android:background="@drawable/dark_gray_gradient_horizontal"
-		        android:groupIndicator="@null" >
-		    </ExpandableListView>
+		        android:layout_weight="0" >
+		        
+		    	<ExpandableListView
+			        android:id="@+id/sourceListView"
+			        android:layout_height="match_parent"
+			        android:layout_width="130dip"
+			        android:background="@drawable/dark_gray_gradient_horizontal"
+			        android:groupIndicator="@null" />
 		    
-			<View
-			    android:layout_height="match_parent"
-			    android:layout_width="1px"
-			    android:background="#555" />
-			
+				<View
+				    android:layout_height="match_parent"
+				    android:layout_width="1px"
+				    android:background="#555" />
+			</LinearLayout>
+				
 		    <ListView
 		        android:id="@+id/libraryListView"
 		        android:layout_width="match_parent"

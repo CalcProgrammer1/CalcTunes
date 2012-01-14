@@ -12,6 +12,11 @@ import android.widget.TextView;
 
 public class SourceListAdapter extends BaseExpandableListAdapter
 {
+    public static final int SOURCE_GROUP_LIBRARY = 0;
+    public static final int SOURCE_GROUP_PLAYLIST = 1;
+    public static final int SOURCE_GROUP_SYSTEM = 2;
+    public static final int TOTAL_SOURCE_GROUP = 3;
+    
     LayoutInflater inflater;
     Context c;
     ArrayList<libraryListElement> libraryList = new ArrayList<libraryListElement>();
@@ -29,14 +34,18 @@ public class SourceListAdapter extends BaseExpandableListAdapter
 
     public Object getChild(int groupPosition, int childPosition)
     {
-        if(groupPosition == 0)
+        switch(groupPosition)
         {
-            return libraryList.get(childPosition);
+            case SOURCE_GROUP_LIBRARY:
+                return libraryList.get(childPosition);
+            
+            case SOURCE_GROUP_PLAYLIST:
+                return null;
+                
+            case SOURCE_GROUP_SYSTEM:
+                return null;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     public long getChildId(int groupPosition, int childPosition)
@@ -54,44 +63,53 @@ public class SourceListAdapter extends BaseExpandableListAdapter
         TextView sourceText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
         ImageView sourceImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
         
-        if(childPosition == 0)
+        switch(groupPosition)
         {
-            sourceText.setText("Filesystem");
-            sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_folder));
-        }
-        else
-        {
-            sourceText.setText(libraryList.get(childPosition-1).name);
-            if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_OK)
-            {
-                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon));
-            }
-            else if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_UNAVAILABLE)
-            {
-                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
-            }
-            else if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_OFFLINE)
-            {
-                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
-            }
-            else if(libraryList.get(childPosition-1).status == libraryListElement.LIBRARY_UPDATING)
-            {
-                sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
-            }
+            case SOURCE_GROUP_LIBRARY:
+                sourceText.setText(libraryList.get(childPosition).name);
+                if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_OK)
+                {
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon));
+                }
+                else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_UNAVAILABLE)
+                {
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+                }
+                else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_OFFLINE)
+                {
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+                }
+                else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_UPDATING)
+                {
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
+                }
+                break;
+                
+            case SOURCE_GROUP_SYSTEM:
+                if(childPosition == 0)
+                {
+                    sourceText.setText("Filesystem");
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_folder));
+                }
+                break;
         }
         return convertView;
     }
 
     public int getChildrenCount(int groupPosition)
     {
-        if(groupPosition == 0)
+        switch(groupPosition)
         {
-            return libraryList.size() + 1;
+            case SOURCE_GROUP_LIBRARY:
+                return libraryList.size();
+                
+            case SOURCE_GROUP_PLAYLIST:
+                return 0;
+                
+            case SOURCE_GROUP_SYSTEM:
+                return 1;
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
     public Object getGroup(int groupPosition)
@@ -101,7 +119,7 @@ public class SourceListAdapter extends BaseExpandableListAdapter
 
     public int getGroupCount()
     {
-        return 2;
+        return TOTAL_SOURCE_GROUP;
     }
 
     public long getGroupId(int groupPosition)
@@ -111,35 +129,34 @@ public class SourceListAdapter extends BaseExpandableListAdapter
 
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)
     {
-        if(groupPosition == 0)
+        if(convertView == null)
         {
-            if(convertView == null)
-            {
-                convertView = inflater.inflate(R.layout.sourcelistgroupentry, null);
-            }
-            TextView groupText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
-            ImageView groupImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
-            groupText.setText("Libraries");
-            groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
-            return convertView;
+            convertView = inflater.inflate(R.layout.sourcelistgroupentry, null);
         }
-        else
+        TextView groupText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
+        ImageView groupImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
+        switch(groupPosition)
         {
-            if(convertView == null)
-            {
-                convertView = inflater.inflate(R.layout.sourcelistgroupentry, null);
-            }
-            TextView groupText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
-            ImageView groupImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
-            groupText.setText("Playlists");
-            groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
-            return convertView;
+            case SOURCE_GROUP_LIBRARY:
+                groupText.setText("Libraries");
+                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
+                break;
+                
+            case SOURCE_GROUP_PLAYLIST:
+                groupText.setText("Playlists");
+                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
+                break;
+                
+            case SOURCE_GROUP_SYSTEM:
+                groupText.setText("System");
+                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
+                break;
         }
+        return convertView;
     }
 
     public boolean hasStableIds()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 

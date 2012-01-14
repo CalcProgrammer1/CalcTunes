@@ -43,6 +43,7 @@ public class CalcTunesActivity extends Activity
 	SeekBar trackseek;
 	SeekHandler trackseekhandler;
 	
+	View sourcelistframe;
 	ExpandableListView sourcelist;
 	SourceListHandler sourcelisthandler;
 	
@@ -208,12 +209,12 @@ public class CalcTunesActivity extends Activity
             case R.id.collapseSidebar:
                 if(sidebarHidden)
                 {
-                    sourcelist.setVisibility(View.VISIBLE);
+                    sourcelistframe.setVisibility(View.VISIBLE);
                     sidebarHidden = false;
                 }
                 else
                 {
-                    sourcelist.setVisibility(View.GONE);
+                    sourcelistframe.setVisibility(View.GONE);
                     sidebarHidden = true;
                 }
                 break;
@@ -343,6 +344,7 @@ public class CalcTunesActivity extends Activity
         trackseek = (SeekBar) findViewById(R.id.seekBar_track);
         trackseekhandler = new SeekHandler(trackseek, mediaplayer);
         
+        sourcelistframe = findViewById(R.id.sourceListFrame);
         sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
         sourcelisthandler.setListView(sourcelist);
         sourcelisthandler.updateList();
@@ -350,12 +352,13 @@ public class CalcTunesActivity extends Activity
         registerForContextMenu(sourcelist);
         if(sidebarHidden)
         {
-            sourcelist.setVisibility(View.GONE);
+            sourcelistframe.setVisibility(View.GONE);
         }
         
         mainlist = (ListView) findViewById(R.id.libraryListView);
         mainlisthandler.setListView(mainlist);
         updateInterfaceColor(interfaceColor);
+        mainlisthandler.drawList();
     }
     
     public void media_initialize(String filename)

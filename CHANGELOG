@@ -1,5 +1,9 @@
 Release History
 ---------------
+Version 0.34 Alpha (1/12/2012)
+Filesystem browser is implemented but is not feature-complete and needs work.  It can do basic browsing and play media files,
+but there is no filtering or sanity checking on permissions.  Also did some tweaking to mediaplayer and interface to fix bugs.
+
 Version 0.33 Alpha (1/11/2012)
 LibraryDatabaseAdapter has been completely redone yet again, this time back to a BaseAdapter backed by not one but THREE
 different Cursors.  The first cursor holds the first N entries and the other two jump around the dataset.  This improves

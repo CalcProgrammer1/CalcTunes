@@ -58,16 +58,18 @@ public class SourceListHandler
         {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
             {
-                if(groupPosition == 0)
+                switch(groupPosition)
                 {
-                    if(childPosition == 0)
-                    {
+                    case SourceListAdapter.SOURCE_GROUP_LIBRARY:
+                        cb.callback(ContentListHandler.CONTENT_TYPE_LIBRARY, libraryList.get(childPosition).filename);
+                        break;
+                        
+                    case SourceListAdapter.SOURCE_GROUP_PLAYLIST:
+                        break;
+                        
+                    case SourceListAdapter.SOURCE_GROUP_SYSTEM:
                         cb.callback(ContentListHandler.CONTENT_TYPE_FILESYSTEM, null);
-                    }
-                    else
-                    {
-                        cb.callback(ContentListHandler.CONTENT_TYPE_LIBRARY, libraryList.get(childPosition-1).filename);
-                    }
+                        break;
                 }
                 return true;
             }       

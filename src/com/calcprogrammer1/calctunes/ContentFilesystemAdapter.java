@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ public class ContentFilesystemAdapter extends BaseAdapter
     private Context con;
     private String now_playing = new String();
     private int length;
-    private int interfaceColor;
+    private int interface_color;
     
     public File currentDirectory;
     public ArrayList<File> files;
@@ -36,25 +37,38 @@ public class ContentFilesystemAdapter extends BaseAdapter
         if(!currentDirectory.getPath().equals("/"))
         {
             files.add(new File(""));
-            length = currentDirectory.listFiles().length + 1;
-        }
-        else
-        {
-            length = currentDirectory.listFiles().length;
-        }
-        ArrayList<File> file_list  = new ArrayList<File>();
-        for(int i = 0; i < currentDirectory.listFiles().length; i++)
-        {
-            if(currentDirectory.listFiles()[i].isDirectory())
+            if(currentDirectory.listFiles() != null)
             {
-                files.add(currentDirectory.listFiles()[i]);
+                length = currentDirectory.listFiles().length + 1;
             }
             else
             {
-                file_list.add(currentDirectory.listFiles()[i]);
+                length = 1;
             }
         }
-
+        else
+        {
+            if(currentDirectory.listFiles() != null)
+            {
+            length = currentDirectory.listFiles().length;
+            }
+        }
+        ArrayList<File> file_list  = new ArrayList<File>();
+        if(currentDirectory.listFiles() != null)
+        {
+            for(int i = 0; i < currentDirectory.listFiles().length; i++)
+            {
+                if(currentDirectory.listFiles()[i].isDirectory())
+                {
+                    files.add(currentDirectory.listFiles()[i]);
+                }
+                else
+                {
+                    file_list.add(currentDirectory.listFiles()[i]);
+                }
+            }
+        }
+        
         Comparator<? super File> filecomparator = new Comparator<File>()
         {
             public int compare(File file1, File file2)
@@ -126,6 +140,14 @@ public class ContentFilesystemAdapter extends BaseAdapter
                 icon.setImageResource(R.drawable.icon);
             }
             text.setText(files.get(position).getName());
+            if(files.get(position).getPath().equals(now_playing))
+            {
+                view.setBackgroundColor(interface_color);
+            }
+            else
+            {
+                view.setBackgroundColor(Color.BLACK);
+            }
         }
         
         
@@ -134,7 +156,7 @@ public class ContentFilesystemAdapter extends BaseAdapter
 
     public void setNowPlayingColor(int interfaceColor)
     {
-        
+        interface_color = interfaceColor;
     }
 
 }

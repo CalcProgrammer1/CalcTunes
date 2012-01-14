@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="4dip"
-        android:text=""
+        android:text="File"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>
