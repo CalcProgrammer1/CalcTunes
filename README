@@ -30,10 +30,6 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.35 Alpha (1/14/2012)
+Current Version - Version 0.36 Alpha (1/14/2012)
 ---------------
-	- Fixed file browser crash on no permissions and IO error directories
-	- Now playing file is now highlighted across libraries and filesystem views
-	- Reorganized sources list, put filesystem under "System" heading
-	- Edited main.c from AndLess to use CalcTunes directory for libraries, fixes bug where AndLess app required
-	- No longer crashes when rescanning, editing, or deleting a library 
+	- Added new color scheme for Seek Bar

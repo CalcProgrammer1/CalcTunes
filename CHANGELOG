@@ -1,5 +1,12 @@
 Release History
 ---------------
+Version 0.35 Alpha (1/14/2012)
+	- Fixed file browser crash on no permissions and IO error directories
+	- Now playing file is now highlighted across libraries and filesystem views
+	- Reorganized sources list, put filesystem under "System" heading
+	- Edited main.c from AndLess to use CalcTunes directory for libraries, fixes bug where AndLess app required
+	- No longer crashes when rescanning, editing, or deleting a library 
+	
 Version 0.34 Alpha (1/12/2012)
 Filesystem browser is implemented but is not feature-complete and needs work.  It can do basic browsing and play media files,
 but there is no filtering or sanity checking on permissions.  Also did some tweaking to mediaplayer and interface to fix bugs.

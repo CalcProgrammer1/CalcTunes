@@ -431,5 +431,6 @@ public class CalcTunesActivity extends Activity
         back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         findViewById(R.id.lower_frame).setBackgroundDrawable(back);
         mainlisthandler.setHighlightColor(color);
+        trackseekhandler.setInterfaceColor(color);
     }
 }
