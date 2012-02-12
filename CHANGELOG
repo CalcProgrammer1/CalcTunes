@@ -1,5 +1,8 @@
 Release History
 ---------------
+Version 0.36 Alpha (1/14/2012)
+	- Added new color scheme for Seek Bar
+
 Version 0.35 Alpha (1/14/2012)
 	- Fixed file browser crash on no permissions and IO error directories
 	- Now playing file is now highlighted across libraries and filesystem views

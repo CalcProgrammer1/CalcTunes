@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 public class AlbumArtManager
 {
@@ -55,24 +56,18 @@ public class AlbumArtManager
         {
             try
             {
-                String apiKey = "b25b959554ed76058ac220b7b2e0a026";
+                String apiKey = "4b724a8d125b0c56965ad3e28a51530c";
                 String imageSize = "large";
                 String method = "album.getinfo";
                 
-                String request = "http://ws.audioscrobbler.com/2.0/?method=" + method + "&api_key="+apiKey;
-                request += "&artist=" + artist.replaceAll(" ", "%20");
-                if (method.equals("album.getinfo"))
-                {
-                    request += "&album=" + album.replaceAll(" ", "%20");
-                }
+                String request = "http://ws.audioscrobbler.com/2.0/?method=" + method + "&api_key="+apiKey + "&artist=" + artist.replaceAll(" ", "%20") + "&album=" + album.replaceAll(" ", "%20");
                 
                 URL url = new URL(request);
                 InputStream is = url.openStream();
                 DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document doc = db.parse(is);
-        
+                Document doc = db.parse(is);        
                 NodeList nl = doc.getElementsByTagName("image");
-                
+
                 for (int i = 0; i < nl.getLength(); i++)
                 {
                     Node n = nl.item(i);
@@ -81,27 +76,27 @@ public class AlbumArtManager
                         Node fc = n.getFirstChild();
                         URL imgUrl = new URL(fc.getNodeValue());
                         artwork = BitmapFactory.decodeStream(imgUrl.openStream());
-                        
-                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                        artwork.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                        File outfile = new File(artfilepath);
-                        FileOutputStream fo = new FileOutputStream(outfile);
-                        fo.write(bytes.toByteArray());
+                        if(artwork != null)
+                        {
+                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                            artwork.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+                            File outfile = new File(artfilepath);
+                            FileOutputStream fo = new FileOutputStream(outfile);
+                            fo.write(bytes.toByteArray());
+                        }
                     }
                 }
                 
-            }catch(Exception ex){}
+            }catch(Exception ex)
+            {
+                Log.d("AlbumArt Exception", ""+ex);
+            }
         }
         if(artwork == null)
         {
             try
             {
                 artwork = BitmapFactory.decodeResource(c.getResources(), R.drawable.icon);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                artwork.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                File outfile = new File(artfilepath);
-                FileOutputStream fo = new FileOutputStream(outfile);
-                fo.write(bytes.toByteArray());
             }catch(Exception ex){}
         }
         return artwork;   
