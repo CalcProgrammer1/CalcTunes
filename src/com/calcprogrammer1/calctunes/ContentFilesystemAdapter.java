@@ -146,7 +146,7 @@ public class ContentFilesystemAdapter extends BaseAdapter
             }
             else
             {
-                view.setBackgroundColor(Color.BLACK);
+                view.setBackgroundColor(Color.TRANSPARENT);
             }
         }
         

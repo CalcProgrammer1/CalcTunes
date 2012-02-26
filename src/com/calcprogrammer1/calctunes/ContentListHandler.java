@@ -225,7 +225,14 @@ public class ContentListHandler
         }
         else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
         {
-            nowPlayingCursorPos ++;
+            if(nowPlayingCursorPos >= playbackCursor.getCount()-1)
+            {
+                nowPlayingCursorPos = 0;
+            }
+            else
+            {
+                nowPlayingCursorPos++;
+            }
             playbackCursor.moveToPosition(nowPlayingCursorPos);
             nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
             setAdaptersNowPlaying(nowPlayingFile);
@@ -247,7 +254,14 @@ public class ContentListHandler
         }
         else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
         {
-            nowPlayingCursorPos --;
+            if(nowPlayingCursorPos <= 0)
+            {
+                nowPlayingCursorPos = playbackCursor.getCount() - 1;
+            }
+            else
+            {
+                nowPlayingCursorPos--;
+            }
             playbackCursor.moveToPosition(nowPlayingCursorPos);
             nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
             setAdaptersNowPlaying(nowPlayingFile);

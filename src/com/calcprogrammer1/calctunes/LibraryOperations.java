@@ -19,7 +19,7 @@ public class LibraryOperations
     {
         File libDir = new File(libPath);
         libDir.mkdirs();
-        libDir.setExecutable(true, false);
+        //libDir.setExecutable(true, false);
         try
         {
             FileWriter outFile = new FileWriter(libPath+"/"+getLibraryFilename(libName));

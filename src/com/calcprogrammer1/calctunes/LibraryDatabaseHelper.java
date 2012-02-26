@@ -12,10 +12,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LibraryDatabaseHelper extends SQLiteOpenHelper
 {
     private SQLiteDatabase myDataBase;
-    
+    private Context con;
     public LibraryDatabaseHelper(Context context, String name)
     {
         super(context, name, null, 1);
+        con = context;
         File databaseDirectory = new File("/data/data/com.calcprogrammer1.calctunes/databases/");
         databaseDirectory.mkdirs();
         myDataBase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/"+name, null);
@@ -56,6 +57,7 @@ public class LibraryDatabaseHelper extends SQLiteOpenHelper
             song_title = song_title.replaceAll("'", "''");
             song_year = song_year.replaceAll("'", "''");
             song_path = song_path.replaceAll("'", "''");
+            AlbumArtManager.getAlbumArt(song_artist, song_album, con);
             myDataBase.execSQL("INSERT INTO 'MYLIBRARY' VALUES (NULL, '" + song_artist + "', '" + song_album + "', '" + song_year + "', " + song_num + ", '" + song_title + "', '" + song_path + "', " + song_length + ", " + song_disc + ");");
         }catch(Exception e){}
     }
