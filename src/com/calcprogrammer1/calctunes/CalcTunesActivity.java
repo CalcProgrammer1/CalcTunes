@@ -150,8 +150,12 @@ public class CalcTunesActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
         
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
+        setContentView(R.layout.main);
+   
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
@@ -207,16 +211,7 @@ public class CalcTunesActivity extends Activity
                 break;
                 
             case R.id.collapseSidebar:
-                if(sidebarHidden)
-                {
-                    sourcelistframe.setVisibility(View.VISIBLE);
-                    sidebarHidden = false;
-                }
-                else
-                {
-                    sourcelistframe.setVisibility(View.GONE);
-                    sidebarHidden = true;
-                }
+                ButtonSidebarClick(null);
                 break;
                 
             case R.id.openSettings:
@@ -427,10 +422,24 @@ public class CalcTunesActivity extends Activity
         int[] colors = {Color.BLACK, color};
         GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
         back.setShape(GradientDrawable.RECTANGLE);
-        sourcelist.setBackgroundDrawable(back);
+        //sourcelist.setBackgroundDrawable(back);
         back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         findViewById(R.id.lower_frame).setBackgroundDrawable(back);
         mainlisthandler.setHighlightColor(color);
         trackseekhandler.setInterfaceColor(color);
+    }
+    
+    public void ButtonSidebarClick(View view)
+    {
+        if(sidebarHidden)
+        {
+            sourcelistframe.setVisibility(View.VISIBLE);
+            sidebarHidden = false;
+        }
+        else
+        {
+            sourcelistframe.setVisibility(View.GONE);
+            sidebarHidden = true;
+        }  
     }
 }

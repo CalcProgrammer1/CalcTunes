@@ -5,7 +5,60 @@
      android:layout_width="match_parent"
      android:orientation="vertical"
      android:weightSum="1" >
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="30dip"
+	    android:orientation="horizontal" >
+		<LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="30dip"
+		    android:orientation="horizontal" >
+			<ImageView
+			    android:id="@+id/imageView1"
+			    android:layout_width="30dip"
+			    android:layout_height="30dip"
+			    android:paddingRight="5dip"
+			    android:src="@drawable/icon"/>
+	
+			<TextView
+			    android:id="@+id/textView1"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_gravity="center_vertical"
+			    android:text="@string/app_name"
+			    android:textAppearance="?android:attr/textAppearanceMedium" />
 
+		</LinearLayout>
+		<LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="30dip"
+		    android:layout_alignParentRight="true"
+		    android:orientation="horizontal" >
+
+			<ImageButton
+			    android:id="@+id/button_menu_add"
+			    android:layout_width="30dip"
+			    android:layout_height="30dip"
+			    android:background="@android:color/transparent"
+			    android:onClick="ButtonAddClick"
+			    android:scaleType="centerInside"
+			    android:src="@drawable/button_add" />
+
+			<ImageButton
+			    android:id="@+id/button_menu_sidebar"
+			    android:layout_width="30dip"
+			    android:layout_height="30dip"
+			    android:background="@android:color/transparent"
+			    android:onClick="ButtonSidebarClick"
+			    android:scaleType="centerInside"
+			    android:src="@drawable/button_showhide_sidebar" />
+		</LinearLayout>		      
+	</RelativeLayout>
+	<View
+	    android:layout_width="match_parent"
+	    android:layout_height="1px"
+	    android:background="#555" >
+	</View>
 	<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -28,7 +81,7 @@
 			        android:id="@+id/sourceListView"
 			        android:layout_height="match_parent"
 			        android:layout_width="130dip"
-			        android:background="@drawable/dark_gray_gradient_horizontal"
+			        android:divider="#000000"
 			        android:groupIndicator="@null" />
 		    
 				<View
@@ -52,7 +105,6 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
 		    android:layout_alignParentBottom="true"
-		    android:background="@drawable/dark_gray_gradient"
 		    android:gravity="center_vertical"
 		    android:orientation="horizontal" >
 
@@ -87,7 +139,7 @@
 		                    android:layout_height="wrap_content"
 		                    android:background="@android:color/transparent"
 		                    android:onClick="ButtonStopClick"
-		                    android:src="@drawable/media_playback_stop" />
+		                    android:src="@drawable/button_media_stop" />
 
 		                <ImageButton
 		                    android:id="@+id/button_playpause"
@@ -95,7 +147,7 @@
 		                    android:layout_height="wrap_content"
 		                    android:background="@android:color/transparent"
 		                    android:onClick="ButtonPlayPauseClick"
-		                    android:src="@drawable/media_play_pause" />
+		                    android:src="@drawable/button_media_playpause" />
 		            </LinearLayout>
 
 		            <LinearLayout
@@ -110,7 +162,7 @@
 		                    android:layout_height="wrap_content"
 		                    android:background="@android:color/transparent"
 		                    android:onClick="ButtonPrevClick"
-		                    android:src="@drawable/media_skip_backward" />
+		                    android:src="@drawable/button_media_back" />
 
 		                <ImageButton
 		                    android:id="@+id/button_next"
@@ -118,7 +170,7 @@
 		                    android:layout_height="wrap_content"
 		                    android:background="@android:color/transparent"
 		                    android:onClick="ButtonNextClick"
-		                    android:src="@drawable/media_skip_forward" />
+		                    android:src="@drawable/button_media_forward" />
 		            </LinearLayout>
 		        </LinearLayout>
 	

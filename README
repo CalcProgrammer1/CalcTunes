@@ -30,6 +30,7 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.38 Alpha (2/26/2012)
+Current Version - Version 0.39 Alpha (2/28/2012)
 ---------------
-	- Fixed seeking from end to beginning/beginning to end
+	- Disabled default title bar, started work on a new custom title/menu bar that will have icons and replace the context
+	menu for Android 3.0+ devices.  2.x devices will still have the context menu but will also have the new menu bar.

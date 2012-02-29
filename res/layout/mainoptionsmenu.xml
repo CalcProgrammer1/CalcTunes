@@ -1,12 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/createLibrary"
-        android:icon="@drawable/ic_menu_add"
+        android:icon="@drawable/icon_add"
         android:title="Create Library" />
     <item android:id="@+id/openSettings"
         android:icon="@drawable/ic_menu_preferences"
         android:title="Settings" />
     <item android:id="@+id/collapseSidebar"
-        android:icon="@drawable/ic_menu_preferences"
+        android:icon="@drawable/icon_showhide_sidebar"
         android:title="Show/Hide Sidebar" />
     <item android:id="@+id/exitApplication"
         android:title="Exit"

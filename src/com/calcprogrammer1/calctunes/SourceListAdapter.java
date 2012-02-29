@@ -139,17 +139,17 @@ public class SourceListAdapter extends BaseExpandableListAdapter
         {
             case SOURCE_GROUP_LIBRARY:
                 groupText.setText("Libraries");
-                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
+                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_media_playpause));
                 break;
                 
             case SOURCE_GROUP_PLAYLIST:
                 groupText.setText("Playlists");
-                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
+                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_media_playpause));
                 break;
                 
             case SOURCE_GROUP_SYSTEM:
                 groupText.setText("System");
-                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.media_play_pause));
+                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_media_playpause));
                 break;
         }
         return convertView;
