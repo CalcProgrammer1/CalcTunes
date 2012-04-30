@@ -38,7 +38,7 @@ public class LibraryDatabaseAdapter extends BaseAdapter
     private int cur1_offset;
     private int cur2_offset;
     
-    private int highlightColor;
+    private int interfaceColor;
 
     public LibraryDatabaseAdapter (Context context, SQLiteDatabase data, String dbquery)
     {
@@ -62,7 +62,7 @@ public class LibraryDatabaseAdapter extends BaseAdapter
     
     public void setNowPlayingColor(int color)
     {
-        highlightColor = color;
+        interfaceColor = color;
     }
 
     private class CursorUpdateTask extends Thread
@@ -269,20 +269,20 @@ public class LibraryDatabaseAdapter extends BaseAdapter
             if(artistName != null)
             {   
                 artistName.setText(artist);
-                int[] colors = {Color.TRANSPARENT, highlightColor};
+                int[] colors = {Color.TRANSPARENT, interfaceColor};
                 GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
                 GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
                 back1.setShape(GradientDrawable.RECTANGLE);
                 back2.setShape(GradientDrawable.RECTANGLE);
                 artistline1.setBackgroundDrawable(back1);
-                artistline2.setBackgroundColor(highlightColor);
+                artistline2.setBackgroundColor(interfaceColor);
                 artistline3.setBackgroundDrawable(back2);
             }
         }
         
         if(path.equals(now_playing))
         {
-            int[] colors = {Color.TRANSPARENT, highlightColor, Color.TRANSPARENT};
+            int[] colors = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
             GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
             back.setShape(GradientDrawable.RECTANGLE);
             view.findViewById(R.id.librarylistsong_frame).setBackgroundDrawable(back);

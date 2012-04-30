@@ -20,6 +20,10 @@ public class SourceListHandler
     ArrayList<libraryListElement> libraryList = new ArrayList<libraryListElement>();
     SourceListCallback cb;
     
+    private int interfaceColor;
+    private int selectedGroup;
+    private int selectedChild;
+    
     public SourceListHandler(Context con, ExpandableListView listv)
     {
         sourceList = listv;
@@ -58,10 +62,15 @@ public class SourceListHandler
         {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
             {
-                switch(groupPosition)
+                selectedGroup = groupPosition;
+                selectedChild = childPosition;
+                
+                adapter.setSelected(selectedGroup, selectedChild);
+                
+                switch(selectedGroup)
                 {
                     case SourceListAdapter.SOURCE_GROUP_LIBRARY:
-                        cb.callback(ContentListHandler.CONTENT_TYPE_LIBRARY, libraryList.get(childPosition).filename);
+                        cb.callback(ContentListHandler.CONTENT_TYPE_LIBRARY, libraryList.get(selectedChild).filename);
                         break;
                         
                     case SourceListAdapter.SOURCE_GROUP_PLAYLIST:
@@ -75,5 +84,11 @@ public class SourceListHandler
             }       
         });
         sourceList.expandGroup(0);
+    }
+    
+    public void setInterfaceColor(int color)
+    {
+        interfaceColor = color;
+        adapter.setNowPlayingColor(interfaceColor);
     }
 }

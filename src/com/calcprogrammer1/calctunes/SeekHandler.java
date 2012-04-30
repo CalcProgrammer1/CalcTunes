@@ -10,19 +10,23 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 import android.widget.SeekBar;
 
 public class SeekHandler implements Runnable
 {
     SeekBar sb;
-    MediaPlayerHandler mp;
+    MediaPlayerService mp;
     Thread t;
     boolean running = false;
     boolean touch = false;
-    public SeekHandler(SeekBar seekb, MediaPlayerHandler mediap)
+    public SeekHandler(SeekBar seekb, MediaPlayerService mediap)
     {
         updateSeekBar(seekb);
+        Log.d("SeekHandler", ""+mediap);
+        Log.d("SeekHandler", ""+seekb);
         mp = mediap;
+        sb = seekb;
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
             public void onStopTrackingTouch(SeekBar seekBar)
@@ -46,7 +50,7 @@ public class SeekHandler implements Runnable
         resume();
     }
     
-    public void updateMediaPlayer(MediaPlayerHandler mediap)
+    public void updateMediaPlayer(MediaPlayerService mediap)
     {
         mp = mediap;
     }

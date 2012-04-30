@@ -10,8 +10,10 @@
 package com.calcprogrammer1.calctunes;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.*;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.widget.*;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.content.*;
@@ -30,7 +32,6 @@ public class CalcTunesActivity extends Activity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	MediaPlayerHandler mediaplayer;
 	TextView artisttext;
 	TextView albumtext;
 	TextView tracktext;
@@ -54,6 +55,32 @@ public class CalcTunesActivity extends Activity
     
     int interfaceColor;
     boolean sidebarHidden = false;
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Service Connection/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    private MediaPlayerService mediaservice;
+    
+    private ServiceConnection mediaServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            mediaservice = ((MediaPlayerService.MediaPlayerBinder)service).getService();
+            Log.d("CalcTunes", ""+mediaservice);
+            
+            mediaservice.setCallback(mediaplayerCallback);
+            updateGuiElements();
+            sourcelisthandler.refreshLibraryList();
+        }
+        
+        @Override
+        public void onServiceDisconnected(ComponentName arg0)
+        {
+            mediaservice = null;
+        }
+    };
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Callbacks//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,10 +121,10 @@ public class CalcTunesActivity extends Activity
 
         public void onStop()
         {
-            artisttext.setText(mediaplayer.current_artist);
-            albumtext.setText(mediaplayer.current_album);
-            tracktext.setText(mediaplayer.current_title);
-            trackyear.setText(mediaplayer.current_year);
+            artisttext.setText(mediaservice.current_artist);
+            albumtext.setText(mediaservice.current_album);
+            tracktext.setText(mediaservice.current_title);
+            trackyear.setText(mediaservice.current_year);
             albumartview.setImageResource(R.drawable.icon);
         }
     };
@@ -142,6 +169,7 @@ public class CalcTunesActivity extends Activity
         }
     };
     
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Class Overrides////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,32 +184,21 @@ public class CalcTunesActivity extends Activity
         
         setContentView(R.layout.main);
    
+        startService(new Intent(this, MediaPlayerService.class));
+        bindService(new Intent(this, MediaPlayerService.class), mediaServiceConnection, Context.BIND_AUTO_CREATE);
+        
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         
         buttons = new MediaButtonsHandler(this);
         buttons.setCallback(buttonsCallback);
-        
-        mediaplayer = new MediaPlayerHandler();
-        mediaplayer.setCallback(mediaplayerCallback);
-    	
+          	
         mainlisthandler = new ContentListHandler(this, mainlist);
     	mainlisthandler.setCallback(mainlisthandlerCallback);
 
     	sourcelisthandler = new SourceListHandler(this, sourcelist);
     	sourcelisthandler.setCallback(sourcelisthandlerCallback);
-    	
-        updateGuiElements();
- 
-        sourcelisthandler.refreshLibraryList();
-    }
-    
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        buttons.registerButtons();
     }
     
     public void onConfigurationChanged(Configuration newConfig)
@@ -320,8 +337,6 @@ public class CalcTunesActivity extends Activity
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-
-    
     public void updateGuiElements()
     {
         artisttext = (TextView) findViewById(R.id.text_artistname);
@@ -330,14 +345,14 @@ public class CalcTunesActivity extends Activity
         trackyear = (TextView) findViewById(R.id.text_trackyear);
         albumartview = (ImageView) findViewById(R.id.imageAlbumArt);
         
-        artisttext.setText(mediaplayer.current_artist);
-        albumtext.setText(mediaplayer.current_album);
-        tracktext.setText(mediaplayer.current_title);
-        trackyear.setText(mediaplayer.current_year);
-        albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaplayer.current_artist, mediaplayer.current_album, this));
+        artisttext.setText(mediaservice.current_artist);
+        albumtext.setText(mediaservice.current_album);
+        tracktext.setText(mediaservice.current_title);
+        trackyear.setText(mediaservice.current_year);
+        albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaservice.current_artist, mediaservice.current_album, this));
         
         trackseek = (SeekBar) findViewById(R.id.seekBar_track);
-        trackseekhandler = new SeekHandler(trackseek, mediaplayer);
+        trackseekhandler = new SeekHandler(trackseek, mediaservice);
         
         sourcelistframe = findViewById(R.id.sourceListFrame);
         sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
@@ -358,62 +373,62 @@ public class CalcTunesActivity extends Activity
     
     public void media_initialize(String filename)
     {	
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(filename);
-			artisttext.setText(mediaplayer.current_artist);
-			albumtext.setText(mediaplayer.current_album);
-			tracktext.setText(mediaplayer.current_title);
-			trackyear.setText(mediaplayer.current_year);
-			albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaplayer.current_artist, mediaplayer.current_album, this));
+            mediaservice.stopPlayback();
+            mediaservice.initialize(filename);
+			artisttext.setText(mediaservice.current_artist);
+			albumtext.setText(mediaservice.current_album);
+			tracktext.setText(mediaservice.current_title);
+			trackyear.setText(mediaservice.current_year);
+			albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaservice.current_artist, mediaservice.current_album, this));
     }
    
     public void ButtonStopClick(View view)
     {
         mainlisthandler.StopNotify();
-    	mediaplayer.stopPlayback();
+    	mediaservice.stopPlayback();
     }
     
     public void ButtonPlayPauseClick(View view)
     {
-        if(mediaplayer.isPlaying())
+        if(mediaservice.isPlaying())
         {
-            mediaplayer.pausePlayback();
+            mediaservice.pausePlayback();
         }
-        else if(mediaplayer.prepared)
+        else if(mediaservice.prepared)
         {
-            mediaplayer.startPlayback();
+            mediaservice.startPlayback();
         }
     }
     
     public void ButtonNextClick(View view)
     {
-        mediaplayer.stopPlayback();
+        mediaservice.stopPlayback();
         String nextFile = mainlisthandler.NextTrack();
         if(nextFile != null)
         {
             media_initialize(nextFile);
-            mediaplayer.startPlayback();
+            mediaservice.startPlayback();
         }
         else
         {
             mainlisthandler.StopNotify();
-            mediaplayer.stopPlayback();
+            mediaservice.stopPlayback();
         }
     }
     
     public void ButtonPrevClick(View view)
     {
-        mediaplayer.stopPlayback();
+        mediaservice.stopPlayback();
         String prevFile = mainlisthandler.PrevTrack();
         if(prevFile != null)
         {
             media_initialize(prevFile);
-            mediaplayer.startPlayback();
+            mediaservice.startPlayback();
         }
         else
         {
             mainlisthandler.StopNotify();
-            mediaplayer.stopPlayback();
+            mediaservice.stopPlayback();
         }
     }
     
@@ -422,7 +437,7 @@ public class CalcTunesActivity extends Activity
         int[] colors = {Color.BLACK, color};
         GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
         back.setShape(GradientDrawable.RECTANGLE);
-        //sourcelist.setBackgroundDrawable(back);
+        sourcelisthandler.setInterfaceColor(color);
         back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         findViewById(R.id.lower_frame).setBackgroundDrawable(back);
         mainlisthandler.setHighlightColor(color);
@@ -441,5 +456,10 @@ public class CalcTunesActivity extends Activity
             sourcelistframe.setVisibility(View.GONE);
             sidebarHidden = true;
         }  
+    }
+    
+    public void ButtonAddClick(View view)
+    {
+        startActivityForResult(new Intent(this, LibraryBuilderActivity.class), 1);
     }
 }

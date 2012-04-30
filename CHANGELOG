@@ -1,5 +1,9 @@
 Release History
 ---------------
+Version 0.39 Alpha (2/28/2012)
+	- Disabled default title bar, started work on a new custom title/menu bar that will have icons and replace the context
+	menu for Android 3.0+ devices.  2.x devices will still have the context menu but will also have the new menu bar.
+	
 Version 0.38 Alpha (2/26/2012)
 	- Fixed seeking from end to beginning/beginning to end
 	

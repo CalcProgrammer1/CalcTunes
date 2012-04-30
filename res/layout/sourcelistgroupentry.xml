@@ -3,13 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="30dip"
     android:orientation="horizontal" >
-
-    <ImageView
-        android:id="@+id/sourcelistentry_icon"
+	
+	<View
+	    android:layout_width="0dip"
+	    android:layout_height="30dip" />
+	
+    <View
+        android:id="@+id/sourcelistentry_line1"
         android:layout_width="20dip"
-        android:layout_height="30dip"
-        android:scaleType="centerInside"
-        android:src="@drawable/icon" />
+        android:layout_height="2dip"
+        android:layout_gravity="center_vertical"
+        android:background="@color/interface_color" />
 
     <TextView
         android:id="@+id/sourcelistentry_text"
@@ -17,7 +21,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:paddingLeft="4dip"
-        android:text=""
+        android:text="SourceListEntry"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+    <View
+        android:id="@+id/sourcelistentry_line2"
+        android:layout_width="0dip"
+        android:layout_height="2dip"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.33"
+        android:background="@color/interface_color" />
+
+    <View
+        android:id="@+id/sourcelistentry_line3"
+        android:layout_width="20dip"
+        android:layout_height="2dip"
+        android:layout_gravity="center_vertical"
+        android:background="@color/interface_color" />
 </LinearLayout>

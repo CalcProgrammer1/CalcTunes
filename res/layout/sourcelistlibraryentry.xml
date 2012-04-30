@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="30dip"
     android:orientation="horizontal" >
-
+	
     <ImageView
         android:id="@+id/sourcelistentry_icon"
         android:layout_width="40dip"

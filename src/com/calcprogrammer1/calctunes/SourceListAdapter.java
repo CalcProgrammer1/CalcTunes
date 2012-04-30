@@ -3,6 +3,8 @@ package com.calcprogrammer1.calctunes;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,10 @@ public class SourceListAdapter extends BaseExpandableListAdapter
     public static final int SOURCE_GROUP_PLAYLIST = 1;
     public static final int SOURCE_GROUP_SYSTEM = 2;
     public static final int TOTAL_SOURCE_GROUP = 3;
+    
+    private int interfaceColor;
+    private int selectedGroup = -1;
+    private int selectedChild = -1;
     
     LayoutInflater inflater;
     Context c;
@@ -60,8 +66,17 @@ public class SourceListAdapter extends BaseExpandableListAdapter
             convertView = inflater.inflate(R.layout.sourcelistlibraryentry, null);
         }
         
-        TextView sourceText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
-        ImageView sourceImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
+        TextView sourceText = (TextView)      convertView.findViewById(R.id.sourcelistentry_text);
+        ImageView sourceImage = (ImageView)   convertView.findViewById(R.id.sourcelistentry_icon);
+
+        if(groupPosition == selectedGroup && childPosition == selectedChild)
+        {
+            convertView.setBackgroundColor(interfaceColor);
+        }
+        else
+        {
+            convertView.setBackgroundColor(Color.TRANSPARENT);
+        }
         
         switch(groupPosition)
         {
@@ -134,22 +149,31 @@ public class SourceListAdapter extends BaseExpandableListAdapter
             convertView = inflater.inflate(R.layout.sourcelistgroupentry, null);
         }
         TextView groupText = (TextView) convertView.findViewById(R.id.sourcelistentry_text);
-        ImageView groupImage = (ImageView) convertView.findViewById(R.id.sourcelistentry_icon);
+        final View sourceline1 = convertView.findViewById(R.id.sourcelistentry_line1);
+        final View sourceline2 = convertView.findViewById(R.id.sourcelistentry_line2);
+        final View sourceline3 = convertView.findViewById(R.id.sourcelistentry_line3);
+        
+        int[] colors = {Color.TRANSPARENT, interfaceColor};
+        GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
+        back1.setShape(GradientDrawable.RECTANGLE);
+        back2.setShape(GradientDrawable.RECTANGLE);
+        sourceline1.setBackgroundDrawable(back1);
+        sourceline2.setBackgroundColor(interfaceColor);
+        sourceline3.setBackgroundDrawable(back2);
+        
         switch(groupPosition)
         {
             case SOURCE_GROUP_LIBRARY:
                 groupText.setText("Libraries");
-                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_media_playpause));
                 break;
                 
             case SOURCE_GROUP_PLAYLIST:
                 groupText.setText("Playlists");
-                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_media_playpause));
                 break;
                 
             case SOURCE_GROUP_SYSTEM:
                 groupText.setText("System");
-                groupImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_media_playpause));
                 break;
         }
         return convertView;
@@ -164,5 +188,17 @@ public class SourceListAdapter extends BaseExpandableListAdapter
     {
         return true;
     }
+    
+    public void setSelected(int group, int child)
+    {
+        selectedGroup = group;
+        selectedChild = child;
+        notifyDataSetChanged();
+    }
 
+    public void setNowPlayingColor(int color)
+    {
+        interfaceColor = color;
+        notifyDataSetChanged();
+    }
 }

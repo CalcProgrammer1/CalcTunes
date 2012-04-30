@@ -86,7 +86,10 @@ public final class R {
         public static final int seekBar_track=0x7f070031;
         public static final int sourceListFrame=0x7f070021;
         public static final int sourceListView=0x7f070022;
-        public static final int sourcelistentry_icon=0x7f070036;
+        public static final int sourcelistentry_icon=0x7f07003a;
+        public static final int sourcelistentry_line1=0x7f070036;
+        public static final int sourcelistentry_line2=0x7f070038;
+        public static final int sourcelistentry_line3=0x7f070039;
         public static final int sourcelistentry_text=0x7f070037;
         public static final int stopplaypauseFrame=0x7f070026;
         public static final int text=0x7f07001c;
