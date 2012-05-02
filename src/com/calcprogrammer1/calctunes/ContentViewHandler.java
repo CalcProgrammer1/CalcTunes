@@ -8,12 +8,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-interface ContentListCallback
+interface ContentViewCallback
 {
     void callback(String file);
 }
 
-public class ContentListHandler
+public class ContentViewHandler
 {
     //Content Types
     public static final int CONTENT_TYPE_NONE = 0;
@@ -37,7 +37,6 @@ public class ContentListHandler
     //Current Content View
     private int contentViewType = CONTENT_TYPE_NONE;
     private int contentViewMode = CONTENT_VIEW_NONE;
-    private int contentPlayMode = CONTENT_PLAYBACK_NONE;
     
     //ListView to display on and context of main activity
     private ListView contentList;
@@ -47,25 +46,21 @@ public class ContentListHandler
     private SQLiteDatabase libraryDatabase;
 
     private String viewCursorQuery;
-    private Cursor playbackCursor;
-    private String playbackCursorQuery;
-    
-    //Now Playing
-    private String nowPlayingFile = new String();
-    private int nowPlayingCursorPos = -1;
     
     //Color
     private int interfaceColor;
     
     private LibraryDatabaseAdapter   libAdapter;
     private ContentFilesystemAdapter fileAdapter;
-    private ContentListCallback cb;
+    //private ContentViewCallback cb;
+    private ContentPlaybackService playbackservice;
     
     //Setup and Constructor Functions
-    public ContentListHandler(Context con, ListView lv)
+    public ContentViewHandler(Context con, ListView lv, ContentPlaybackService player)
     {
         contentList = lv;
         c = con;
+        playbackservice = player;
     }
     
     public void setListView(ListView lv)
@@ -73,9 +68,9 @@ public class ContentListHandler
         contentList = lv;
     }
     
-    public void setCallback(ContentListCallback callback)
+    public void setCallback(ContentViewCallback callback)
     {
-        cb = callback;
+        //cb = callback;
     }
     
     //Set Content Source
@@ -88,14 +83,14 @@ public class ContentListHandler
             libraryDatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + contentName + ".db", null);
             viewCursorQuery = "SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;";
             libAdapter = new LibraryDatabaseAdapter(c, libraryDatabase, viewCursorQuery);
-            libAdapter.setNowPlaying(nowPlayingFile);
+            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.setNowPlayingColor(interfaceColor);
         }
         else if(contentViewType == CONTENT_TYPE_FILESYSTEM)
         {
             contentViewMode = CONTENT_VIEW_FILESYSTEM;
             fileAdapter = new ContentFilesystemAdapter(c, contentName);
-            fileAdapter.setNowPlaying(nowPlayingFile);
+            fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             fileAdapter.setNowPlayingColor(interfaceColor);
         }
         else if(contentViewType == CONTENT_TYPE_PLAYLIST)
@@ -134,47 +129,37 @@ public class ContentListHandler
             if(position == 0 && !fileAdapter.currentDirectory.getPath().equals("/"))
             {
                 fileAdapter = new ContentFilesystemAdapter(c, fileAdapter.currentDirectory.getParent());
-                fileAdapter.setNowPlaying(nowPlayingFile);
+                fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
                 fileAdapter.setNowPlayingColor(interfaceColor);
                 drawList();
             }
             else if(fileAdapter.files.get(position).isDirectory())
             {
                 fileAdapter = new ContentFilesystemAdapter(c, fileAdapter.files.get(position).getPath());
-                fileAdapter.setNowPlaying(nowPlayingFile);
+                fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
                 fileAdapter.setNowPlayingColor(interfaceColor);
                 drawList();
             }
             else
             {
-                nowPlayingFile = fileAdapter.files.get(position).getPath();
-                fileAdapter.setNowPlaying(nowPlayingFile);
+                playbackservice.SetPlaybackContentSource(CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0, null);
+
+                fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
                 fileAdapter.notifyDataSetChanged();
-                contentPlayMode = CONTENT_PLAYBACK_FILESYSTEM;
-                cb.callback(nowPlayingFile);
+                //cb.callback(nowPlayingFile);
                 
             }
         }
         else if(contentViewMode == CONTENT_VIEW_LIBRARY_ALL)
         {
-            playbackCursorQuery = viewCursorQuery;
-            playbackCursor = libraryDatabase.rawQuery(playbackCursorQuery, null);
-            playbackCursor.moveToPosition(position);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            nowPlayingCursorPos = position;
+            Cursor playbackCursor = libraryDatabase.rawQuery(viewCursorQuery, null);
+            playbackservice.SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, null, position, playbackCursor);
             
-            libAdapter.setNowPlaying(nowPlayingFile);
+            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.notifyDataSetChanged();
-            
-            contentPlayMode = CONTENT_PLAYBACK_LIBRARY;
-            
-            cb.callback(nowPlayingFile);
+                        
+            //cb.callback(nowPlayingFile);
         }
-    }
-
-    public String CurTrack()
-    {
-        return nowPlayingFile;
     }
     
     public void setAdaptersNowPlaying(String nowPlaying)
@@ -192,87 +177,6 @@ public class ContentListHandler
         }
     }
     
-    public void StopNotify()
-    {
-        if(contentPlayMode == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-            setAdaptersNowPlaying(nowPlayingFile);
-        }
-        
-        else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
-        {
-            nowPlayingCursorPos = -1;
-            nowPlayingFile = "";
-            if(playbackCursor != null)
-            {
-            playbackCursor.close();
-            playbackCursor = null;
-            }
-            setAdaptersNowPlaying(nowPlayingFile);
-        }
-        
-        contentPlayMode = CONTENT_PLAYBACK_NONE;
-    }
-    
-    public String NextTrack()
-    {
-        if(contentPlayMode == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-            setAdaptersNowPlaying(nowPlayingFile);
-            return null;
-        }
-        else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
-        {
-            if(nowPlayingCursorPos >= playbackCursor.getCount()-1)
-            {
-                nowPlayingCursorPos = 0;
-            }
-            else
-            {
-                nowPlayingCursorPos++;
-            }
-            playbackCursor.moveToPosition(nowPlayingCursorPos);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            setAdaptersNowPlaying(nowPlayingFile);
-            return nowPlayingFile;
-        }
-        else
-        {
-            return null;
-        }
-    }
-    
-    public String PrevTrack()
-    {
-        if(contentPlayMode == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-            setAdaptersNowPlaying(nowPlayingFile);
-            return null;
-        }
-        else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
-        {
-            if(nowPlayingCursorPos <= 0)
-            {
-                nowPlayingCursorPos = playbackCursor.getCount() - 1;
-            }
-            else
-            {
-                nowPlayingCursorPos--;
-            }
-            playbackCursor.moveToPosition(nowPlayingCursorPos);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            setAdaptersNowPlaying(nowPlayingFile);
-            return nowPlayingFile;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     public void setHighlightColor(int color)
     {
         interfaceColor = color;

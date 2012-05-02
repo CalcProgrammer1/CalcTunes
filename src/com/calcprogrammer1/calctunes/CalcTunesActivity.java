@@ -10,7 +10,6 @@
 package com.calcprogrammer1.calctunes;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.*;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -38,7 +37,8 @@ public class CalcTunesActivity extends Activity
 	TextView trackyear;
 	ImageView albumartview;
 	
-
+	ContentViewHandler viewhandler;
+	
     SharedPreferences appSettings;
     
 	SeekBar trackseek;
@@ -49,7 +49,6 @@ public class CalcTunesActivity extends Activity
 	SourceListHandler sourcelisthandler;
 	
 	ListView mainlist;
-    ContentListHandler mainlisthandler;
 
     MediaButtonsHandler buttons;
     
@@ -60,26 +59,23 @@ public class CalcTunesActivity extends Activity
     //Service Connection/////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    private MediaPlayerService mediaservice;
+    private ContentPlaybackService playbackservice;
     
-    private ServiceConnection mediaServiceConnection = new ServiceConnection() {
-
+    private ServiceConnection playbackserviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
-            mediaservice = ((MediaPlayerService.MediaPlayerBinder)service).getService();
-            Log.d("CalcTunes", ""+mediaservice);
-            
-            mediaservice.setCallback(mediaplayerCallback);
+            playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             updateGuiElements();
             sourcelisthandler.refreshLibraryList();
+            playbackservice.setCallback(playbackCallback);
         }
-        
+
         @Override
-        public void onServiceDisconnected(ComponentName arg0)
+        public void onServiceDisconnected(ComponentName name)
         {
-            mediaservice = null;
-        }
+            playbackservice = null;
+        }    
     };
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,65 +85,66 @@ public class CalcTunesActivity extends Activity
     MediaButtonsHandlerCallback buttonsCallback = new MediaButtonsHandlerCallback(){
         public void onMediaNextPressed()
         {
-            tracktext.setText("Button Pressed");
             ButtonNextClick(null);
         }
 
         public void onMediaPrevPressed()
-        { 
+        {
+            ButtonPrevClick(null);
         }
 
         public void onMediaPlayPausePressed()
         {
+            ButtonPlayPauseClick(null);
         }
 
         public void onMediaStopPressed()
         {
+            ButtonStopClick(null);
         }  
     };
     
-    MediaPlayerHandlerCallback mediaplayerCallback = new MediaPlayerHandlerCallback(){
-        public void onSongFinished()
+    ContentPlaybackCallback playbackCallback = new ContentPlaybackCallback(){
+        @Override
+        public void onTrackEnd()
         {
-            runOnUiThread(new Runnable()
-            {
-                public void run()
-                {
-                    onStop();
-                    ButtonNextClick(null);
-                }
-            });
+            //Do nothing on track end
         }
 
-        public void onStop()
+        @Override
+        public void onMediaInfoUpdated()
         {
-            artisttext.setText(mediaservice.current_artist);
-            albumtext.setText(mediaservice.current_album);
-            tracktext.setText(mediaservice.current_title);
-            trackyear.setText(mediaservice.current_year);
-            albumartview.setImageResource(R.drawable.icon);
+            //On media info updated, update all the text fields and album art display
+            artisttext.setText(playbackservice.NowPlayingArtist());
+            albumtext.setText(playbackservice.NowPlayingAlbum());
+            tracktext.setText(playbackservice.NowPlayingTitle());
+            trackyear.setText(playbackservice.NowPlayingYear());
+            albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), CalcTunesActivity.this));
+            
+            viewhandler.setAdaptersNowPlaying(playbackservice.NowPlayingFile());
         }
+        
     };
     
-    ContentListCallback mainlisthandlerCallback = new ContentListCallback(){
+    ContentViewCallback mainlisthandlerCallback = new ContentViewCallback(){
         public void callback(String file)
         {
-            media_initialize(file);
+            
         }
     };
     
     SourceListCallback sourcelisthandlerCallback = new SourceListCallback(){
         public void callback(int contentType, String filename)
         {
-            if(contentType == ContentListHandler.CONTENT_TYPE_FILESYSTEM)
+            if(contentType == ContentViewHandler.CONTENT_TYPE_FILESYSTEM)
             {
-                mainlisthandler.setContentSource("/mnt/sdcard", contentType);
-                mainlisthandler.drawList();
+                viewhandler.setContentSource("/mnt/sdcard", contentType);
+                viewhandler.drawList();
             }
-            else if(contentType == ContentListHandler.CONTENT_TYPE_LIBRARY)
+            else if(contentType == ContentViewHandler.CONTENT_TYPE_LIBRARY)
             {
-                mainlisthandler.setContentSource(LibraryOperations.readLibraryName(filename), ContentListHandler.CONTENT_TYPE_LIBRARY);
-                mainlisthandler.drawList();
+                viewhandler.setContentSource(LibraryOperations.readLibraryName(filename), ContentViewHandler.CONTENT_TYPE_LIBRARY);
+                viewhandler.drawList();
             }
         }
     };
@@ -184,21 +181,12 @@ public class CalcTunesActivity extends Activity
         
         setContentView(R.layout.main);
    
-        startService(new Intent(this, MediaPlayerService.class));
-        bindService(new Intent(this, MediaPlayerService.class), mediaServiceConnection, Context.BIND_AUTO_CREATE);
+        startService(new Intent(this, ContentPlaybackService.class));
+        bindService(new Intent(this, ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
         
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-        
-        buttons = new MediaButtonsHandler(this);
-        buttons.setCallback(buttonsCallback);
-          	
-        mainlisthandler = new ContentListHandler(this, mainlist);
-    	mainlisthandler.setCallback(mainlisthandlerCallback);
-
-    	sourcelisthandler = new SourceListHandler(this, sourcelist);
-    	sourcelisthandler.setCallback(sourcelisthandlerCallback);
     }
     
     public void onConfigurationChanged(Configuration newConfig)
@@ -224,7 +212,11 @@ public class CalcTunesActivity extends Activity
                 break;
                 
             case R.id.exitApplication:
-                this.finish();
+                Exit();
+                break;
+            
+            case R.id.minimizeApplication:
+                Minimize();
                 break;
                 
             case R.id.collapseSidebar:
@@ -237,7 +229,8 @@ public class CalcTunesActivity extends Activity
         }
         return true;
     }
-        
+    
+    //Process result from library builder activity
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if(resultCode == Activity.RESULT_OK)
@@ -339,20 +332,23 @@ public class CalcTunesActivity extends Activity
     
     public void updateGuiElements()
     {
+        buttons = new MediaButtonsHandler(this);
+        buttons.setCallback(buttonsCallback);
+            
+        viewhandler = new ContentViewHandler(this, mainlist, playbackservice);
+        viewhandler.setCallback(mainlisthandlerCallback);
+
+        sourcelisthandler = new SourceListHandler(this, sourcelist);
+        sourcelisthandler.setCallback(sourcelisthandlerCallback);
+        
         artisttext = (TextView) findViewById(R.id.text_artistname);
         albumtext = (TextView) findViewById(R.id.text_albumname);
         tracktext = (TextView) findViewById(R.id.text_trackname);
         trackyear = (TextView) findViewById(R.id.text_trackyear);
         albumartview = (ImageView) findViewById(R.id.imageAlbumArt);
         
-        artisttext.setText(mediaservice.current_artist);
-        albumtext.setText(mediaservice.current_album);
-        tracktext.setText(mediaservice.current_title);
-        trackyear.setText(mediaservice.current_year);
-        albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaservice.current_artist, mediaservice.current_album, this));
-        
         trackseek = (SeekBar) findViewById(R.id.seekBar_track);
-        trackseekhandler = new SeekHandler(trackseek, mediaservice);
+        trackseekhandler = new SeekHandler(trackseek, playbackservice);
         
         sourcelistframe = findViewById(R.id.sourceListFrame);
         sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
@@ -360,76 +356,57 @@ public class CalcTunesActivity extends Activity
         sourcelisthandler.updateList();
         
         registerForContextMenu(sourcelist);
+        
         if(sidebarHidden)
         {
             sourcelistframe.setVisibility(View.GONE);
         }
         
         mainlist = (ListView) findViewById(R.id.libraryListView);
-        mainlisthandler.setListView(mainlist);
+        viewhandler.setListView(mainlist);
         updateInterfaceColor(interfaceColor);
-        mainlisthandler.drawList();
-    }
-    
-    public void media_initialize(String filename)
-    {	
-            mediaservice.stopPlayback();
-            mediaservice.initialize(filename);
-			artisttext.setText(mediaservice.current_artist);
-			albumtext.setText(mediaservice.current_album);
-			tracktext.setText(mediaservice.current_title);
-			trackyear.setText(mediaservice.current_year);
-			albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(mediaservice.current_artist, mediaservice.current_album, this));
+        viewhandler.drawList();
     }
    
+    public void Exit()
+    {
+        trackseekhandler.pause();
+        playbackservice.StopPlayback();
+        unbindService(playbackserviceConnection);
+        stopService(new Intent(this, ContentPlaybackService.class));
+        finish();
+    }
+    
+    public void Minimize()
+    {
+        finish();
+    }
+    
     public void ButtonStopClick(View view)
     {
-        mainlisthandler.StopNotify();
-    	mediaservice.stopPlayback();
+    	playbackservice.StopPlayback();
     }
     
     public void ButtonPlayPauseClick(View view)
     {
-        if(mediaservice.isPlaying())
+        if(playbackservice.isPlaying())
         {
-            mediaservice.pausePlayback();
+            playbackservice.PausePlayback();
         }
-        else if(mediaservice.prepared)
+        else
         {
-            mediaservice.startPlayback();
+            playbackservice.StartPlayback();
         }
     }
     
     public void ButtonNextClick(View view)
     {
-        mediaservice.stopPlayback();
-        String nextFile = mainlisthandler.NextTrack();
-        if(nextFile != null)
-        {
-            media_initialize(nextFile);
-            mediaservice.startPlayback();
-        }
-        else
-        {
-            mainlisthandler.StopNotify();
-            mediaservice.stopPlayback();
-        }
+        playbackservice.NextTrack();
     }
     
     public void ButtonPrevClick(View view)
     {
-        mediaservice.stopPlayback();
-        String prevFile = mainlisthandler.PrevTrack();
-        if(prevFile != null)
-        {
-            media_initialize(prevFile);
-            mediaservice.startPlayback();
-        }
-        else
-        {
-            mainlisthandler.StopNotify();
-            mediaservice.stopPlayback();
-        }
+        playbackservice.PrevTrack();
     }
     
     public void updateInterfaceColor(int color)
@@ -440,7 +417,7 @@ public class CalcTunesActivity extends Activity
         sourcelisthandler.setInterfaceColor(color);
         back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         findViewById(R.id.lower_frame).setBackgroundDrawable(back);
-        mainlisthandler.setHighlightColor(color);
+        viewhandler.setHighlightColor(color);
         trackseekhandler.setInterfaceColor(color);
     }
     

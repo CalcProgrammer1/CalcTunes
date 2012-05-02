@@ -16,16 +16,16 @@ import android.widget.SeekBar;
 public class SeekHandler implements Runnable
 {
     SeekBar sb;
-    MediaPlayerService mp;
+    ContentPlaybackService mp;
     Thread t;
     boolean running = false;
     boolean touch = false;
-    public SeekHandler(SeekBar seekb, MediaPlayerService mediap)
+    public SeekHandler(SeekBar seekb, ContentPlaybackService playbackservice)
     {
         updateSeekBar(seekb);
-        Log.d("SeekHandler", ""+mediap);
+        Log.d("SeekHandler", ""+playbackservice);
         Log.d("SeekHandler", ""+seekb);
-        mp = mediap;
+        mp = playbackservice;
         sb = seekb;
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -33,7 +33,7 @@ public class SeekHandler implements Runnable
             {
                 if(mp != null)
                 {
-                    mp.seekPlayback(sb.getProgress());
+                    mp.SeekPlayback(sb.getProgress());
                 }
                 touch = false;
             }
@@ -50,9 +50,9 @@ public class SeekHandler implements Runnable
         resume();
     }
     
-    public void updateMediaPlayer(MediaPlayerService mediap)
+    public void updateMediaPlayer(ContentPlaybackService playbackservice)
     {
-        mp = mediap;
+        mp = playbackservice;
     }
     
     public void setInterfaceColor(int color)
@@ -104,8 +104,8 @@ public class SeekHandler implements Runnable
                 {
                     if(!touch)
                     {
-                        sb.setMax(mp.getDuration());
-                        int currentPosition = mp.getCurrentPosition();
+                        sb.setMax(mp.NowPlayingDuration());
+                        int currentPosition = mp.NowPlayingPosition();
                         sb.setProgress(currentPosition);
                         Thread.sleep(250);
                     }
@@ -122,14 +122,6 @@ public class SeekHandler implements Runnable
     public void pause()
     {
         running = false;
-        while(true)
-        {
-            try
-            {
-                t.join();
-            } catch (Exception e){}
-            break;
-        }
         t = null;
     }
     

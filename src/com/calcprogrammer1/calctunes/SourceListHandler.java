@@ -70,14 +70,14 @@ public class SourceListHandler
                 switch(selectedGroup)
                 {
                     case SourceListAdapter.SOURCE_GROUP_LIBRARY:
-                        cb.callback(ContentListHandler.CONTENT_TYPE_LIBRARY, libraryList.get(selectedChild).filename);
+                        cb.callback(ContentPlaybackService.CONTENT_TYPE_LIBRARY, libraryList.get(selectedChild).filename);
                         break;
                         
                     case SourceListAdapter.SOURCE_GROUP_PLAYLIST:
                         break;
                         
                     case SourceListAdapter.SOURCE_GROUP_SYSTEM:
-                        cb.callback(ContentListHandler.CONTENT_TYPE_FILESYSTEM, null);
+                        cb.callback(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, null);
                         break;
                 }
                 return true;

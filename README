@@ -30,9 +30,14 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.40 Alpha (4/29/2012)
+Current Version - Version 0.41 Alpha (4/29/2012)
 ---------------
-	- Beginning to implement a background service to handle audio playback.  The system now uses a Service to run the audio
-	backend, but the current library state tracking is done in the main Activity still.  This functionality needs to be
-	moved into the Service as well to make the system retain its state after the UI is closed and playback is continuing
-	in the background.  The "Add Library" button in the menu works now as well.
+	- Implemented a full backend service for playback content management.  This service takes a library cursor or filesystem
+	file from the view handler that is now responsible for the main ListView.  The playback service then opens a MediaPlayer
+	Handler to play the files and handles media callbacks to increment to the next track.  It provides a callback interface
+	for media information updates which is used to set the information TextViews and Album Art View when media playback info
+	changes.  The Seekbar handler was updated to support this new playback service.
+	- Implemented an exit and minimize function.  The exit function terminates the playback service and closes everything,
+	while the minimize function only closes the Activity, leaving the playback service active to keep playing music.  The
+	service is reconnected when the Activity is opened again, and the Now Playing bar automatically fills in with the Now
+	Playing track data from the Service, resuming control over the playback.

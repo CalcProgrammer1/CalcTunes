@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.calcprogrammer1.calctunes"
       android:versionCode="0"
-      android:versionName="0.40">
+      android:versionName="0.41">
     <uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -26,7 +26,7 @@
 		    	  android:configChanges="keyboardHidden|orientation">
 		</activity>
 		
-		<service android:name="com.calcprogrammer1.calctunes.MediaPlayerService" />
+		<service android:name="com.calcprogrammer1.calctunes.ContentPlaybackService" />
 				
 		<receiver android:name="RemoteControlReceiver">
     		<intent-filter>

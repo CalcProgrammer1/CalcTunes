@@ -1,5 +1,11 @@
 Release History
 ---------------
+Version 0.40 Alpha (4/29/2012)
+	- Beginning to implement a background service to handle audio playback.  The system now uses a Service to run the audio
+	backend, but the current library state tracking is done in the main Activity still.  This functionality needs to be
+	moved into the Service as well to make the system retain its state after the UI is closed and playback is continuing
+	in the background.  The "Add Library" button in the menu works now as well.
+
 Version 0.39 Alpha (2/28/2012)
 	- Disabled default title bar, started work on a new custom title/menu bar that will have icons and replace the context
 	menu for Android 3.0+ devices.  2.x devices will still have the context menu but will also have the new menu bar.

@@ -11,4 +11,7 @@
     <item android:id="@+id/exitApplication"
         android:title="Exit"
         android:icon="@drawable/ic_menu_close_clear_cancel" />
+    <item android:id="@+id/minimizeApplication"
+        android:title="Minimize"
+        android:icon="@drawable/ic_menu_close_clear_cancel" />
 </menu>
