@@ -8,11 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-interface ContentViewCallback
-{
-    void callback(String file);
-}
-
 public class ContentViewHandler
 {
     //Content Types
@@ -66,11 +61,6 @@ public class ContentViewHandler
     public void setListView(ListView lv)
     {
         contentList = lv;
-    }
-    
-    public void setCallback(ContentViewCallback callback)
-    {
-        //cb = callback;
     }
     
     //Set Content Source
@@ -145,9 +135,7 @@ public class ContentViewHandler
                 playbackservice.SetPlaybackContentSource(CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0, null);
 
                 fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
-                fileAdapter.notifyDataSetChanged();
-                //cb.callback(nowPlayingFile);
-                
+                fileAdapter.notifyDataSetChanged();                
             }
         }
         else if(contentViewMode == CONTENT_VIEW_LIBRARY_ALL)
@@ -157,8 +145,6 @@ public class ContentViewHandler
             
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.notifyDataSetChanged();
-                        
-            //cb.callback(nowPlayingFile);
         }
     }
     

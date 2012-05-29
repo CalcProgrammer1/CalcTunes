@@ -60,13 +60,14 @@ public class CalcTunesActivity extends Activity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     private ContentPlaybackService playbackservice;
-    
+    private Boolean playbackservice_bound = false;
     private ServiceConnection playbackserviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
-            updateGuiElements();
+            playbackservice_bound = true;
+            createGuiElements();
             sourcelisthandler.refreshLibraryList();
             playbackservice.setCallback(playbackCallback);
         }
@@ -75,6 +76,7 @@ public class CalcTunesActivity extends Activity
         public void onServiceDisconnected(ComponentName name)
         {
             playbackservice = null;
+            playbackservice_bound = false;
         }    
     };
     
@@ -126,13 +128,6 @@ public class CalcTunesActivity extends Activity
         
     };
     
-    ContentViewCallback mainlisthandlerCallback = new ContentViewCallback(){
-        public void callback(String file)
-        {
-            
-        }
-    };
-    
     SourceListCallback sourcelisthandlerCallback = new SourceListCallback(){
         public void callback(int contentType, String filename)
         {
@@ -180,9 +175,9 @@ public class CalcTunesActivity extends Activity
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         setContentView(R.layout.main);
-   
-        startService(new Intent(this, ContentPlaybackService.class));
-        bindService(new Intent(this, ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
+        
+      	startService(new Intent(this, ContentPlaybackService.class));
+       	bindService(new Intent(this, ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
         
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
@@ -193,7 +188,12 @@ public class CalcTunesActivity extends Activity
     {
         super.onConfigurationChanged(newConfig);
         setContentView(R.layout.main);
-        updateGuiElements();
+        if(playbackservice_bound)
+        {
+            updateGuiElements();
+            sourcelisthandler.refreshLibraryList();
+            playbackservice.setCallback(playbackCallback);
+        }
     }
     
     public boolean onCreateOptionsMenu(Menu menu)
@@ -329,18 +329,21 @@ public class CalcTunesActivity extends Activity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    public void updateGuiElements()
+    public void createGuiElements()
     {
         buttons = new MediaButtonsHandler(this);
         buttons.setCallback(buttonsCallback);
-            
-        viewhandler = new ContentViewHandler(this, mainlist, playbackservice);
-        viewhandler.setCallback(mainlisthandlerCallback);
+        
+    	viewhandler = new ContentViewHandler(this, mainlist, playbackservice);
 
         sourcelisthandler = new SourceListHandler(this, sourcelist);
         sourcelisthandler.setCallback(sourcelisthandlerCallback);
         
+        updateGuiElements();
+    }
+    
+    public void updateGuiElements()
+    {        
         artisttext = (TextView) findViewById(R.id.text_artistname);
         albumtext = (TextView) findViewById(R.id.text_albumname);
         tracktext = (TextView) findViewById(R.id.text_trackname);
