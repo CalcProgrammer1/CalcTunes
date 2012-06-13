@@ -1,5 +1,7 @@
 package com.calcprogrammer1.calctunes;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.SeekBar;
 
 public class SeekHandler implements Runnable
@@ -18,10 +21,12 @@ public class SeekHandler implements Runnable
     SeekBar sb;
     ContentPlaybackService mp;
     Thread t;
+    Resources res;
     boolean running = false;
     boolean touch = false;
-    public SeekHandler(SeekBar seekb, ContentPlaybackService playbackservice)
+    public SeekHandler(SeekBar seekb, ContentPlaybackService playbackservice, Context con)
     {
+        res = con.getResources();
         updateSeekBar(seekb);
         Log.d("SeekHandler", ""+playbackservice);
         Log.d("SeekHandler", ""+seekb);
@@ -55,16 +60,23 @@ public class SeekHandler implements Runnable
         mp = playbackservice;
     }
     
+    private int px_to_dip(int x)
+    {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, x, res.getDisplayMetrics());
+    }
+    
     public void setInterfaceColor(int color)
     {
-        RadialGradient thumbgr = new RadialGradient(20, 20, 20, Color.BLACK, color, android.graphics.Shader.TileMode.CLAMP);
-        Bitmap thumbbm = Bitmap.createBitmap(20, 20, Bitmap.Config.ARGB_8888);
+        int dip10 = px_to_dip(10);
+        int dip20 = px_to_dip(20);
+        RadialGradient thumbgr = new RadialGradient(dip20, dip20, dip20, Color.BLACK, color, android.graphics.Shader.TileMode.CLAMP);
+        Bitmap thumbbm = Bitmap.createBitmap(dip20, dip20, Bitmap.Config.ARGB_8888);
         Canvas thumb = new Canvas(thumbbm);
         Paint  thumbp = new Paint(Paint.ANTI_ALIAS_FLAG);
         thumbp.setColor(Color.BLACK);
-        thumb.drawCircle(10, 10, 10, thumbp);
+        thumb.drawCircle(dip10, dip10, dip10, thumbp);
         thumbp.setShader(thumbgr);
-        thumb.drawCircle(10, 10, 8, thumbp);
+        thumb.drawCircle(dip10, dip10, px_to_dip(8), thumbp);
         
         BitmapDrawable thumbdraw = new BitmapDrawable(thumbbm);
         thumbdraw.setBounds(new Rect(0, 0, thumbdraw.getIntrinsicWidth(), thumbdraw.getIntrinsicHeight()));
@@ -74,12 +86,12 @@ public class SeekHandler implements Runnable
         int colors[] = {Color.BLACK, Color.BLACK, color, Color.BLACK, Color.BLACK};
         GradientDrawable progback1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         progback1.setShape(GradientDrawable.RECTANGLE);
-        progback1.setCornerRadius(10);
+        progback1.setCornerRadius(dip10);
         
         int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
         GradientDrawable progback2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
         progback2.setShape(GradientDrawable.RECTANGLE);
-        progback2.setCornerRadius(10);
+        progback2.setCornerRadius(dip10);
         
         LayerDrawable prog = new LayerDrawable(new Drawable[] {progback1, progback2});
         

@@ -1,5 +1,8 @@
 Release History
 ---------------
+Version 0.42 Alpha (5/28/2012)
+	- Fixed screen rotation being broken in 0.41 Alpha update
+	
 Version 0.41 Alpha (5/2/2012)
 	- Implemented a full backend service for playback content management.  This service takes a library cursor or filesystem
 	file from the view handler that is now responsible for the main ListView.  The playback service then opens a MediaPlayer

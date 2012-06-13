@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,10 +22,15 @@ public class LibraryBuilderActivity extends Activity
     ArrayList<String> libraryFolders;
     Intent i;
     
-    public void onCreate(Bundle savedInstanceState)
+   public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
         setContentView(R.layout.librarybuilder);
+        
         librarylist = (ListView) findViewById(R.id.libraryListView);
         libNameInput = (EditText) findViewById(R.id.libNameInput);
         
@@ -126,8 +132,19 @@ public class LibraryBuilderActivity extends Activity
         }
         else
         {
-            i.putStringArrayListExtra("libraryFolders", libraryFolders);
-            i.putExtra("libraryName", libNameInput.getText().toString());
+            String libraryName = libNameInput.getText().toString();
+            
+            //if(data.getStringExtra("EditFilename") != null)
+            //{
+              //  File deleteFile = new File(data.getStringExtra("EditFilename"));
+              //  deleteFile.delete();
+            //}
+            
+            LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
+
+            LibraryScannerTask task = new LibraryScannerTask(this);
+            task.execute(libraryName);
+            
             setResult(Activity.RESULT_OK, i);
             finish();
         }

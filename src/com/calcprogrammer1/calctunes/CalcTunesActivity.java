@@ -10,7 +10,9 @@
 package com.calcprogrammer1.calctunes;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.*;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.*;
@@ -23,8 +25,8 @@ import android.graphics.drawable.GradientDrawable;
 
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.LibraryOperations;
+
 import java.io.File;
-import java.util.ArrayList;
 
 public class CalcTunesActivity extends Activity
 {
@@ -52,6 +54,7 @@ public class CalcTunesActivity extends Activity
 
     MediaButtonsHandler buttons;
     
+    String openFile = null;
     int interfaceColor;
     boolean sidebarHidden = false;
     
@@ -70,6 +73,11 @@ public class CalcTunesActivity extends Activity
             createGuiElements();
             sourcelisthandler.refreshLibraryList();
             playbackservice.setCallback(playbackCallback);
+            if(openFile != null)
+            {
+                playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, openFile, 0, null);
+                playbackservice.StartPlayback();
+            }
         }
 
         @Override
@@ -144,14 +152,6 @@ public class CalcTunesActivity extends Activity
         }
     };
     
-    LibraryScannerTaskCallback scanCompleteCallback = new LibraryScannerTaskCallback(){
-        public void onScanComplete()
-        {
-            updateGuiElements();
-            sourcelisthandler.refreshLibraryList();
-        }        
-    };
-    
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
@@ -174,11 +174,28 @@ public class CalcTunesActivity extends Activity
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         
+        //Set content view to main layout
         setContentView(R.layout.main);
         
+        //Check if CalcTunes was opened from a file browser, and if so, open the file
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if(action.equals(Intent.ACTION_VIEW))
+        {
+            try{
+                
+                Uri data = intent.getData();
+                openFile = data.getPath();
+                Log.d("asdf", "file: " + openFile);
+                
+            }catch(Exception e){}
+        }
+        
+        //Start or Reconnect to the CalcTunes Playback Service
       	startService(new Intent(this, ContentPlaybackService.class));
        	bindService(new Intent(this, ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
         
+       	//Get the application preferences
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
@@ -237,22 +254,6 @@ public class CalcTunesActivity extends Activity
         {
             if(requestCode == 1)
             {
-                ArrayList<String> libraryFolders = data.getStringArrayListExtra("libraryFolders");
-                
-                if(data.getStringExtra("EditFilename") != null)
-                {
-                    File deleteFile = new File(data.getStringExtra("EditFilename"));
-                    deleteFile.delete();
-                }
-                
-                String libraryName = data.getStringExtra("libraryName");
-                
-                LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
-    
-                LibraryScannerTask task = new LibraryScannerTask(this);
-                task.setCallback(scanCompleteCallback);
-                task.execute(libraryName);
-
                 sourcelisthandler.refreshLibraryList();
             }
         }
@@ -318,7 +319,6 @@ public class CalcTunesActivity extends Activity
             
             case 3:
                 LibraryScannerTask task = new LibraryScannerTask(this);
-                task.setCallback(scanCompleteCallback);
                 task.execute(sourcelisthandler.getLibraryList().get(id).name);
                 break;
         }
@@ -351,7 +351,7 @@ public class CalcTunesActivity extends Activity
         albumartview = (ImageView) findViewById(R.id.imageAlbumArt);
         
         trackseek = (SeekBar) findViewById(R.id.seekBar_track);
-        trackseekhandler = new SeekHandler(trackseek, playbackservice);
+        trackseekhandler = new SeekHandler(trackseek, playbackservice, this);
         
         sourcelistframe = findViewById(R.id.sourceListFrame);
         sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
@@ -410,6 +410,13 @@ public class CalcTunesActivity extends Activity
     public void ButtonPrevClick(View view)
     {
         playbackservice.PrevTrack();
+    }
+    
+    public void ButtonInfoClick(View view)
+    {
+        Intent intent = new Intent(getBaseContext(), CalcTunesMediaInfoActivity.class);
+        intent.putExtra("TrackFilename", playbackservice.NowPlayingFile());
+        startActivity(intent);
     }
     
     public void updateInterfaceColor(int color)

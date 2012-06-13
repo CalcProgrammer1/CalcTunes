@@ -30,6 +30,8 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.42 Alpha (5/28/2012)
+Current Version - Version 0.43 Alpha (6/12/2012)
 ---------------
-	- Fixed screen rotation being broken in 0.41 Alpha update
+	- Started an information view screen that shows album art, format, and tag info
+	- Cleaned up library builder activity, added new title bar design to it
+	- Added intent filter for opening files with CalcTunes from file manager/browser/etc.
