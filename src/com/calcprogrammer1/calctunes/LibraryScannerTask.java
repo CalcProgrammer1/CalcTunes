@@ -84,7 +84,6 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
         long when = System.currentTimeMillis();
         
         notificationView = new RemoteViews(con.getPackageName(), R.layout.libraryupdatingnotification);
-        notificationView.setImageViewResource(R.id.libupdatenotification_image, R.drawable.icon);
         notificationView.setTextViewText(R.id.libupdatenotification_title, "CalcTunes: Updating \"" + libraryName + "\" - 0/" + length);
         notificationView.setProgressBar(R.id.libupdatenotification_progress, length, 0, false);
         
@@ -99,7 +98,7 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
     
     private void updateNotification(int length, int progress)
     {
-        notificationView.setTextViewText(R.id.libupdatenotification_title, "CalcTunes: Updating \"" + libraryName + "\" - " + progress + "/" + length);
+        notificationView.setTextViewText(R.id.libupdatenotification_title, "Updating \"" + libraryName + "\" - " + progress + "/" + length);
         notificationView.setProgressBar(R.id.libupdatenotification_progress, length, progress, false);
         notificationManager.notify(notificationId, notification);
     }

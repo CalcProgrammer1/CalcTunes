@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +73,14 @@ public class SourceListAdapter extends BaseExpandableListAdapter
 
         if(groupPosition == selectedGroup && childPosition == selectedChild)
         {
-            convertView.setBackgroundColor(interfaceColor);
+            int colors1[] = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
+            GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors1);
+            back1.setShape(GradientDrawable.RECTANGLE);
+            int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
+            GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
+            back2.setShape(GradientDrawable.RECTANGLE);
+            LayerDrawable back = new LayerDrawable(new Drawable[] {back1, back2});
+            convertView.setBackgroundDrawable(back);
         }
         else
         {

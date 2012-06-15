@@ -26,6 +26,7 @@
 	</LinearLayout>
 
 	<View
+	    android:id="@+id/title_border"
 	    android:layout_width="match_parent"
 	    android:layout_height="1px"
 	    android:background="#555" >

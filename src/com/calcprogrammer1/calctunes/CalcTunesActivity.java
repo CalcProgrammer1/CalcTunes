@@ -31,6 +31,17 @@ import java.io.File;
 public class CalcTunesActivity extends Activity
 {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Static Menu Operations/////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    final int CONTEXT_MENU_NEW_LIBRARY     = 0;
+    final int CONTEXT_MENU_EDIT_LIBRARY    = 1;
+    final int CONTEXT_MENU_DELETE_LIBRARY  = 2;
+    final int CONTEXT_MENU_RESCAN_LIBRARY  = 3;
+    final int CONTEXT_MENU_NEW_PLAYLIST    = 4;
+    final int CONTEXT_MENU_RENAME_PLAYLIST = 5;
+    final int CONTEXT_MENU_DELETE_PLAYLIST = 6;
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	TextView artisttext;
@@ -229,11 +240,11 @@ public class CalcTunesActivity extends Activity
                 break;
                 
             case R.id.exitApplication:
-                Exit();
+                ButtonExitClick(null);
                 break;
             
             case R.id.minimizeApplication:
-                Minimize();
+                ButtonMinimizeClick(null);
                 break;
                 
             case R.id.collapseSidebar:
@@ -241,7 +252,7 @@ public class CalcTunesActivity extends Activity
                 break;
                 
             case R.id.openSettings:
-                startActivity(new Intent(this, CalcTunesSettingsActivity.class));
+                ButtonSettingsClick(null);
                 break;
         }
         return true;
@@ -284,17 +295,48 @@ public class CalcTunesActivity extends Activity
         return false;       
     }
     
+    //Function for creating a context (right click/long tap) menu for various UI elements
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
+        //Context menu for source list broken down into different menu categories
         if(v == findViewById(R.id.sourceListView))
         {
-            menu.add(1, 1, Menu.NONE, "Edit Library");
-            menu.add(1, 2, Menu.NONE, "Delete Library");
-            menu.add(1, 3, Menu.NONE, "Rescan Library");
+            ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+            int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+            int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+            int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+            
+            //Type=0 is group, Type=1 is child
+            if(type == 0)
+            {
+                if(group == 0) //Libraries
+                {
+                    menu.add(1, CONTEXT_MENU_NEW_LIBRARY, Menu.NONE, "New Library");
+                }
+                else if(group == 1) //Playlists
+                {
+                    menu.add(1, CONTEXT_MENU_NEW_PLAYLIST, Menu.NONE, "New Playlist");
+                }
+            }
+            else if(type == 1)
+            {
+                if(group == 0)
+                {
+                    menu.add(1, CONTEXT_MENU_EDIT_LIBRARY,    Menu.NONE, "Edit Library");
+                    menu.add(1, CONTEXT_MENU_DELETE_LIBRARY,  Menu.NONE, "Delete Library");
+                    menu.add(1, CONTEXT_MENU_RESCAN_LIBRARY,  Menu.NONE, "Rescan Library");
+                }
+                else if(group == 1)
+                {
+                    menu.add(1, CONTEXT_MENU_RENAME_PLAYLIST, Menu.NONE, "Rename Playlist");
+                    menu.add(1, CONTEXT_MENU_DELETE_PLAYLIST, Menu.NONE, "Delete Playlist");
+                }
+            }
         }
     }
     
+    //Function to handle all context menu events
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
@@ -303,21 +345,25 @@ public class CalcTunesActivity extends Activity
 
         switch(item.getItemId())
         {
-            case 1:
+            case CONTEXT_MENU_NEW_LIBRARY:
+                ButtonAddClick(null);
+                break;
+                
+            case CONTEXT_MENU_EDIT_LIBRARY:
                 Intent intent = new Intent(getBaseContext(), LibraryBuilderActivity.class);
                 intent.putExtra("EditFilename", sourcelisthandler.getLibraryList().get(id).filename);
                 intent.putExtra("EditName", sourcelisthandler.getLibraryList().get(id).name);
                 startActivityForResult(intent, 1);
                 break;
             
-            case 2:
+            case CONTEXT_MENU_DELETE_LIBRARY:
                 File libraryToDelete = new File(sourcelisthandler.getLibraryList().get(id).filename);
                 libraryToDelete.delete();
                 sourcelisthandler.refreshLibraryList();
                 Toast.makeText(this, "Library Deleted", Toast.LENGTH_SHORT).show();
                 break;
             
-            case 3:
+            case CONTEXT_MENU_RESCAN_LIBRARY:
                 LibraryScannerTask task = new LibraryScannerTask(this);
                 task.execute(sourcelisthandler.getLibraryList().get(id).name);
                 break;
@@ -363,6 +409,12 @@ public class CalcTunesActivity extends Activity
         if(sidebarHidden)
         {
             sourcelistframe.setVisibility(View.GONE);
+        }
+        
+        //If ICS, make the title border match the ICS Holo theme
+        if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)
+        {
+            findViewById(R.id.title_border).setBackgroundResource(android.R.color.holo_blue_light);
         }
         
         mainlist = (ListView) findViewById(R.id.libraryListView);
@@ -445,6 +497,21 @@ public class CalcTunesActivity extends Activity
         }  
     }
     
+    public void ButtonSettingsClick(View view)
+    {
+        startActivity(new Intent(this, CalcTunesSettingsActivity.class));
+    }
+    
+    public void ButtonMinimizeClick(View view)
+    {
+        Minimize();
+    }
+    
+    public void ButtonExitClick(View view)
+    {
+        Exit();
+    }
+
     public void ButtonAddClick(View view)
     {
         startActivityForResult(new Intent(this, LibraryBuilderActivity.class), 1);

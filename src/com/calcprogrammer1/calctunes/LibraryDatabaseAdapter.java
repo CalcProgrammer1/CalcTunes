@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -282,9 +284,13 @@ public class LibraryDatabaseAdapter extends BaseAdapter
         
         if(path.equals(now_playing))
         {
-            int[] colors = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
-            GradientDrawable back = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
-            back.setShape(GradientDrawable.RECTANGLE);
+            int colors1[] = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
+            GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors1);
+            back1.setShape(GradientDrawable.RECTANGLE);
+            int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
+            GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
+            back2.setShape(GradientDrawable.RECTANGLE);
+            LayerDrawable back = new LayerDrawable(new Drawable[] {back1, back2});
             view.findViewById(R.id.librarylistsong_frame).setBackgroundDrawable(back);
         }
         else

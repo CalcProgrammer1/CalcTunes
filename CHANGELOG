@@ -1,5 +1,10 @@
 Release History
 ---------------
+Version 0.43 Alpha (6/12/2012)
+	- Started an information view screen that shows album art, format, and tag info
+	- Cleaned up library builder activity, added new title bar design to it
+	- Added intent filter for opening files with CalcTunes from file manager/browser/etc.
+	
 Version 0.42 Alpha (5/28/2012)
 	- Fixed screen rotation being broken in 0.41 Alpha update
 	

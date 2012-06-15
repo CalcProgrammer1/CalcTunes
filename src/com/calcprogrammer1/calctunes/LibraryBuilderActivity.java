@@ -34,6 +34,12 @@ public class LibraryBuilderActivity extends Activity
         librarylist = (ListView) findViewById(R.id.libraryListView);
         libNameInput = (EditText) findViewById(R.id.libNameInput);
         
+        //If ICS, make the title border match the ICS Holo theme
+        if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)
+        {
+            findViewById(R.id.title_border).setBackgroundResource(android.R.color.holo_blue_light);
+        }
+        
         i = getIntent();
         Bundle extras = i.getExtras();
         libraryFolders = new ArrayList<String>();

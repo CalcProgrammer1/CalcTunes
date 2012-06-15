@@ -10,8 +10,8 @@
         android:title="Show/Hide Sidebar" />
     <item android:id="@+id/exitApplication"
         android:title="Exit"
-        android:icon="@drawable/ic_menu_close_clear_cancel" />
+        android:icon="@drawable/icon_exit" />
     <item android:id="@+id/minimizeApplication"
         android:title="Minimize"
-        android:icon="@drawable/ic_menu_close_clear_cancel" />
+        android:icon="@drawable/icon_minimize" />
 </menu>

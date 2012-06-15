@@ -1,10 +1,18 @@
 package com.calcprogrammer1.calctunes;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
+import android.widget.RemoteViews;
 
 interface ContentPlaybackCallback
 {
@@ -58,8 +66,17 @@ public class ContentPlaybackService extends Service
     
     private ContentPlaybackCallback cb;
     
+    //Now Playing Notification
+    private RemoteViews notificationView;
+    private Notification notification;
+    private NotificationManager notificationManager;
+    private static int notificationId = 2;
+    
+    //Application Settings
+    SharedPreferences appSettings;
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////Media Player Callback Functions////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////Callback Functions/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     MediaPlayerHandlerCallback mediaplayerCallback = new MediaPlayerHandlerCallback(){
@@ -70,6 +87,14 @@ public class ContentPlaybackService extends Service
 
         public void onStop()
         {
+        }
+    };
+    
+    OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
+        public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
+        {
+            appSettings = arg0;
+            appSettings.getInt("InterfaceColor", Color.DKGRAY);
         }
     };
     
@@ -152,6 +177,8 @@ public class ContentPlaybackService extends Service
         mediaplayer.stopPlayback();
         mediaplayer.initialize(nowPlayingFile);
         
+        updateNotification();
+        
         if(cb != null)
         {
             cb.onMediaInfoUpdated();
@@ -184,7 +211,11 @@ public class ContentPlaybackService extends Service
             playbackCursor = null;
             }
         }
+        
         mediaplayer.stopPlayback();
+        
+        updateNotification();
+        
         if(cb != null)
         {
             cb.onMediaInfoUpdated();
@@ -216,6 +247,8 @@ public class ContentPlaybackService extends Service
             mediaplayer.startPlayback();
         }
 
+        updateNotification();
+        
         if(cb != null)
         {
             cb.onMediaInfoUpdated();
@@ -247,12 +280,34 @@ public class ContentPlaybackService extends Service
             mediaplayer.startPlayback();
         }
 
+        updateNotification();
+        
         if(cb != null)
         {
             cb.onMediaInfoUpdated();
         }
     }
 
+    @SuppressWarnings("deprecation")
+    private void initializeNotification()
+    {
+        notification = new Notification(R.drawable.icon, "CalcTunes Playback Service Started", System.currentTimeMillis());
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: ", PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationId, notification);
+    }
+    
+    private void updateNotification()
+    {
+        notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: " + mediaplayer.current_title, PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
+        notificationManager.notify(notificationId, notification);
+    }
+    
+    private void endNotification()
+    {
+        notificationManager.cancel(notificationId);
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Service Functions//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,6 +327,18 @@ public class ContentPlaybackService extends Service
     {
         mediaplayer = new MediaPlayerHandler();
         mediaplayer.setCallback(mediaplayerCallback);
+        
+        //Get the application preferences
+        appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+        appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
+        initializeNotification();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+        //Stop the notification
+        endNotification();
     }
     
     @Override
