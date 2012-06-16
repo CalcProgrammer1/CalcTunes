@@ -5,15 +5,21 @@ import com.example.android.apis.graphics.ColorPickerDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.widget.Toast;
 
-public class CalcTunesSettingsActivity extends PreferenceActivity implements ColorPickerDialog.OnColorChangedListener 
+public class CalcTunesSettingsActivity extends PreferenceActivity implements ColorPickerDialog.OnColorChangedListener
 {
     ColorPickerDialog color_picker;
+    SharedPreferences appSettings;
+    SharedPreferences.Editor appSettingsEditor;
     
+    Preference interface_color_pref;
+    CheckBoxPreference system_service_notification_pref;
+    
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -21,16 +27,27 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
         addPreferencesFromResource(R.layout.settingsactivity);
         
         color_picker = new ColorPickerDialog(this, this, Color.BLUE);
+        appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
+        appSettingsEditor = appSettings.edit();
         
-        Preference interface_color_pref = (Preference) findPreference("interface_color");
+        interface_color_pref =             (Preference)         findPreference("interface_color");
+        system_service_notification_pref = (CheckBoxPreference) findPreference("service_notification");
+        
         interface_color_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
             public boolean onPreferenceClick(Preference arg0)
             {
-                Toast.makeText(getBaseContext(), "Stuff Happend", Toast.LENGTH_SHORT).show();
-                
                 color_picker.show();
                 return true;
             } 
+        });
+        
+        system_service_notification_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+            public boolean onPreferenceClick(Preference arg0)
+            {
+                appSettingsEditor.putBoolean("service_notification", system_service_notification_pref.isChecked());
+                appSettingsEditor.commit();
+                return true;
+            }
         });
     }
 

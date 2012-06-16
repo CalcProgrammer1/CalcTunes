@@ -69,6 +69,7 @@ public class CalcTunesMediaInfoActivity extends Activity
         updateGuiElements();
     }
     
+    @SuppressWarnings("deprecation")
     public void updateGuiElements()
     {
         mediaInfoTitle = (TextView) findViewById(R.id.mediaInfoTitle);

@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.RemoteViews;
 
 interface ContentPlaybackCallback
 {
@@ -67,7 +65,6 @@ public class ContentPlaybackService extends Service
     private ContentPlaybackCallback cb;
     
     //Now Playing Notification
-    private RemoteViews notificationView;
     private Notification notification;
     private NotificationManager notificationManager;
     private static int notificationId = 2;
@@ -94,7 +91,15 @@ public class ContentPlaybackService extends Service
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            appSettings.getInt("InterfaceColor", Color.DKGRAY);
+
+            if(appSettings.getBoolean("service_notification", true))
+            {
+                initializeNotification();
+            }
+            else
+            {
+                endNotification();
+            }
         }
     };
     
@@ -298,10 +303,14 @@ public class ContentPlaybackService extends Service
         notificationManager.notify(notificationId, notification);
     }
     
+    @SuppressWarnings("deprecation")
     private void updateNotification()
     {
-        notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: " + mediaplayer.current_title, PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
-        notificationManager.notify(notificationId, notification);
+        if(appSettings.getBoolean("service_notification", true))
+        {
+            notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: " + mediaplayer.current_title, PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
+            notificationManager.notify(notificationId, notification);
+        }
     }
     
     private void endNotification()
@@ -331,7 +340,11 @@ public class ContentPlaybackService extends Service
         //Get the application preferences
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        initializeNotification();
+        
+        if(appSettings.getBoolean("service_notification", true))
+        {
+            initializeNotification();
+        }
     }
     
     @Override

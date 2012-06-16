@@ -22,7 +22,8 @@ public class LibraryBuilderActivity extends Activity
     ArrayList<String> libraryFolders;
     Intent i;
     
-   public void onCreate(Bundle savedInstanceState)
+    @SuppressWarnings("deprecation")
+    public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         
@@ -106,6 +107,7 @@ public class LibraryBuilderActivity extends Activity
         updateFolderList();
     }
     
+    @SuppressWarnings("deprecation")
     public void DoneClick(View view)
     {
         if(libNameInput.getText().toString().equals(""))

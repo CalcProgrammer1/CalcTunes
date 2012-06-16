@@ -14,6 +14,7 @@ interface LosslessMediaCodecHandlerCallback
     public void onCompletion();
 }
 
+@SuppressWarnings("deprecation")
 public class LosslessMediaCodecHandler
 {
     static

@@ -77,6 +77,7 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
         }
     }
     
+    @SuppressWarnings("deprecation")
     private void initializeNotification(int length)
     {
         int icon = R.drawable.icon;

@@ -10,7 +10,6 @@
 package com.calcprogrammer1.calctunes;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.*;
 import android.net.Uri;
 import android.os.Bundle;
@@ -74,7 +73,7 @@ public class CalcTunesActivity extends Activity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     private ContentPlaybackService playbackservice;
-    private Boolean playbackservice_bound = false;
+    private boolean playbackservice_bound = false;
     private ServiceConnection playbackserviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
@@ -187,7 +186,7 @@ public class CalcTunesActivity extends Activity
         
         //Set content view to main layout
         setContentView(R.layout.main);
-        
+
         //Check if CalcTunes was opened from a file browser, and if so, open the file
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -197,7 +196,6 @@ public class CalcTunesActivity extends Activity
                 
                 Uri data = intent.getData();
                 openFile = data.getPath();
-                Log.d("asdf", "file: " + openFile);
                 
             }catch(Exception e){}
         }
@@ -212,6 +210,17 @@ public class CalcTunesActivity extends Activity
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
     }
     
+	@Override
+	public void onDestroy()
+	{
+	    super.onDestroy();
+	    if(playbackservice_bound)
+	    {
+	        unbindService(playbackserviceConnection);
+	    }
+	}
+	
+	@Override
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
@@ -305,7 +314,7 @@ public class CalcTunesActivity extends Activity
             ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
             int type = ExpandableListView.getPackedPositionType(info.packedPosition);
             int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-            int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+            //int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
             
             //Type=0 is group, Type=1 is child
             if(type == 0)
@@ -388,6 +397,7 @@ public class CalcTunesActivity extends Activity
         updateGuiElements();
     }
     
+    @SuppressWarnings("deprecation")
     public void updateGuiElements()
     {        
         artisttext = (TextView) findViewById(R.id.text_artistname);
@@ -428,6 +438,7 @@ public class CalcTunesActivity extends Activity
         trackseekhandler.pause();
         playbackservice.StopPlayback();
         unbindService(playbackserviceConnection);
+        playbackservice_bound = false;
         stopService(new Intent(this, ContentPlaybackService.class));
         finish();
     }

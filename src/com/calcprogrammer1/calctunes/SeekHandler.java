@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.SeekBar;
 
@@ -28,8 +27,7 @@ public class SeekHandler implements Runnable
     {
         res = con.getResources();
         updateSeekBar(seekb);
-        Log.d("SeekHandler", ""+playbackservice);
-        Log.d("SeekHandler", ""+seekb);
+
         mp = playbackservice;
         sb = seekb;
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
@@ -65,6 +63,7 @@ public class SeekHandler implements Runnable
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, x, res.getDisplayMetrics());
     }
     
+    @SuppressWarnings("deprecation")
     public void setInterfaceColor(int color)
     {
         int dip10 = px_to_dip(10);

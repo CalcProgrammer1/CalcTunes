@@ -8,7 +8,18 @@
 		    android:title="Interface Color"
 		    android:summary="Select the interface background color"
 		    android:key="interface_color" />
-		
+				
+	</PreferenceCategory>
+	
+	<PreferenceCategory
+	    android:title="System Settings" >
+	    
+	    <CheckBoxPreference
+		    android:title="Show Ongoing Notification"
+		    android:summary="Show an ongoing notification when background service running"
+		    android:defaultValue="true"
+		    android:key="service_notification" />
+	    
 	</PreferenceCategory>
 
 </PreferenceScreen>
