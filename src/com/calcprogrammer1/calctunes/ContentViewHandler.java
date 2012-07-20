@@ -1,5 +1,8 @@
 package com.calcprogrammer1.calctunes;
 
+import com.calcprogrammer1.calctunes.ContentAdapters.ContentFilesystemAdapter;
+import com.calcprogrammer1.calctunes.ContentAdapters.ContentLibraryDatabaseAdapter;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -45,7 +48,7 @@ public class ContentViewHandler
     //Color
     private int interfaceColor;
     
-    private LibraryDatabaseAdapter   libAdapter;
+    private ContentLibraryDatabaseAdapter   libAdapter;
     private ContentFilesystemAdapter fileAdapter;
     //private ContentViewCallback cb;
     private ContentPlaybackService playbackservice;
@@ -72,7 +75,7 @@ public class ContentViewHandler
             contentViewMode = CONTENT_VIEW_LIBRARY_ALL;
             libraryDatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + contentName + ".db", null);
             viewCursorQuery = "SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;";
-            libAdapter = new LibraryDatabaseAdapter(c, libraryDatabase, viewCursorQuery);
+            libAdapter = new ContentLibraryDatabaseAdapter(c, libraryDatabase, viewCursorQuery);
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.setNowPlayingColor(interfaceColor);
         }

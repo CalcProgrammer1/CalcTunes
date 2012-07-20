@@ -11,23 +11,25 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int dividing_line_color=0x7f040001;
+        public static final int holo_dark_background=0x7f040001;
+        public static final int holo_edge=0x7f040002;
+        public static final int holo_light_background=0x7f040003;
         public static final int interface_color=0x7f040000;
     }
     public static final class drawable {
-        public static final int button_add=0x7f020000;
-        public static final int button_exit=0x7f020001;
-        public static final int button_media_back=0x7f020002;
-        public static final int button_media_forward=0x7f020003;
-        public static final int button_media_playpause=0x7f020004;
-        public static final int button_media_stop=0x7f020005;
-        public static final int button_minimize=0x7f020006;
-        public static final int button_showhide_sidebar=0x7f020007;
-        public static final int ic_menu_preferences=0x7f020008;
-        public static final int icon=0x7f020009;
-        public static final int icon_add=0x7f02000a;
-        public static final int icon_add_hl=0x7f02000b;
-        public static final int icon_android=0x7f02000c;
+        public static final int apollo_holo_dark_pause=0x7f020000;
+        public static final int button_add=0x7f020001;
+        public static final int button_exit=0x7f020002;
+        public static final int button_media_back=0x7f020003;
+        public static final int button_media_forward=0x7f020004;
+        public static final int button_media_playpause=0x7f020005;
+        public static final int button_media_stop=0x7f020006;
+        public static final int button_minimize=0x7f020007;
+        public static final int button_showhide_sidebar=0x7f020008;
+        public static final int ic_menu_preferences=0x7f020009;
+        public static final int icon=0x7f02000a;
+        public static final int icon_add=0x7f02000b;
+        public static final int icon_add_hl=0x7f02000c;
         public static final int icon_exit=0x7f02000d;
         public static final int icon_exit_hl=0x7f02000e;
         public static final int icon_folder=0x7f02000f;
@@ -39,13 +41,15 @@ public final class R {
         public static final int icon_media_forward=0x7f020015;
         public static final int icon_media_forward_hl=0x7f020016;
         public static final int icon_media_playpause=0x7f020017;
-        public static final int icon_media_playpause_hl=0x7f020018;
-        public static final int icon_media_stop=0x7f020019;
-        public static final int icon_media_stop_hl=0x7f02001a;
-        public static final int icon_minimize=0x7f02001b;
-        public static final int icon_minimize_hl=0x7f02001c;
-        public static final int icon_showhide_sidebar=0x7f02001d;
-        public static final int icon_showhide_sidebar_hl=0x7f02001e;
+        public static final int icon_media_playpause_big=0x7f020018;
+        public static final int icon_media_playpause_hl=0x7f020019;
+        public static final int icon_media_stop=0x7f02001a;
+        public static final int icon_media_stop_big=0x7f02001b;
+        public static final int icon_media_stop_hl=0x7f02001c;
+        public static final int icon_minimize=0x7f02001d;
+        public static final int icon_minimize_hl=0x7f02001e;
+        public static final int icon_showhide_sidebar=0x7f02001f;
+        public static final int icon_showhide_sidebar_hl=0x7f020020;
     }
     public static final class id {
         public static final int buttonFrame=0x7f070027;
@@ -105,7 +109,7 @@ public final class R {
         public static final int nextprevFrame=0x7f07002b;
         public static final int openSettings=0x7f070035;
         public static final int player_controls=0x7f070025;
-        public static final int seekBar_track=0x7f070033;
+        public static final int seekBar_track=0x7f070032;
         public static final int sourceListFrame=0x7f070023;
         public static final int sourceListView=0x7f070024;
         public static final int sourcelistentry_icon=0x7f070048;
@@ -118,7 +122,7 @@ public final class R {
         public static final int text_albumname=0x7f070031;
         public static final int text_artistname=0x7f070030;
         public static final int text_trackname=0x7f07002f;
-        public static final int text_trackyear=0x7f070032;
+        public static final int text_trackyear=0x7f070033;
         public static final int title_border=0x7f070004;
         public static final int trackinfoFrame=0x7f07002e;
     }
@@ -130,11 +134,12 @@ public final class R {
         public static final int librarylistentrysong=0x7f030004;
         public static final int libraryupdatingnotification=0x7f030005;
         public static final int main=0x7f030006;
-        public static final int mainoptionsmenu=0x7f030007;
-        public static final int mediainfo=0x7f030008;
-        public static final int settingsactivity=0x7f030009;
-        public static final int sourcelistgroupentry=0x7f03000a;
-        public static final int sourcelistlibraryentry=0x7f03000b;
+        public static final int main_smallscreen=0x7f030007;
+        public static final int mainoptionsmenu=0x7f030008;
+        public static final int mediainfo=0x7f030009;
+        public static final int settingsactivity=0x7f03000a;
+        public static final int sourcelistgroupentry=0x7f03000b;
+        public static final int sourcelistlibraryentry=0x7f03000c;
     }
     public static final class string {
         public static final int app_name=0x7f050000;

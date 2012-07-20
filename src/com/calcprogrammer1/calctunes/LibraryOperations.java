@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 import org.jaudiotagger.audio.*;
 import org.jaudiotagger.audio.mp3.MP3File;
+
+import com.calcprogrammer1.calctunes.Library.LibraryDatabaseHelper;
+import com.calcprogrammer1.calctunes.Library.libraryListElement;
+
 import android.content.Context;
 
 public class LibraryOperations

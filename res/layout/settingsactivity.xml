@@ -20,6 +20,12 @@
 		    android:defaultValue="true"
 		    android:key="service_notification" />
 	    
+	    <CheckBoxPreference
+	        android:title="Use Small Screen Layout"
+	        android:summary="Re-arranges the Now Playing bar to fit small screens better"
+	        android:defaultValue="false"
+	        android:key="small_screen_layout" />
+	    
 	</PreferenceCategory>
 
 </PreferenceScreen>

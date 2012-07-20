@@ -44,7 +44,6 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -53,8 +52,9 @@
 
             <EditText
                 android:id="@+id/libNameInput"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:inputType="text"
                 android:layout_weight="1" />
 
         </LinearLayout>

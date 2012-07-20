@@ -98,6 +98,7 @@
 		    android:id="@+id/linearLayout1"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
+		    android:background="#000"
 		    android:layout_above="@+id/lower_frame">
 
 		    <LinearLayout
@@ -135,12 +136,13 @@
 		    android:layout_height="wrap_content"
 		    android:layout_alignParentBottom="true"
 		    android:gravity="center_vertical"
+		    android:background="@color/holo_dark_background"
 		    android:orientation="horizontal" >
 
 			<View
 			    android:layout_width="match_parent"
-			    android:layout_height="1px"
-			    android:background="#555" />
+			    android:layout_height="2dip"
+			    android:background="@color/holo_edge" />
 		    
 		    <RelativeLayout
 		        android:id="@+id/player_controls"
@@ -217,38 +219,25 @@
 		                android:id="@+id/text_trackname"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
+		                android:singleLine="true"
 		                android:text="Track Name"
 		                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-		            <LinearLayout
-		                android:id="@+id/linearLayout3"
+		            <TextView
+		                android:id="@+id/text_artistname"
 		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content" >
+		                android:layout_height="match_parent"
+		                android:singleLine="true"
+		                android:text="Artist Name"
+		                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-		                <TextView
-		                    android:id="@+id/text_artistname"
-		                    android:layout_width="wrap_content"
-		                    android:layout_height="match_parent"
-		                    android:paddingRight="20dip"
-		                    android:text="Artist Name"
-		                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-		                <TextView
-		                    android:id="@+id/text_albumname"
-		                    android:layout_width="wrap_content"
-		                    android:layout_height="wrap_content"
-		                    android:text="Album Name"
-		                    android:paddingRight="20dip"
-		                    android:textAppearance="?android:attr/textAppearanceSmall" />
-		                
-						<TextView
-		                    android:id="@+id/text_trackyear"
-		                    android:layout_width="wrap_content"
-		                    android:layout_height="wrap_content"
-		                    android:text="Year"
-		                    android:textAppearance="?android:attr/textAppearanceSmall" />
-		                		                
-		            </LinearLayout>
+	                <TextView
+	                    android:id="@+id/text_albumname"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:singleLine="true"
+	                    android:text="Album Name"
+	                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
 		            <SeekBar
 		                android:id="@+id/seekBar_track"

@@ -1,5 +1,8 @@
 package com.calcprogrammer1.calctunes;
 
+import com.calcprogrammer1.calctunes.Interfaces.*;
+import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,11 +15,6 @@ import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
 
-interface ContentPlaybackCallback
-{
-    void onTrackEnd();
-    void onMediaInfoUpdated();
-}
 
 public class ContentPlaybackService extends Service
 {
@@ -62,7 +60,7 @@ public class ContentPlaybackService extends Service
     private String nowPlayingFile = new String();
     private int nowPlayingCursorPos = -1;
     
-    private ContentPlaybackCallback cb;
+    private ContentPlaybackInterface cb;
     
     //Now Playing Notification
     private Notification notification;
@@ -76,7 +74,7 @@ public class ContentPlaybackService extends Service
     ////Callback Functions/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    MediaPlayerHandlerCallback mediaplayerCallback = new MediaPlayerHandlerCallback(){
+    MediaPlayerHandlerInterface mediaplayerCallback = new MediaPlayerHandlerInterface(){
         public void onSongFinished()
         {
             NextTrack();
@@ -107,7 +105,7 @@ public class ContentPlaybackService extends Service
     ////Class functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    public void setCallback(ContentPlaybackCallback callback)
+    public void setCallback(ContentPlaybackInterface callback)
     {
         cb = callback;
         if(cb != null)
@@ -325,7 +323,7 @@ public class ContentPlaybackService extends Service
     
     public class ContentPlaybackBinder extends Binder
     {
-        ContentPlaybackService getService()
+        public ContentPlaybackService getService()
         {
             return ContentPlaybackService.this;
         }

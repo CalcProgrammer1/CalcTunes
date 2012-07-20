@@ -32,7 +32,7 @@
 	            android:id="@+id/librarylistalbum_text"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
-
+				android:singleLine="true"
 	            android:text="Album"
 	            android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -41,6 +41,7 @@
 	            android:id="@+id/librarylistalbum_artist"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
+	            android:singleLine="true"
 	            android:text="Artist" />
 
 
@@ -48,6 +49,7 @@
 	            android:id="@+id/librarylistalbum_year"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
+	            android:singleLine="true"
 	            android:text="Year" />
 
 	    </LinearLayout>
@@ -71,6 +73,7 @@
 		        android:id="@+id/librarylistsong_num"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
+		        android:singleLine="true"
 		        android:text="#"
 		        android:paddingLeft="40dip" />
 		
@@ -78,6 +81,7 @@
 		    android:id="@+id/librarylistsong_text"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
+		    android:singleLine="true"
 		    android:text="Song"
 		    android:textAppearance="?android:attr/textAppearanceSmall" 
 		    android:paddingLeft="7dip"/>
@@ -88,6 +92,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentRight="true"
+	        android:singleLine="true"
 	        android:text="00:00"
 	        android:paddingRight="2dip"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />

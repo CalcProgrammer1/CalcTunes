@@ -1,5 +1,9 @@
 Release History
 ---------------
+Version 0.45 Alpha (6/16/2012)
+	- Fixed screen rotation on ICS devices broken by retargeting to SDK version 14
+	- Added preference to enable/disable ongoing notification for those who hate notifications
+	
 Version 0.44 Alpha (6/15/2012)
 	- Cleaned up context menu for sources list, preliminary playlist UI implementation
 	- Cleaned up notifications for library scanning, added notification for background service

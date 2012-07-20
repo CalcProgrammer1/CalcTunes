@@ -16,6 +16,7 @@
 	        android:id="@+id/librarylistsong_num"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:singleLine="true"
 	        android:text="#"
 	        android:paddingLeft="40dip" />
 	
@@ -23,6 +24,7 @@
 	    android:id="@+id/librarylistsong_text"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
+	    android:singleLine="true"
 	    android:text="Song"
 	    android:textAppearance="?android:attr/textAppearanceSmall" 
 	    android:paddingLeft="7dip"/>
@@ -31,6 +33,7 @@
         android:id="@+id/librarylistsong_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:singleLine="true"
         android:layout_alignParentRight="true"
         android:text="00:00"
         android:paddingRight="2dip"

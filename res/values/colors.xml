@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<color name="interface_color">#777</color>
-	<color name="dividing_line_color">#555</color>
-    
+	<color name="holo_dark_background">#80323232</color>
+	<color name="holo_edge">@android:color/holo_blue_light</color>
+	<color name="holo_light_background">@android:color/holo_blue_light</color>  
 </resources>
