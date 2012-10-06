@@ -9,8 +9,12 @@ import org.jaudiotagger.tag.Tag;
 import com.calcprogrammer1.calctunes.LibraryOperations;
 import com.calcprogrammer1.calctunes.Interfaces.MediaPlayerHandlerInterface;
 
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+
+import android.media.audiofx.AudioEffect;
 
 public class MediaPlayerHandler
 {
@@ -27,11 +31,13 @@ public class MediaPlayerHandler
     public String current_artist = "";
     public String current_year = "";
     
+    Context con;
+    
     MediaPlayerHandlerInterface cb;
     
-    public MediaPlayerHandler()
+    public MediaPlayerHandler(Context context)
     {
-
+        con = context;
     }
     
     public void setCallback(MediaPlayerHandlerInterface callback)
@@ -82,6 +88,10 @@ public class MediaPlayerHandler
                 {
                     mp.stop();
                     prepared = false;
+                    Intent i = new Intent(AudioEffect.ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION);
+                    i.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, mp.getAudioSessionId());
+                    i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
+                    con.sendBroadcast(i);
                     mp.release();
                     mp = null;
                     current_path = "";
@@ -92,6 +102,10 @@ public class MediaPlayerHandler
                     if(cb != null) cb.onSongFinished();
                 }
             });
+            Intent i = new Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
+            i.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, mp.getAudioSessionId());
+            i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
+            con.sendBroadcast(i);
         }
         catch (Exception e)
         {
