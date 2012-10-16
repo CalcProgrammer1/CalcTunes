@@ -49,7 +49,7 @@ public class ContentPlaybackService extends Service
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     //MediaPlayer Handler for playback
-    private MediaPlayerHandler mediaplayer;
+    public MediaPlayerHandler mediaplayer;
     
     //Cursors - one for content list view and one for playback
     //private SQLiteDatabase libraryDatabase;
@@ -66,7 +66,7 @@ public class ContentPlaybackService extends Service
     private Notification notification;
     private NotificationManager notificationManager;
     private static int notificationId = 2;
-    
+
     //Application Settings
     SharedPreferences appSettings;
     
@@ -332,7 +332,7 @@ public class ContentPlaybackService extends Service
     @Override
     public void onCreate()
     {
-        mediaplayer = new MediaPlayerHandler();
+        mediaplayer = new MediaPlayerHandler(this);
         mediaplayer.setCallback(mediaplayerCallback);
         
         //Get the application preferences

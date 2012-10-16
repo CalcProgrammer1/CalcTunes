@@ -30,9 +30,9 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.46 Alpha (7/19/2012)
+Current Version - Version 0.47 Alpha (10/15/2012)
 ---------------
-	- New theme design inspired by ICS Holo
-	- New icons modified from Apollo project for play/pause/next/stop
-	- Fixed line overflows by limiting fields to a single line
-	- Has not been updated for small screen and non-ICS devices yet
+	- Added DSPManager/Beats Audio support using Android AudioFX intent for 4.0+
+	- New horizontal pager UI, swipe left and right for different views
+	- Integrated media info activity into main activity
+	- Started implementing visualizations

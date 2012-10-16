@@ -27,6 +27,7 @@ import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaButtonsHandler;
 import com.calcprogrammer1.calctunes.SourceList.SourceListHandler;
+import com.github.ysamlan.horizontalpager.HorizontalPager;
 
 import java.io.File;
 
@@ -46,7 +47,10 @@ public class CalcTunesActivity extends Activity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	TextView artisttext;
+	HorizontalPager horizontalpager;
+    TrackInfoView trackinfoview;
+    
+    TextView artisttext;
 	TextView albumtext;
 	TextView tracktext;
 	
@@ -141,9 +145,7 @@ public class CalcTunesActivity extends Activity
             artisttext.setText(playbackservice.NowPlayingArtist());
             albumtext.setText(playbackservice.NowPlayingAlbum());
             tracktext.setText(playbackservice.NowPlayingTitle());
-            
             albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), CalcTunesActivity.this));
-            
             viewhandler.setAdaptersNowPlaying(playbackservice.NowPlayingFile());
         }
         
@@ -412,9 +414,10 @@ public class CalcTunesActivity extends Activity
         updateGuiElements();
     }
     
-    @SuppressWarnings("deprecation")
     public void updateGuiElements()
-    {        
+    {   
+        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);
+        trackinfoview = (TrackInfoView) findViewById(R.id.trackInfoView);
         artisttext = (TextView) findViewById(R.id.text_artistname);
         albumtext = (TextView) findViewById(R.id.text_albumname);
         tracktext = (TextView) findViewById(R.id.text_trackname);
@@ -435,13 +438,7 @@ public class CalcTunesActivity extends Activity
         {
             sourcelistframe.setVisibility(View.GONE);
         }
-        
-        //If ICS, make the title border match the ICS Holo theme
-        if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)
-        {
-            findViewById(R.id.title_border).setBackgroundResource(android.R.color.holo_blue_light);
-        }
-        
+               
         mainlist = (ListView) findViewById(R.id.libraryListView);
         viewhandler.setListView(mainlist);
         updateInterfaceColor(interfaceColor);
@@ -492,17 +489,20 @@ public class CalcTunesActivity extends Activity
     
     public void ButtonInfoClick(View view)
     {
-        Intent intent = new Intent(getBaseContext(), CalcTunesMediaInfoActivity.class);
-        intent.putExtra("TrackFilename", playbackservice.NowPlayingFile());
-        startActivity(intent);
+        trackinfoview.setTrackInfoFromFile(playbackservice.NowPlayingFile());
+        horizontalpager.setCurrentScreen(3, true);
+        //Intent intent = new Intent(getBaseContext(), CalcTunesMediaInfoActivity.class);
+        //intent.putExtra("TrackFilename", playbackservice.NowPlayingFile());
+        //startActivity(intent);
     }
     
     public void updateInterfaceColor(int color)
     {
-        int newcolor = getResources().getColor(R.color.holo_edge);
-        sourcelisthandler.setInterfaceColor(newcolor);
-        viewhandler.setHighlightColor(newcolor);
-        //trackseekhandler.setInterfaceColor(color);
+        findViewById(R.id.title_border).setBackgroundColor(color);
+        findViewById(R.id.lower_border).setBackgroundColor(color);
+        sourcelisthandler.setInterfaceColor(color);
+        viewhandler.setHighlightColor(color);
+        trackseekhandler.setInterfaceColor(color);
     }
     
     public void ButtonSidebarClick(View view)

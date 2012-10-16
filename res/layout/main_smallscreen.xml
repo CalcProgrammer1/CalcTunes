@@ -114,6 +114,7 @@
 			        android:groupIndicator="@null" />
 		    
 				<View
+				    android:id="@+id/lower_border"
 				    android:layout_height="match_parent"
 				    android:layout_width="1px"
 				    android:background="#555" />

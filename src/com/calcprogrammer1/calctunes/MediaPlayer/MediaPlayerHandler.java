@@ -15,10 +15,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import android.media.audiofx.AudioEffect;
+import android.media.audiofx.Visualizer;
 
 public class MediaPlayerHandler
 {
     MediaPlayer mp;
+    Visualizer vis;
     LosslessMediaCodecHandler ls;
     
     boolean running = false;
@@ -30,6 +32,8 @@ public class MediaPlayerHandler
     public String current_album = "";
     public String current_artist = "";
     public String current_year = "";
+    
+    public byte vis_buffer[];
     
     Context con;
     
@@ -106,33 +110,34 @@ public class MediaPlayerHandler
             i.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, mp.getAudioSessionId());
             i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
             con.sendBroadcast(i);
+            vis = new Visualizer(mp.getAudioSessionId());
         }
         catch (Exception e)
         {
             mp.release();
             mp = null;
-            ls = new LosslessMediaCodecHandler();
-            ls.setCallback(new LosslessMediaCodecHandlerCallback()
-            {
-                public void onCompletion()
-                {
-                    prepared = false;
-                    ls = null;
-                    current_path = "";
-                    current_title = "";
-                    current_artist = "";
-                    current_album = "";
-                    current_year = "";
-                    if(cb != null) cb.onSongFinished();
-                }
-            });
-            ls.setDataSource(current_path);
-            prepared = true;
-            if(playonprepare)
-            {
-                ls.start();
-                playonprepare = false;
-            }
+//            ls = new LosslessMediaCodecHandler();
+//            ls.setCallback(new LosslessMediaCodecHandlerCallback()
+//            {
+//                public void onCompletion()
+//                {
+//                    prepared = false;
+//                    ls = null;
+//                    current_path = "";
+//                    current_title = "";
+//                    current_artist = "";
+//                    current_album = "";
+//                    current_year = "";
+//                    if(cb != null) cb.onSongFinished();
+//                }
+//            });
+//            ls.setDataSource(current_path);
+//            prepared = true;
+//            if(playonprepare)
+//            {
+//                ls.start();
+//                playonprepare = false;
+//            }
         }
     }
     
@@ -147,6 +152,11 @@ public class MediaPlayerHandler
             else if(ls != null)
             {
                 ls.start();
+            }
+            
+            if(vis != null)
+            {
+                vis.setEnabled(true);
             }
         }
         else
@@ -286,5 +296,15 @@ public class MediaPlayerHandler
         {
             return 0;
         }
+    }
+    
+    public int computeFft()
+    {
+        return vis.getFft(vis_buffer);
+    }
+    
+    public int computeWave()
+    {
+        return vis.getWaveForm(vis_buffer);
     }
 }

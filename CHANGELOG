@@ -1,5 +1,11 @@
 Release History
 ---------------
+Version 0.46 Alpha (7/19/2012)
+	- New theme design inspired by ICS Holo
+	- New icons modified from Apollo project for play/pause/next/stop
+	- Fixed line overflows by limiting fields to a single line
+	- Has not been updated for small screen and non-ICS devices yet
+	
 Version 0.45 Alpha (6/16/2012)
 	- Fixed screen rotation on ICS devices broken by retargeting to SDK version 14
 	- Added preference to enable/disable ongoing notification for those who hate notifications

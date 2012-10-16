@@ -12,6 +12,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.SeekBar;
 
@@ -66,36 +68,39 @@ public class SeekHandler implements Runnable
     @SuppressWarnings("deprecation")
     public void setInterfaceColor(int color)
     {
-        int dip10 = px_to_dip(10);
         int dip20 = px_to_dip(20);
-        RadialGradient thumbgr = new RadialGradient(dip20, dip20, dip20, Color.BLACK, color, android.graphics.Shader.TileMode.CLAMP);
-        Bitmap thumbbm = Bitmap.createBitmap(dip20, dip20, Bitmap.Config.ARGB_8888);
+        int dip40 = px_to_dip(40);
+        Bitmap thumbbm = Bitmap.createBitmap(dip40, dip40, Bitmap.Config.ARGB_8888);
         Canvas thumb = new Canvas(thumbbm);
         Paint  thumbp = new Paint(Paint.ANTI_ALIAS_FLAG);
-        thumbp.setColor(Color.BLACK);
-        thumb.drawCircle(dip10, dip10, dip10, thumbp);
-        thumbp.setShader(thumbgr);
-        thumb.drawCircle(dip10, dip10, px_to_dip(8), thumbp);
+        thumbp.setColor(Color.argb(Color.alpha(color)/2, Color.red(color), Color.green(color), Color.blue(color)));
+        thumb.drawCircle(dip20, dip20, dip20, thumbp);
+        thumbp.setColor(color);
+        thumb.drawCircle(dip20, dip20, px_to_dip(8), thumbp);
         
         BitmapDrawable thumbdraw = new BitmapDrawable(thumbbm);
         thumbdraw.setBounds(new Rect(0, 0, thumbdraw.getIntrinsicWidth(), thumbdraw.getIntrinsicHeight()));
         sb.setThumb(thumbdraw);
         sb.setThumbOffset(0);
               
-        int colors[] = {Color.BLACK, Color.BLACK, color, Color.BLACK, Color.BLACK};
-        GradientDrawable progback1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
-        progback1.setShape(GradientDrawable.RECTANGLE);
-        progback1.setCornerRadius(dip10);
+        DisplayMetrics metrics = res.getDisplayMetrics();
+        sb.measure(metrics.widthPixels, metrics.heightPixels);
+        Log.d("test", "screen width " + metrics.widthPixels);
+        Log.d("test", "screen height " + metrics.heightPixels);
+        Log.d("test", "bar width " + sb.getMeasuredWidth());
+        Log.d("test", "bar height " + sb.getMeasuredHeight());
+        Bitmap progbm = Bitmap.createBitmap(1, dip40, Bitmap.Config.ARGB_8888);
+        Canvas prog = new Canvas(progbm);
+        Paint progp = new Paint(Paint.ANTI_ALIAS_FLAG);
+        progp.setColor(Color.GRAY);
+        prog.drawLine(0, dip20, 1, dip20, progp);
+        BitmapDrawable progdraw = new BitmapDrawable(progbm);
         
-        int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
-        GradientDrawable progback2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
-        progback2.setShape(GradientDrawable.RECTANGLE);
-        progback2.setCornerRadius(dip10);
-        
-        LayerDrawable prog = new LayerDrawable(new Drawable[] {progback1, progback2});
-        
+       
         Rect bounds = sb.getProgressDrawable().getBounds();
-        sb.setProgressDrawable(prog);
+        Log.d("test", "rect " + bounds.flattenToString());
+        bounds.offset(dip20, 0);
+        sb.setProgressDrawable(progdraw);
         sb.getProgressDrawable().setBounds(bounds);
         sb.refreshDrawableState();
     }
