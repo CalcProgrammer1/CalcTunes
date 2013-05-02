@@ -2,9 +2,10 @@ package com.calcprogrammer1.calctunes.Activities;
 
 import java.util.ArrayList;
 
-import com.calcprogrammer1.calctunes.LibraryOperations;
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
+import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,8 +51,9 @@ public class CalcTunesLibraryBuilderActivity extends Activity
         if(extras != null)
         {
             String filename = extras.getString("EditFilename");
-            String name = extras.getString("EditName");
-            libraryFolders = LibraryOperations.readLibraryFile(filename);
+            LibrarySource EditLib = SourceListOperations.readLibraryFile(filename);
+            String name = EditLib.name;
+            libraryFolders = EditLib.folders;
             libNameInput.setText(name);
             updateFolderList();
         }
@@ -143,7 +145,10 @@ public class CalcTunesLibraryBuilderActivity extends Activity
         }
         else
         {
-            String libraryName = libNameInput.getText().toString();
+            LibrarySource lib = new LibrarySource();
+            lib.name = libNameInput.getText().toString();
+            lib.filename = SourceListOperations.getLibraryPath(this) + "/" + SourceListOperations.getFilename(lib.name);
+            lib.folders = libraryFolders;
             
             //if(data.getStringExtra("EditFilename") != null)
             //{
@@ -151,10 +156,10 @@ public class CalcTunesLibraryBuilderActivity extends Activity
               //  deleteFile.delete();
             //}
             
-            LibraryOperations.saveLibraryFile(libraryName, libraryFolders, LibraryOperations.getLibraryPath(this));
+            SourceListOperations.writeLibraryFile(lib);
 
             LibraryScannerTask task = new LibraryScannerTask(this);
-            task.execute(libraryName);
+            task.execute(lib.name);
             
             setResult(Activity.RESULT_OK, i);
             finish();

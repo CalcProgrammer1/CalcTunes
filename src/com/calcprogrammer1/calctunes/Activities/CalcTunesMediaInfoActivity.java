@@ -8,6 +8,7 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
 import com.calcprogrammer1.calctunes.*;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -87,7 +88,7 @@ public class CalcTunesMediaInfoActivity extends Activity
         mediaInfoFormatLogo = (ImageView) findViewById(R.id.mediaInfoFormatLogo);
         
         File file = new File(mediaInfoPath);
-        AudioFile f = LibraryOperations.readAudioFileReadOnly(file);
+        AudioFile f = SourceListOperations.readAudioFileReadOnly(file);
         Tag tag = f.getTag();
         AudioHeader header = f.getAudioHeader();
         

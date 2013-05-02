@@ -99,12 +99,10 @@
 	    android:background="#000"
 	    android:layout_weight="1">
     
-	    <ExpandableListView
-			android:id="@+id/sourceListView"
+	    <FrameLayout
+			android:id="@+id/sourceListFragmentContainer"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:divider="#000000"
-			android:groupIndicator="@null" />
+			android:layout_height="wrap_content" />
 
 	    <ListView
 	        android:id="@+id/libraryListView"

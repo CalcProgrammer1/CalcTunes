@@ -6,8 +6,8 @@ import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
-import com.calcprogrammer1.calctunes.LibraryOperations;
 import com.calcprogrammer1.calctunes.Interfaces.MediaPlayerHandlerInterface;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import android.media.MediaPlayer;
 
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.Visualizer;
+import android.os.Build;
 
 public class MediaPlayerHandler
 {
@@ -63,7 +64,7 @@ public class MediaPlayerHandler
         AudioFile f;
         try
         {
-            f = LibraryOperations.readAudioFileReadOnly(song);
+            f = SourceListOperations.readAudioFileReadOnly(song);
             Tag tag = f.getTag();
             current_artist = tag.getFirst(FieldKey.ARTIST);
             current_album = tag.getFirst(FieldKey.ALBUM);
@@ -110,7 +111,10 @@ public class MediaPlayerHandler
             i.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, mp.getAudioSessionId());
             i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
             con.sendBroadcast(i);
-            vis = new Visualizer(mp.getAudioSessionId());
+            if(Integer.parseInt(Build.VERSION.SDK) > 8)
+            {
+                vis = new Visualizer(mp.getAudioSessionId());
+            }
         }
         catch (Exception e)
         {
@@ -300,11 +304,25 @@ public class MediaPlayerHandler
     
     public int computeFft()
     {
-        return vis.getFft(vis_buffer);
+        if(Integer.parseInt(Build.VERSION.SDK) > 8)
+        {
+            return vis.getFft(vis_buffer);
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     public int computeWave()
     {
-        return vis.getWaveForm(vis_buffer);
+        if(Integer.parseInt(Build.VERSION.SDK) > 8)
+        {
+            return vis.getWaveForm(vis_buffer);
+        }
+        else
+        {
+            return 0;
+        }
     }
 }

@@ -134,7 +134,7 @@ public final class HorizontalPager extends ViewGroup {
                 (int) (displayMetrics.density * SNAP_VELOCITY_DIP_PER_SECOND);
 
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
-        mTouchSlop = configuration.getScaledTouchSlop();
+        mTouchSlop = 10 * configuration.getScaledTouchSlop();  //Edit by CalcProgrammer1 - With the unlocked vertical motion, increase the slop to prevent over-sensitive swipes
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
     }
 

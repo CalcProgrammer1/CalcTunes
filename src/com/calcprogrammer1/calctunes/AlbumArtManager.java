@@ -13,6 +13,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,9 +26,9 @@ public class AlbumArtManager
     static public Bitmap getAlbumArtFromCache(String artist, String album, Context c)
     {
         Bitmap artwork = null;
-        File dirfile = new File(LibraryOperations.getAlbumArtPath(c));
+        File dirfile = new File(SourceListOperations.getAlbumArtPath(c));
         dirfile.mkdirs();
-        String artfilepath = LibraryOperations.getAlbumArtPath(c) + File.separator + LibraryOperations.makeFilename(artist) + "_" + LibraryOperations.makeFilename(album) + ".png";
+        String artfilepath = SourceListOperations.getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "_" + SourceListOperations.makeFilename(album) + ".png";
         File infile = new File(artfilepath);
         try
         {
@@ -46,7 +48,7 @@ public class AlbumArtManager
     static public Bitmap getAlbumArt(String artist, String album, Context c)
     {
         Bitmap artwork = null;
-        String artfilepath = LibraryOperations.getAlbumArtPath(c) + File.separator + LibraryOperations.makeFilename(artist) + "_" + LibraryOperations.makeFilename(album) + ".png";
+        String artfilepath = SourceListOperations.getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "_" + SourceListOperations.makeFilename(album) + ".png";
         File infile = new File(artfilepath);
         try
         {

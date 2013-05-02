@@ -6,7 +6,7 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
 import com.calcprogrammer1.calctunes.AlbumArtManager;
-import com.calcprogrammer1.calctunes.LibraryOperations;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -41,7 +41,7 @@ public class LibraryDatabaseHelper extends SQLiteOpenHelper
         AudioFile f;
         try
         {
-            f = LibraryOperations.readAudioFileReadOnly(file);
+            f = SourceListOperations.readAudioFileReadOnly(file);
             Tag tag = f.getTag();
             int song_length = f.getAudioHeader().getTrackLength();
             int song_num = Integer.parseInt(tag.getFirst(FieldKey.TRACK));

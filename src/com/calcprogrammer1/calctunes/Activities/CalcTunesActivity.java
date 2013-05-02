@@ -10,40 +10,26 @@
 package com.calcprogrammer1.calctunes.Activities;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.widget.*;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-
 import com.calcprogrammer1.calctunes.*;
 import com.calcprogrammer1.calctunes.Interfaces.*;
-import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
-import com.calcprogrammer1.calctunes.MediaPlayer.MediaButtonsHandler;
-import com.calcprogrammer1.calctunes.SourceList.SourceListHandler;
+import com.calcprogrammer1.calctunes.SourceList.SourceListFragment;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
+import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
 import com.github.ysamlan.horizontalpager.HorizontalPager;
 
-import java.io.File;
-
 public class CalcTunesActivity extends Activity
-{
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Static Menu Operations/////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    final int CONTEXT_MENU_NEW_LIBRARY     = 0;
-    final int CONTEXT_MENU_EDIT_LIBRARY    = 1;
-    final int CONTEXT_MENU_DELETE_LIBRARY  = 2;
-    final int CONTEXT_MENU_RESCAN_LIBRARY  = 3;
-    final int CONTEXT_MENU_NEW_PLAYLIST    = 4;
-    final int CONTEXT_MENU_RENAME_PLAYLIST = 5;
-    final int CONTEXT_MENU_DELETE_PLAYLIST = 6;
-    
+{    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,16 +50,12 @@ public class CalcTunesActivity extends Activity
 	SeekHandler trackseekhandler;
 	
 	View sourcelistframe;
-	ExpandableListView sourcelist;
-	SourceListHandler sourcelisthandler;
+	SourceListFragment sourcelistfragment;
 	
 	ListView mainlist;
-
-    MediaButtonsHandler buttons;
     
     String openFile = null;
     int interfaceColor;
-    boolean sidebarHidden = false;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Service Connection/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +70,7 @@ public class CalcTunesActivity extends Activity
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             createGuiElements();
-            sourcelisthandler.refreshLibraryList();
+            //sourcelist.readSourceLists();
             playbackservice.setCallback(playbackCallback);
             if(openFile != null)
             {
@@ -161,7 +143,7 @@ public class CalcTunesActivity extends Activity
             }
             else if(contentType == ContentViewHandler.CONTENT_TYPE_LIBRARY)
             {
-                viewhandler.setContentSource(LibraryOperations.readLibraryName(filename), ContentViewHandler.CONTENT_TYPE_LIBRARY);
+                viewhandler.setContentSource(SourceListOperations.readLibraryFile(filename).name, ContentViewHandler.CONTENT_TYPE_LIBRARY);
                 viewhandler.drawList();
             }
         }
@@ -186,11 +168,16 @@ public class CalcTunesActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         
+        //Create Source List Fragment
+        sourcelistfragment = new SourceListFragment();
+        sourcelistfragment.setCallback(sourcelisthandlerCallback);
+        getFragmentManager().beginTransaction().add(R.id.sourceListFragmentContainer, sourcelistfragment).commit();
+
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         //Get the application preferences
-        appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+        appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         
@@ -223,8 +210,6 @@ public class CalcTunesActivity extends Activity
         //Start or Reconnect to the CalcTunes Playback Service
       	startService(new Intent(this, ContentPlaybackService.class));
        	bindService(new Intent(this, ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
-        
-
     }
     
 	@Override
@@ -241,11 +226,10 @@ public class CalcTunesActivity extends Activity
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
-        setContentView(R.layout.main);
+        //setContentView(R.layout.main);
         if(playbackservice_bound)
         {
             updateGuiElements();
-            sourcelisthandler.refreshLibraryList();
             playbackservice.setCallback(playbackCallback);
         }
     }
@@ -291,7 +275,7 @@ public class CalcTunesActivity extends Activity
         {
             if(requestCode == 1)
             {
-                sourcelisthandler.refreshLibraryList();
+                sourcelistfragment.readSourceLists();
             }
         }
     }
@@ -321,95 +305,15 @@ public class CalcTunesActivity extends Activity
         return false;       
     }
     
-    //Function for creating a context (right click/long tap) menu for various UI elements
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-    {
-        //Context menu for source list broken down into different menu categories
-        if(v == findViewById(R.id.sourceListView))
-        {
-            ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-            int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-            int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-            //int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
-            
-            //Type=0 is group, Type=1 is child
-            if(type == 0)
-            {
-                if(group == 0) //Libraries
-                {
-                    menu.add(1, CONTEXT_MENU_NEW_LIBRARY, Menu.NONE, "New Library");
-                }
-                else if(group == 1) //Playlists
-                {
-                    menu.add(1, CONTEXT_MENU_NEW_PLAYLIST, Menu.NONE, "New Playlist");
-                }
-            }
-            else if(type == 1)
-            {
-                if(group == 0)
-                {
-                    menu.add(1, CONTEXT_MENU_EDIT_LIBRARY,    Menu.NONE, "Edit Library");
-                    menu.add(1, CONTEXT_MENU_DELETE_LIBRARY,  Menu.NONE, "Delete Library");
-                    menu.add(1, CONTEXT_MENU_RESCAN_LIBRARY,  Menu.NONE, "Rescan Library");
-                }
-                else if(group == 1)
-                {
-                    menu.add(1, CONTEXT_MENU_RENAME_PLAYLIST, Menu.NONE, "Rename Playlist");
-                    menu.add(1, CONTEXT_MENU_DELETE_PLAYLIST, Menu.NONE, "Delete Playlist");
-                }
-            }
-        }
-    }
-    
-    //Function to handle all context menu events
-    @Override
-    public boolean onContextItemSelected(MenuItem item)
-    {
-        ExpandableListContextMenuInfo info= (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
-        int id = (int) info.id;
 
-        switch(item.getItemId())
-        {
-            case CONTEXT_MENU_NEW_LIBRARY:
-                ButtonAddClick(null);
-                break;
-                
-            case CONTEXT_MENU_EDIT_LIBRARY:
-                Intent intent = new Intent(getBaseContext(), CalcTunesLibraryBuilderActivity.class);
-                intent.putExtra("EditFilename", sourcelisthandler.getLibraryList().get(id).filename);
-                intent.putExtra("EditName", sourcelisthandler.getLibraryList().get(id).name);
-                startActivityForResult(intent, 1);
-                break;
-            
-            case CONTEXT_MENU_DELETE_LIBRARY:
-                File libraryToDelete = new File(sourcelisthandler.getLibraryList().get(id).filename);
-                libraryToDelete.delete();
-                sourcelisthandler.refreshLibraryList();
-                Toast.makeText(this, "Library Deleted", Toast.LENGTH_SHORT).show();
-                break;
-            
-            case CONTEXT_MENU_RESCAN_LIBRARY:
-                LibraryScannerTask task = new LibraryScannerTask(this);
-                task.execute(sourcelisthandler.getLibraryList().get(id).name);
-                break;
-        }
-        
-        return(super.onOptionsItemSelected(item));
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void createGuiElements()
     {
-        buttons = new MediaButtonsHandler(this);
-        buttons.setCallback(buttonsCallback);
-        
+      
     	viewhandler = new ContentViewHandler(this, mainlist, playbackservice);
-
-        sourcelisthandler = new SourceListHandler(this, sourcelist);
-        sourcelisthandler.setCallback(sourcelisthandlerCallback);
         
         updateGuiElements();
     }
@@ -428,17 +332,7 @@ public class CalcTunesActivity extends Activity
         trackseekhandler = new SeekHandler(trackseek, playbackservice, this);
         
         sourcelistframe = findViewById(R.id.sourceListFrame);
-        sourcelist = (ExpandableListView) findViewById(R.id.sourceListView);
-        sourcelisthandler.setListView(sourcelist);
-        sourcelisthandler.updateList();
-        
-        registerForContextMenu(sourcelist);
-        
-        if(sidebarHidden)
-        {
-            sourcelistframe.setVisibility(View.GONE);
-        }
-               
+                     
         mainlist = (ListView) findViewById(R.id.libraryListView);
         viewhandler.setListView(mainlist);
         updateInterfaceColor(interfaceColor);
@@ -500,23 +394,28 @@ public class CalcTunesActivity extends Activity
     {
         findViewById(R.id.title_border).setBackgroundColor(color);
         findViewById(R.id.lower_border).setBackgroundColor(color);
-        sourcelisthandler.setInterfaceColor(color);
+        //sourcelist.setInterfaceColor(color);
         viewhandler.setHighlightColor(color);
         trackseekhandler.setInterfaceColor(color);
     }
     
     public void ButtonSidebarClick(View view)
     {
-        if(sidebarHidden)
+        //this button is pointless, so currently it is a subsonic api test
+        //get around stupid android 4.0 restrictions that are dumb
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+        SubsonicAPI sub = new SubsonicAPI("192.168.3.100:4040", "user", "password");
+        if( sub.SubsonicPing() && sub.SubsonicGetLicense() )
         {
-            sourcelistframe.setVisibility(View.VISIBLE);
-            sidebarHidden = false;
+            int id = sub.SubsonicGetMusicFolders().get(0).id;
+            sub.SubsonicGetMusicDirectory(id);
+            sub.SubsonicGetIndexes();
+            SubsonicAPI.SubsonicSong song = sub.SubsonicGetAlbum(sub.SubsonicGetArtist(sub.SubsonicGetArtists().get(0).id).get(0).id).get(0);
+            Log.d("SubsonicTest", "Song: " + song.title);
+            sub.SubsonicStream(song.id, 160, "ogg");
         }
-        else
-        {
-            sourcelistframe.setVisibility(View.GONE);
-            sidebarHidden = true;
-        }  
     }
     
     public void ButtonSettingsClick(View view)

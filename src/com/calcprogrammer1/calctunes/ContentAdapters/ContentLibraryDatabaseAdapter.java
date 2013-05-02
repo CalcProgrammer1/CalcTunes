@@ -1,8 +1,9 @@
 package com.calcprogrammer1.calctunes.ContentAdapters;
 
 import com.calcprogrammer1.calctunes.AlbumArtManager;
-import com.calcprogrammer1.calctunes.LibraryOperations;
 import com.calcprogrammer1.calctunes.R;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -248,7 +249,7 @@ public class ContentLibraryDatabaseAdapter extends BaseAdapter
         
         final String name = cursor.getString(cursor.getColumnIndex("TITLE"));
         final String path = cursor.getString(cursor.getColumnIndex("PATH"));
-        final String time = LibraryOperations.formatTime(cursor.getInt(cursor.getColumnIndex("TIME")));
+        final String time = SourceListOperations.formatTime(cursor.getInt(cursor.getColumnIndex("TIME")));
         final String num  = "" + cursor.getInt(cursor.getColumnIndex("TRACK"));
         
         final TextView songName = (TextView) view.findViewById(R.id.librarylistsong_text);

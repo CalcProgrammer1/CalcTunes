@@ -7,6 +7,8 @@ import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
@@ -62,7 +64,7 @@ public class TrackInfoView extends LinearLayout
     public void setTrackInfoFromFile(String track_info_path)
     {
         File file = new File(track_info_path);
-        AudioFile f = LibraryOperations.readAudioFileReadOnly(file);
+        AudioFile f = SourceListOperations.readAudioFileReadOnly(file);
         Tag tag = f.getTag();
         AudioHeader header = f.getAudioHeader();
         

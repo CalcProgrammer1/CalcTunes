@@ -3,7 +3,8 @@ package com.calcprogrammer1.calctunes.SourceList;
 import java.util.ArrayList;
 
 import com.calcprogrammer1.calctunes.R;
-import com.calcprogrammer1.calctunes.Library.libraryListElement;
+import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
+import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -19,10 +20,11 @@ import android.widget.TextView;
 
 public class SourceListAdapter extends BaseExpandableListAdapter
 {
-    public static final int SOURCE_GROUP_LIBRARY = 0;
+    public static final int SOURCE_GROUP_LIBRARY  = 0;
     public static final int SOURCE_GROUP_PLAYLIST = 1;
-    public static final int SOURCE_GROUP_SYSTEM = 2;
-    public static final int TOTAL_SOURCE_GROUP = 3;
+    public static final int SOURCE_GROUP_SYSTEM   = 2;
+    public static final int SOURCE_GROUP_SUBSONIC = 3;
+    public static final int TOTAL_SOURCE_GROUP    = 4;
     
     private int interfaceColor;
     private int selectedGroup = -1;
@@ -30,7 +32,8 @@ public class SourceListAdapter extends BaseExpandableListAdapter
     
     LayoutInflater inflater;
     Context c;
-    ArrayList<libraryListElement> libraryList = new ArrayList<libraryListElement>();
+    ArrayList<LibrarySource> libraryList = new ArrayList<LibrarySource>();
+    ArrayList<SubsonicSource> subsonicList = new ArrayList<SubsonicSource>();
     
     public SourceListAdapter(Context con)
     {
@@ -38,11 +41,16 @@ public class SourceListAdapter extends BaseExpandableListAdapter
         inflater = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
-    public void attachLibraryList(ArrayList<libraryListElement> libList)
+    public void attachLibraryList(ArrayList<LibrarySource> libList)
     {
         libraryList = libList;
     }
 
+    public void attachSubsonicList(ArrayList<SubsonicSource> subList)
+    {
+        subsonicList = subList;
+    }
+    
     public Object getChild(int groupPosition, int childPosition)
     {
         switch(groupPosition)
@@ -55,6 +63,9 @@ public class SourceListAdapter extends BaseExpandableListAdapter
                 
             case SOURCE_GROUP_SYSTEM:
                 return null;
+            
+            case SOURCE_GROUP_SUBSONIC:
+                return subsonicList.get(childPosition);
         }
         return null;
     }
@@ -94,19 +105,19 @@ public class SourceListAdapter extends BaseExpandableListAdapter
         {
             case SOURCE_GROUP_LIBRARY:
                 sourceText.setText(libraryList.get(childPosition).name);
-                if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_OK)
+                if(libraryList.get(childPosition).status == LibrarySource.LIBRARY_OK)
                 {
                     sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon));
                 }
-                else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_UNAVAILABLE)
+                else if(libraryList.get(childPosition).status == LibrarySource.LIBRARY_UNAVAILABLE)
                 {
                     sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
                 }
-                else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_OFFLINE)
+                else if(libraryList.get(childPosition).status == LibrarySource.LIBRARY_OFFLINE)
                 {
                     sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
                 }
-                else if(libraryList.get(childPosition).status == libraryListElement.LIBRARY_UPDATING)
+                else if(libraryList.get(childPosition).status == LibrarySource.LIBRARY_UPDATING)
                 {
                     sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_library_warning));
                 }
@@ -117,6 +128,18 @@ public class SourceListAdapter extends BaseExpandableListAdapter
                 {
                     sourceText.setText("Filesystem");
                     sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_folder));
+                }
+                break;
+                
+            case SOURCE_GROUP_SUBSONIC:
+                sourceText.setText(subsonicList.get(childPosition).name);
+                if(subsonicList.get(childPosition).status == SubsonicSource.SUBSONIC_OK)
+                {
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_server_available));
+                }
+                else
+                {
+                    sourceImage.setImageDrawable(c.getResources().getDrawable(R.drawable.icon_server_unavailable));
                 }
                 break;
         }
@@ -135,6 +158,9 @@ public class SourceListAdapter extends BaseExpandableListAdapter
                 
             case SOURCE_GROUP_SYSTEM:
                 return 1;
+            
+            case SOURCE_GROUP_SUBSONIC:
+                return subsonicList.size();
         }
         return 0;
     }
@@ -186,6 +212,10 @@ public class SourceListAdapter extends BaseExpandableListAdapter
                 
             case SOURCE_GROUP_SYSTEM:
                 groupText.setText("System");
+                break;
+           
+            case SOURCE_GROUP_SUBSONIC:
+                groupText.setText("Subsonic Servers");
                 break;
         }
         return convertView;

@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.calcprogrammer1.calctunes.FileOperations;
-import com.calcprogrammer1.calctunes.LibraryOperations;
 import com.calcprogrammer1.calctunes.R;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -45,7 +45,7 @@ public class LibraryScannerTask extends AsyncTask<String, Integer, Long>
     protected Long doInBackground(String... libName)
     {
         libraryName = libName[0];
-        ArrayList<String> libraryFolders = LibraryOperations.readLibraryFile(LibraryOperations.getLibraryFullPath(con, libraryName));
+        ArrayList<String> libraryFolders = SourceListOperations.readLibraryFile(SourceListOperations.getLibraryFullPath(con, libraryName)).folders;
         ArrayList<File> libraryFiles = new ArrayList<File>();
         
         for(int i = 0; i < libraryFolders.size(); i++)
