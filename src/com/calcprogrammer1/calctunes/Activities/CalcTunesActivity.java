@@ -10,6 +10,7 @@
 package com.calcprogrammer1.calctunes.Activities;
 
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.*;
 import android.net.Uri;
@@ -23,35 +24,28 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import com.calcprogrammer1.calctunes.*;
 import com.calcprogrammer1.calctunes.Interfaces.*;
+import com.calcprogrammer1.calctunes.NowPlaying.NowPlayingFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
 import com.github.ysamlan.horizontalpager.HorizontalPager;
 
-public class CalcTunesActivity extends Activity
+public class CalcTunesActivity extends FragmentActivity
 {    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HorizontalPager horizontalpager;
     TrackInfoView trackinfoview;
-    
-    TextView artisttext;
-	TextView albumtext;
-	TextView tracktext;
-	
-	ImageView albumartview;
 	
 	ContentViewHandler viewhandler;
 	
     SharedPreferences appSettings;
-    
-	SeekBar trackseek;
-	SeekHandler trackseekhandler;
 	
 	View sourcelistframe;
 	SourceListFragment sourcelistfragment;
 	
+	NowPlayingFragment nowplayingfragment;
 	ListView mainlist;
     
     String openFile = null;
@@ -71,7 +65,7 @@ public class CalcTunesActivity extends Activity
             playbackservice_bound = true;
             createGuiElements();
             //sourcelist.readSourceLists();
-            playbackservice.setCallback(playbackCallback);
+            playbackservice.registerCallback(playbackCallback);
             if(openFile != null)
             {
                 playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, openFile, 0, null);
@@ -124,10 +118,10 @@ public class CalcTunesActivity extends Activity
         public void onMediaInfoUpdated()
         {
             //On media info updated, update all the text fields and album art display
-            artisttext.setText(playbackservice.NowPlayingArtist());
-            albumtext.setText(playbackservice.NowPlayingAlbum());
-            tracktext.setText(playbackservice.NowPlayingTitle());
-            albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), CalcTunesActivity.this));
+            //artisttext.setText(playbackservice.NowPlayingArtist());
+            //albumtext.setText(playbackservice.NowPlayingAlbum());
+            //tracktext.setText(playbackservice.NowPlayingTitle());
+            //albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), CalcTunesActivity.this));
             viewhandler.setAdaptersNowPlaying(playbackservice.NowPlayingFile());
         }
         
@@ -149,6 +143,14 @@ public class CalcTunesActivity extends Activity
         }
     };
     
+    NowPlayingFragmentInterface nowPlayingFragmentCallback = new NowPlayingFragmentInterface(){
+        public void onInfoButtonPressed()
+        {
+            trackinfoview.setTrackInfoFromFile(playbackservice.NowPlayingFile());
+            horizontalpager.setCurrentScreen(3, true);
+        }
+    };
+    
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
@@ -157,7 +159,6 @@ public class CalcTunesActivity extends Activity
             updateInterfaceColor(interfaceColor);
         }
     };
-    
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Class Overrides////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,8 +172,13 @@ public class CalcTunesActivity extends Activity
         //Create Source List Fragment
         sourcelistfragment = new SourceListFragment();
         sourcelistfragment.setCallback(sourcelisthandlerCallback);
-        getFragmentManager().beginTransaction().add(R.id.sourceListFragmentContainer, sourcelistfragment).commit();
-
+        getSupportFragmentManager().beginTransaction().add(R.id.sourceListFragmentContainer, sourcelistfragment).commit();
+        
+        //Create Now Playing Fragment
+        nowplayingfragment = new NowPlayingFragment();
+        nowplayingfragment.registerCallback(nowPlayingFragmentCallback);
+        getSupportFragmentManager().beginTransaction().add(R.id.nowPlayingContainer, nowplayingfragment).commit();
+        
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         
@@ -181,18 +187,18 @@ public class CalcTunesActivity extends Activity
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         
-        boolean smallScreenMode = appSettings.getBoolean("small_screen_layout", true);
+        //boolean smallScreenMode = appSettings.getBoolean("small_screen_layout", true);
         
-        if(smallScreenMode)
-        {
+        //if(smallScreenMode)
+        //{
             //Set content view to small screen layout
-            setContentView(R.layout.main_smallscreen);
-        }
-        else
-        {
+        //    setContentView(R.layout.main_smallscreen);
+        //}
+        //else
+        //{
             //Set content view to normal screen layout
             setContentView(R.layout.main);
-        }
+        //}
 
         //Check if CalcTunes was opened from a file browser, and if so, open the file
         Intent intent = getIntent();
@@ -230,7 +236,7 @@ public class CalcTunesActivity extends Activity
         if(playbackservice_bound)
         {
             updateGuiElements();
-            playbackservice.setCallback(playbackCallback);
+            playbackservice.registerCallback(playbackCallback);
         }
     }
     
@@ -305,11 +311,10 @@ public class CalcTunesActivity extends Activity
         return false;       
     }
     
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     public void createGuiElements()
     {
       
@@ -321,18 +326,8 @@ public class CalcTunesActivity extends Activity
     public void updateGuiElements()
     {   
         horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);
-        trackinfoview = (TrackInfoView) findViewById(R.id.trackInfoView);
-        artisttext = (TextView) findViewById(R.id.text_artistname);
-        albumtext = (TextView) findViewById(R.id.text_albumname);
-        tracktext = (TextView) findViewById(R.id.text_trackname);
-        
-        albumartview = (ImageView) findViewById(R.id.imageAlbumArt);
-        
-        trackseek = (SeekBar) findViewById(R.id.seekBar_track);
-        trackseekhandler = new SeekHandler(trackseek, playbackservice, this);
-        
-        sourcelistframe = findViewById(R.id.sourceListFrame);
-                     
+        trackinfoview = (TrackInfoView) findViewById(R.id.trackInfoView);        
+        sourcelistframe = findViewById(R.id.sourceListFrame);                     
         mainlist = (ListView) findViewById(R.id.libraryListView);
         viewhandler.setListView(mainlist);
         updateInterfaceColor(interfaceColor);
@@ -341,7 +336,6 @@ public class CalcTunesActivity extends Activity
    
     public void Exit()
     {
-        trackseekhandler.pause();
         playbackservice.StopPlayback();
         unbindService(playbackserviceConnection);
         playbackservice_bound = false;
@@ -381,22 +375,11 @@ public class CalcTunesActivity extends Activity
         playbackservice.PrevTrack();
     }
     
-    public void ButtonInfoClick(View view)
-    {
-        trackinfoview.setTrackInfoFromFile(playbackservice.NowPlayingFile());
-        horizontalpager.setCurrentScreen(3, true);
-        //Intent intent = new Intent(getBaseContext(), CalcTunesMediaInfoActivity.class);
-        //intent.putExtra("TrackFilename", playbackservice.NowPlayingFile());
-        //startActivity(intent);
-    }
-    
     public void updateInterfaceColor(int color)
     {
         findViewById(R.id.title_border).setBackgroundColor(color);
         findViewById(R.id.lower_border).setBackgroundColor(color);
-        //sourcelist.setInterfaceColor(color);
         viewhandler.setHighlightColor(color);
-        trackseekhandler.setInterfaceColor(color);
     }
     
     public void ButtonSidebarClick(View view)

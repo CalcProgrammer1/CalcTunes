@@ -30,9 +30,11 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.47 Alpha (10/15/2012)
+Current Version - Version 0.48 Alpha (5/4/2013)
 ---------------
-	- Added DSPManager/Beats Audio support using Android AudioFX intent for 4.0+
-	- New horizontal pager UI, swipe left and right for different views
-	- Integrated media info activity into main activity
-	- Started implementing visualizations
+	- Replaced source list and now playing views with Fragments for better code organization
+	- Added Android Support Library to provide Fragments on older Android versions
+	- Improved callbacks for a few classes - can now register multiple callbacks at once
+	- Started implementation of Subsonic, an open source media streaming server protocol
+	- Added Subsonic server source type and source list builder
+	- This version works properly on Android 2.3 devices again! :)

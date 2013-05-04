@@ -1,5 +1,7 @@
 package com.calcprogrammer1.calctunes;
 
+import java.util.ArrayList;
+
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 
@@ -60,7 +62,7 @@ public class ContentPlaybackService extends Service
     private String nowPlayingFile = new String();
     private int nowPlayingCursorPos = -1;
     
-    private ContentPlaybackInterface cb;
+    private ArrayList<ContentPlaybackInterface> callbacks;
     
     //Now Playing Notification
     private Notification notification;
@@ -105,12 +107,17 @@ public class ContentPlaybackService extends Service
     ////Class functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    public void setCallback(ContentPlaybackInterface callback)
+    public void registerCallback(ContentPlaybackInterface callback)
     {
-        cb = callback;
-        if(cb != null)
+        if(callbacks == null)
         {
-            cb.onMediaInfoUpdated();
+            callbacks = new ArrayList<ContentPlaybackInterface>();
+        }
+        
+        if(callback != null)
+        {
+            callbacks.add(callback);
+            callback.onMediaInfoUpdated();
         }
     }
     
@@ -182,9 +189,16 @@ public class ContentPlaybackService extends Service
         
         updateNotification();
         
-        if(cb != null)
+        for(ContentPlaybackInterface callback : callbacks)
         {
-            cb.onMediaInfoUpdated();
+            if(callback != null)
+            {
+                callback.onMediaInfoUpdated();
+            }
+            else
+            {
+                callbacks.remove(callback);
+            }
         }
     }
     
@@ -219,9 +233,16 @@ public class ContentPlaybackService extends Service
         
         updateNotification();
         
-        if(cb != null)
+        for(ContentPlaybackInterface callback : callbacks)
         {
-            cb.onMediaInfoUpdated();
+            if(callback != null)
+            {
+                callback.onMediaInfoUpdated();
+            }
+            else
+            {
+                callbacks.remove(callback);
+            }
         }
         contentPlayMode = CONTENT_PLAYBACK_NONE;
     }
@@ -252,9 +273,16 @@ public class ContentPlaybackService extends Service
 
         updateNotification();
         
-        if(cb != null)
+        for(ContentPlaybackInterface callback : callbacks)
         {
-            cb.onMediaInfoUpdated();
+            if(callback != null)
+            {
+                callback.onMediaInfoUpdated();
+            }
+            else
+            {
+                callbacks.remove(callback);
+            }
         }
     }
     
@@ -285,9 +313,16 @@ public class ContentPlaybackService extends Service
 
         updateNotification();
         
-        if(cb != null)
+        for(ContentPlaybackInterface callback : callbacks)
         {
-            cb.onMediaInfoUpdated();
+            if(callback != null)
+            {
+                callback.onMediaInfoUpdated();
+            }
+            else
+            {
+                callbacks.remove(callback);
+            }
         }
     }
 

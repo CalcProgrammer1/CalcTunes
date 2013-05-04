@@ -16,7 +16,6 @@ import com.calcprogrammer1.calctunes.Library.LibraryDatabaseHelper;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 import com.calcprogrammer1.calctunes.Subsonic.CalcTunesXMLParser;
-import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
 
 import android.content.Context;
 import android.util.Xml;

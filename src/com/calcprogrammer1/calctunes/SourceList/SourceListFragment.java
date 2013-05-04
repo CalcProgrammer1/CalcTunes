@@ -12,7 +12,7 @@ import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;

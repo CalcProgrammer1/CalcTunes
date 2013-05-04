@@ -3,14 +3,12 @@ package com.calcprogrammer1.calctunes;
 import java.io.File;
 
 import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -66,7 +64,7 @@ public class TrackInfoView extends LinearLayout
         File file = new File(track_info_path);
         AudioFile f = SourceListOperations.readAudioFileReadOnly(file);
         Tag tag = f.getTag();
-        AudioHeader header = f.getAudioHeader();
+        //AudioHeader header = f.getAudioHeader();
         
         track_artwork.setImageBitmap(AlbumArtManager.getAlbumArt(tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM), con));
         track_title.setText(tag.getFirst(FieldKey.TITLE));
