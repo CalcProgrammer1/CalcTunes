@@ -9,6 +9,8 @@
 \*---------------------------------------------------------------------------------------------*/
 package com.calcprogrammer1.calctunes.Activities;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -70,8 +72,12 @@ public class CalcTunesActivity extends FragmentActivity
             playbackservice.registerCallback(playbackCallback);
             if(openFile != null)
             {
+                File file = new File(openFile);
+                viewhandler.setContentSource(file.getParent(), ContentViewHandler.CONTENT_TYPE_FILESYSTEM);
+                viewhandler.drawList();
                 playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, openFile, 0, null);
                 playbackservice.StartPlayback();
+                horizontalpager.setCurrentScreen(1, false);
             }
         }
 
@@ -137,6 +143,7 @@ public class CalcTunesActivity extends FragmentActivity
                 viewhandler.setContentSource(SourceListOperations.readLibraryFile(filename).name, ContentViewHandler.CONTENT_TYPE_LIBRARY);
                 viewhandler.drawList();
             }
+            horizontalpager.setCurrentScreen(1, true);
         }
     };
     
