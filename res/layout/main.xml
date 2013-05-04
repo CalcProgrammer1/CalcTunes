@@ -112,11 +112,10 @@
 	        android:fastScrollEnabled="true" >
 	    </ListView>
 
-	    <com.calcprogrammer1.calctunes.TrackInfoView
-	        android:id="@+id/trackInfoView"
+	    <FrameLayout
+	        android:id="@+id/mediaInfoContainer"
 	        android:layout_width="match_parent"
-	        android:layout_height="fill_parent" >
-	    </com.calcprogrammer1.calctunes.TrackInfoView>
+	        android:layout_height="fill_parent" />
 	    
 	</com.github.ysamlan.horizontalpager.HorizontalPager>
 	    

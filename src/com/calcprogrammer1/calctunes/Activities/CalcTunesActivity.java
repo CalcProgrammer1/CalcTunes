@@ -24,6 +24,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import com.calcprogrammer1.calctunes.*;
 import com.calcprogrammer1.calctunes.Interfaces.*;
+import com.calcprogrammer1.calctunes.MediaInfo.MediaInfoFragment;
 import com.calcprogrammer1.calctunes.NowPlaying.NowPlayingFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
@@ -36,7 +37,6 @@ public class CalcTunesActivity extends FragmentActivity
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	HorizontalPager horizontalpager;
-    TrackInfoView trackinfoview;
 	
 	ContentViewHandler viewhandler;
 	
@@ -46,6 +46,9 @@ public class CalcTunesActivity extends FragmentActivity
 	SourceListFragment sourcelistfragment;
 	
 	NowPlayingFragment nowplayingfragment;
+	
+	MediaInfoFragment mediainfofragment;
+	
 	ListView mainlist;
     
     String openFile = null;
@@ -64,7 +67,6 @@ public class CalcTunesActivity extends FragmentActivity
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             createGuiElements();
-            //sourcelist.readSourceLists();
             playbackservice.registerCallback(playbackCallback);
             if(openFile != null)
             {
@@ -117,11 +119,6 @@ public class CalcTunesActivity extends FragmentActivity
         @Override
         public void onMediaInfoUpdated()
         {
-            //On media info updated, update all the text fields and album art display
-            //artisttext.setText(playbackservice.NowPlayingArtist());
-            //albumtext.setText(playbackservice.NowPlayingAlbum());
-            //tracktext.setText(playbackservice.NowPlayingTitle());
-            //albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), CalcTunesActivity.this));
             viewhandler.setAdaptersNowPlaying(playbackservice.NowPlayingFile());
         }
         
@@ -146,7 +143,7 @@ public class CalcTunesActivity extends FragmentActivity
     NowPlayingFragmentInterface nowPlayingFragmentCallback = new NowPlayingFragmentInterface(){
         public void onInfoButtonPressed()
         {
-            trackinfoview.setTrackInfoFromFile(playbackservice.NowPlayingFile());
+            mediainfofragment.setTrackInfoFromFile(playbackservice.NowPlayingFile());
             horizontalpager.setCurrentScreen(3, true);
         }
     };
@@ -178,6 +175,10 @@ public class CalcTunesActivity extends FragmentActivity
         nowplayingfragment = new NowPlayingFragment();
         nowplayingfragment.registerCallback(nowPlayingFragmentCallback);
         getSupportFragmentManager().beginTransaction().add(R.id.nowPlayingContainer, nowplayingfragment).commit();
+        
+        //Create Media Info Fragment
+        mediainfofragment = new MediaInfoFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.mediaInfoContainer, mediainfofragment).commit();
         
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -325,8 +326,7 @@ public class CalcTunesActivity extends FragmentActivity
     
     public void updateGuiElements()
     {   
-        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);
-        trackinfoview = (TrackInfoView) findViewById(R.id.trackInfoView);        
+        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);   
         sourcelistframe = findViewById(R.id.sourceListFrame);                     
         mainlist = (ListView) findViewById(R.id.libraryListView);
         viewhandler.setListView(mainlist);
