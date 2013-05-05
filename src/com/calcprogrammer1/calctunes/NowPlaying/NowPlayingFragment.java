@@ -145,7 +145,7 @@ public class NowPlayingFragment extends Fragment
             artisttext.setText(playbackservice.NowPlayingArtist());
             albumtext.setText(playbackservice.NowPlayingAlbum());
             tracktext.setText(playbackservice.NowPlayingTitle());
-            albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), getActivity()));
+            albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), getActivity(), true));
         }  
     };
    

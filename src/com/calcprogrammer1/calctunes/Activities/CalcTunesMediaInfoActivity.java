@@ -101,7 +101,7 @@ public class CalcTunesMediaInfoActivity extends Activity
         mediaInfoDisc.setText(tag.getFirst(FieldKey.DISC_NO));
         mediaInfoFormat.setText(header.getFormat());
         mediaInfoBitrate.setText(header.getBitRate());
-        mediaInfoAlbumArt.setImageBitmap(AlbumArtManager.getAlbumArt(tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM), this));
+        mediaInfoAlbumArt.setImageBitmap(AlbumArtManager.getAlbumArt(tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM), this, true));
         
         //If ICS, make the title border match the ICS Holo theme
         if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)

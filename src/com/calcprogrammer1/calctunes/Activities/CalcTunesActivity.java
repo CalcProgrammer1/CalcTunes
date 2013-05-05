@@ -173,22 +173,37 @@ public class CalcTunesActivity extends FragmentActivity
     {
         super.onCreate(savedInstanceState);
         
-        //Create Source List Fragment
-        sourcelistfragment = new SourceListFragment();
-        sourcelistfragment.setCallback(sourcelisthandlerCallback);
-        getSupportFragmentManager().beginTransaction().add(R.id.sourceListFragmentContainer, sourcelistfragment).commit();
-        
-        //Create Now Playing Fragment
-        nowplayingfragment = new NowPlayingFragment();
-        nowplayingfragment.registerCallback(nowPlayingFragmentCallback);
-        getSupportFragmentManager().beginTransaction().add(R.id.nowPlayingContainer, nowplayingfragment).commit();
-        
-        //Create Media Info Fragment
-        mediainfofragment = new MediaInfoFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.mediaInfoContainer, mediainfofragment).commit();
-        
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
+        //Create or restore fragments
+        if(savedInstanceState == null)
+        {
+            //Create Source List Fragment
+            sourcelistfragment = new SourceListFragment();
+            sourcelistfragment.setCallback(sourcelisthandlerCallback);
+            getSupportFragmentManager().beginTransaction().add(R.id.sourceListFragmentContainer, sourcelistfragment).commit();
+            
+            //Create Now Playing Fragment
+            nowplayingfragment = new NowPlayingFragment();
+            nowplayingfragment.registerCallback(nowPlayingFragmentCallback);
+            getSupportFragmentManager().beginTransaction().add(R.id.nowPlayingContainer, nowplayingfragment).commit();
+            
+            //Create Media Info Fragment
+            mediainfofragment = new MediaInfoFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.mediaInfoContainer, mediainfofragment).commit();
+        }
+        else
+        {
+            //Restore Source List Fragment
+            sourcelistfragment = (SourceListFragment) getSupportFragmentManager().findFragmentById(R.id.sourceListFragmentContainer);
+            
+            //Restore Now Playing Fragment
+            nowplayingfragment = (NowPlayingFragment) getSupportFragmentManager().findFragmentById(R.id.nowPlayingContainer);
+            
+            //Restore Media Info Fragment
+            mediainfofragment  = (MediaInfoFragment)  getSupportFragmentManager().findFragmentById(R.id.mediaInfoContainer);
+        }
         
         //Get the application preferences
         appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
@@ -404,7 +419,10 @@ public class CalcTunesActivity extends FragmentActivity
             sub.SubsonicGetIndexes();
             SubsonicAPI.SubsonicSong song = sub.SubsonicGetAlbum(sub.SubsonicGetArtist(sub.SubsonicGetArtists().get(0).id).get(0).id).get(0);
             Log.d("SubsonicTest", "Song: " + song.title);
-            sub.SubsonicStream(song.id, 160, "ogg");
+            sub.SubsonicDownload(song.id);
+            String subsonicFile = "/storage/sdcard1/calctunes/subsonic_dl_test.flac";
+            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, subsonicFile, 0, null);
+            playbackservice.StartPlayback();
         }
     }
     

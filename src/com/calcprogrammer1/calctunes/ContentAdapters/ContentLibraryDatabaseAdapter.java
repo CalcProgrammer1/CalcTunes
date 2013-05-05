@@ -265,7 +265,7 @@ public class ContentLibraryDatabaseAdapter extends BaseAdapter
             final String artist = cursor.getString(cursor.getColumnIndex("ARTIST"));
             final String album  = cursor.getString(cursor.getColumnIndex("ALBUM"));
             final String year   = cursor.getString(cursor.getColumnIndex("YEAR"));
-            final Bitmap art    = AlbumArtManager.getAlbumArtFromCache(artist, album, con);
+            final Bitmap art    = AlbumArtManager.getAlbumArtFromCache(artist, album, con, true);
             
             albumName.setText(album);
             albumArtist.setText(artist);

@@ -370,11 +370,35 @@ public class SubsonicAPI
         }
        return null;
     }
+
+    public void SubsonicStream(int id)
+    {
+        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id;
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+    }
+    
+    public void SubsonicStream(int id, String format)
+    {
+        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&format=" + format;
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+    }
+    
+    public void SubsonicStream(int id, int maxBitRate)
+    {
+        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate;
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+    }
     
     public void SubsonicStream(int id, int maxBitRate, String format)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate + "&format=" + format;
         XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+    }
+    
+    public void SubsonicDownload(int id)
+    {
+        HTTPRequest = buildHTTPRequest("download") + "&id=" + id;
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_dl_test.flac");
     }
     
     public SubsonicDirectory SubsonicGetMusicDirectory(int id)

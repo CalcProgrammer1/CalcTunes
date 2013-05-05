@@ -1,7 +1,7 @@
 package com.calcprogrammer1.calctunes;
 
-import com.calcprogrammer1.calctunes.ContentAdapters.ContentFilesystemAdapter;
 import com.calcprogrammer1.calctunes.ContentAdapters.ContentLibraryDatabaseAdapter;
+import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemAdapter;
 
 import android.content.Context;
 import android.database.Cursor;

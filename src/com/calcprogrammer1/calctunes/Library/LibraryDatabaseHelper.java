@@ -60,7 +60,7 @@ public class LibraryDatabaseHelper extends SQLiteOpenHelper
             song_title = song_title.replaceAll("'", "''");
             song_year = song_year.replaceAll("'", "''");
             song_path = song_path.replaceAll("'", "''");
-            AlbumArtManager.getAlbumArt(song_artist, song_album, con);
+            AlbumArtManager.getAlbumArt(song_artist, song_album, con, true);
             myDataBase.execSQL("INSERT INTO 'MYLIBRARY' VALUES (NULL, '" + song_artist + "', '" + song_album + "', '" + song_year + "', " + song_num + ", '" + song_title + "', '" + song_path + "', " + song_length + ", " + song_disc + ");");
         }catch(Exception e){}
     }
