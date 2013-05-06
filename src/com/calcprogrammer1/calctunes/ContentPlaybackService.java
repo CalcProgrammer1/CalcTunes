@@ -25,11 +25,11 @@ public class ContentPlaybackService extends Service
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     //Content Types
-    public static final int CONTENT_TYPE_NONE = 0;
-    public static final int CONTENT_TYPE_FILESYSTEM = 1;
-    public static final int CONTENT_TYPE_LIBRARY = 2;
-    public static final int CONTENT_TYPE_PLAYLIST = 3;
-    
+    public static final int CONTENT_TYPE_NONE           = 0;
+    public static final int CONTENT_TYPE_FILESYSTEM     = 1;
+    public static final int CONTENT_TYPE_LIBRARY        = 2;
+    public static final int CONTENT_TYPE_PLAYLIST       = 3;
+    public static final int CONTENT_TYPE_SUBSONIC       = 4;
     //Content View Modes
     public static final int CONTENT_VIEW_NONE = 0;
     public static final int CONTENT_VIEW_FILESYSTEM = 1;

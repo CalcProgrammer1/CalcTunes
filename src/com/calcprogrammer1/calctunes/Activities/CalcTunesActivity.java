@@ -23,8 +23,13 @@ import android.widget.*;
 import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import com.calcprogrammer1.calctunes.*;
+import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemAdapter;
+import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemFragment;
+import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryDatabaseAdapter;
+import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryFragment;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaInfo.MediaInfoFragment;
 import com.calcprogrammer1.calctunes.NowPlaying.NowPlayingFragment;
@@ -38,22 +43,28 @@ public class CalcTunesActivity extends FragmentActivity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	HorizontalPager horizontalpager;
+	//Horizontal Pager that holds fragments
+    private HorizontalPager horizontalpager;
+
+	//Shared Preferences
+    private SharedPreferences appSettings;
 	
-	ContentViewHandler viewhandler;
+	//Fragments
+	private SourceListFragment         sourcelistfragment;	
+	private NowPlayingFragment         nowplayingfragment;
+	private ContentFilesystemFragment  filesystemfragment;
+    private ContentLibraryFragment     libraryfragment;
+//  private ContentPlaylistFragment    playlistfragment;
+//  private ContentSubsonicFragment    subsonicFragment;
+	private MediaInfoFragment          mediainfofragment;
+
+	//Currently open content fragment
+	private int currentContentSource = ContentPlaybackService.CONTENT_TYPE_NONE;
 	
-    SharedPreferences appSettings;
-	
-	View sourcelistframe;
-	SourceListFragment sourcelistfragment;
-	
-	NowPlayingFragment nowplayingfragment;
-	
-	MediaInfoFragment mediainfofragment;
-	
-	ListView mainlist;
-    
+	//Filename if opened by Intent
     String openFile = null;
+    
+    //Interface Color
     int interfaceColor;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,8 +84,7 @@ public class CalcTunesActivity extends FragmentActivity
             if(openFile != null)
             {
                 File file = new File(openFile);
-                viewhandler.setContentSource(file.getParent(), ContentViewHandler.CONTENT_TYPE_FILESYSTEM);
-                viewhandler.drawList();
+                setContentSource(file.getParent(), ContentPlaybackService.CONTENT_TYPE_FILESYSTEM);
                 playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, openFile, 0, null);
                 playbackservice.StartPlayback();
                 horizontalpager.setCurrentScreen(1, false);
@@ -125,7 +135,6 @@ public class CalcTunesActivity extends FragmentActivity
         @Override
         public void onMediaInfoUpdated()
         {
-            viewhandler.setAdaptersNowPlaying(playbackservice.NowPlayingFile());
         }
         
     };
@@ -133,15 +142,13 @@ public class CalcTunesActivity extends FragmentActivity
     SourceListInterface sourcelisthandlerCallback = new SourceListInterface(){
         public void callback(int contentType, String filename)
         {
-            if(contentType == ContentViewHandler.CONTENT_TYPE_FILESYSTEM)
+            if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
             {
-                viewhandler.setContentSource("/mnt/sdcard", contentType);
-                viewhandler.drawList();
+                setContentSource("/mnt/sdcard", contentType);
             }
-            else if(contentType == ContentViewHandler.CONTENT_TYPE_LIBRARY)
+            else if(contentType == ContentPlaybackService.CONTENT_TYPE_LIBRARY)
             {
-                viewhandler.setContentSource(SourceListOperations.readLibraryFile(filename).name, ContentViewHandler.CONTENT_TYPE_LIBRARY);
-                viewhandler.drawList();
+                setContentSource(SourceListOperations.readLibraryFile(filename).name, ContentPlaybackService.CONTENT_TYPE_LIBRARY);
             }
             horizontalpager.setCurrentScreen(1, true);
         }
@@ -192,6 +199,10 @@ public class CalcTunesActivity extends FragmentActivity
             //Create Media Info Fragment
             mediainfofragment = new MediaInfoFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.mediaInfoContainer, mediainfofragment).commit();
+            
+            //Create Content Type Fragments
+            libraryfragment = new ContentLibraryFragment();
+            filesystemfragment = new ContentFilesystemFragment();
         }
         else
         {
@@ -203,25 +214,33 @@ public class CalcTunesActivity extends FragmentActivity
             
             //Restore Media Info Fragment
             mediainfofragment  = (MediaInfoFragment)  getSupportFragmentManager().findFragmentById(R.id.mediaInfoContainer);
+            
+            //Restore Content Fragment
+            switch(currentContentSource)
+            {
+                case ContentPlaybackService.CONTENT_TYPE_LIBRARY:
+                    libraryfragment = (ContentLibraryFragment) getSupportFragmentManager().findFragmentById(R.id.contentListFragmentContainer);
+                    break;
+                    
+                case ContentPlaybackService.CONTENT_TYPE_FILESYSTEM:
+                    filesystemfragment = (ContentFilesystemFragment) getSupportFragmentManager().findFragmentById(R.id.contentListFragmentContainer);
+                    break;
+                
+                case ContentPlaybackService.CONTENT_TYPE_PLAYLIST:
+                    break;
+                    
+                case ContentPlaybackService.CONTENT_TYPE_SUBSONIC:
+                    break;
+            }
         }
         
         //Get the application preferences
         appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-        
-        //boolean smallScreenMode = appSettings.getBoolean("small_screen_layout", true);
-        
-        //if(smallScreenMode)
-        //{
-            //Set content view to small screen layout
-        //    setContentView(R.layout.main_smallscreen);
-        //}
-        //else
-        //{
-            //Set content view to normal screen layout
-            setContentView(R.layout.main);
-        //}
+
+        //Set the content view
+        setContentView(R.layout.main);
 
         //Check if CalcTunes was opened from a file browser, and if so, open the file
         Intent intent = getIntent();
@@ -229,10 +248,8 @@ public class CalcTunesActivity extends FragmentActivity
         if(action.equals(Intent.ACTION_VIEW))
         {
             try{
-                
                 Uri data = intent.getData();
                 openFile = data.getPath();
-                
             }catch(Exception e){}
         }
         
@@ -255,7 +272,6 @@ public class CalcTunesActivity extends FragmentActivity
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
-        //setContentView(R.layout.main);
         if(playbackservice_bound)
         {
             updateGuiElements();
@@ -340,22 +356,42 @@ public class CalcTunesActivity extends FragmentActivity
     
     public void createGuiElements()
     {
-      
-    	viewhandler = new ContentViewHandler(this, mainlist, playbackservice);
-        
         updateGuiElements();
     }
     
     public void updateGuiElements()
     {   
-        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);   
-        sourcelistframe = findViewById(R.id.sourceListFrame);                     
-        mainlist = (ListView) findViewById(R.id.libraryListView);
-        viewhandler.setListView(mainlist);
+        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);                       
         updateInterfaceColor(interfaceColor);
-        viewhandler.drawList();
     }
    
+    //Set Content Source
+    public void setContentSource(String contentName, int contentType)
+    {
+        if(contentType == ContentPlaybackService.CONTENT_TYPE_LIBRARY)
+        {
+            currentContentSource = ContentPlaybackService.CONTENT_TYPE_LIBRARY;
+            libraryfragment.setLibrary(contentName);
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, libraryfragment).commit();          
+        }
+        else if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
+        {
+            currentContentSource = ContentPlaybackService.CONTENT_TYPE_FILESYSTEM;
+            filesystemfragment.setDirectory(contentName);
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, filesystemfragment).commit();
+        }
+        else if(contentType == ContentPlaybackService.CONTENT_TYPE_PLAYLIST)
+        {
+            currentContentSource = ContentPlaybackService.CONTENT_TYPE_PLAYLIST;
+            //getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, playlistfragment).commit();
+        }
+        else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
+        {
+            currentContentSource = ContentPlaybackService.CONTENT_TYPE_SUBSONIC;
+            //getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, subsonicfragment).commit();
+        }
+    }
+    
     public void Exit()
     {
         playbackservice.StopPlayback();
@@ -401,7 +437,6 @@ public class CalcTunesActivity extends FragmentActivity
     {
         findViewById(R.id.title_border).setBackgroundColor(color);
         findViewById(R.id.lower_border).setBackgroundColor(color);
-        viewhandler.setHighlightColor(color);
     }
     
     public void ButtonSidebarClick(View view)

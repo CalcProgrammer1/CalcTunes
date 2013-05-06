@@ -104,13 +104,10 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-	    <ListView
-	        android:id="@+id/libraryListView"
+	    <FrameLayout
+	        android:id="@+id/contentListFragmentContainer"
 	        android:layout_width="match_parent"
-	        android:layout_height="fill_parent"
-	        android:divider="#000000"
-	        android:fastScrollEnabled="true" >
-	    </ListView>
+	        android:layout_height="fill_parent" />
 
 	    <FrameLayout
 	        android:id="@+id/mediaInfoContainer"
