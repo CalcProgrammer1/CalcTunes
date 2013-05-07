@@ -53,6 +53,12 @@ public class SourceListOperations
             //End document
             serializer.endTag("", "CalcTunesLibrary");
             serializer.endDocument();
+            
+            //Make sure library directory exists before writing
+            File outdir = new File(lib.filename);
+            outdir.getParentFile().mkdirs();
+            
+            //Write output file
             PrintWriter out = new PrintWriter(lib.filename);
             out.println(writer.toString());
             out.close();
