@@ -22,7 +22,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
-import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemAdapter;
+import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 
 public class ContentLibraryFragment extends Fragment
 {
@@ -52,7 +52,8 @@ public class ContentLibraryFragment extends Fragment
         {
             appSettings = arg0;
             interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-            
+            libAdapter.setNowPlayingColor(interfaceColor);
+            libAdapter.notifyDataSetChanged(); 
         }
     };
     
@@ -69,6 +70,7 @@ public class ContentLibraryFragment extends Fragment
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             updateList();
+            playbackservice.registerCallback(playbackCallback);
         }
 
         @Override
@@ -77,6 +79,21 @@ public class ContentLibraryFragment extends Fragment
             playbackservice = null;
             playbackservice_bound = false;
         }    
+    };
+    
+    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
+        @Override
+        public void onTrackEnd()
+        {
+            //Do nothing on track end
+        }
+
+        @Override
+        public void onMediaInfoUpdated()
+        {
+            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            libAdapter.notifyDataSetChanged();
+        }  
     };
     
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +137,8 @@ public class ContentLibraryFragment extends Fragment
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.setNowPlayingColor(interfaceColor);
             rootView.setAdapter(libAdapter);
+            rootView.setDivider(null);
+            rootView.setDividerHeight(0);
         rootView.setOnItemClickListener(new OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)

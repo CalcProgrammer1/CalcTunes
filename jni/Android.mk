@@ -1,15 +1,8 @@
 include $(call all-subdir-makefiles)
 
+APP_PLATFORM := android-9
 
-#CODECS := alac ape flac wav wv mpc
-#codec-makefiles =  $(patsubst %,$(call my-dir)/%/Android.mk,$(CODECS)) 
-#include $(call codec-makefiles)
-
-ifneq ($(NDK_ROOT),)
-LOCAL_PATH:=$(NDK_ROOT)/apps/lossless/project/jni
-else
-LOCAL_PATH:=apps/lossless/project/jni
-endif
+LOCAL_PATH:=jni
 
 # library for Android < 9
 include $(CLEAR_VARS)

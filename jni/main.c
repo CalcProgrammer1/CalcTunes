@@ -295,7 +295,7 @@ void update_track_time(JNIEnv *env, jobject obj, int time) {
 
 #ifdef AVSREMOTE
 //static const char *classPathName = "net/avs234/AndLessSrv";
-static const char *classPathName = "com/calcprogrammer1/calctunes/LosslessMediaCodecHandler";
+static const char *classPathName = "com/calcprogrammer1/calctunes/MediaPlayer/LosslessMediaCodecHandler";
 
 static JNINativeMethod methods[] = {
  { "audioInit", "(II)I", (void *) Java_net_avs234_AndLessSrv_audioInit },

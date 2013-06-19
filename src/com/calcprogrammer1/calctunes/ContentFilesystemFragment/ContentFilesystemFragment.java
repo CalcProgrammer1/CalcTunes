@@ -1,6 +1,8 @@
 package com.calcprogrammer1.calctunes.ContentFilesystemFragment;
 
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,7 +43,8 @@ public class ContentFilesystemFragment extends Fragment
         {
             appSettings = arg0;
             interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-            
+            fileAdapter.setNowPlayingColor(interfaceColor);
+            fileAdapter.notifyDataSetChanged(); 
         }
     };
     
@@ -58,6 +61,7 @@ public class ContentFilesystemFragment extends Fragment
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             updateList();
+            playbackservice.registerCallback(playbackCallback);
         }
 
         @Override
@@ -68,6 +72,20 @@ public class ContentFilesystemFragment extends Fragment
         }    
     };
     
+    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
+        @Override
+        public void onTrackEnd()
+        {
+            //Do nothing on track end
+        }
+
+        @Override
+        public void onMediaInfoUpdated()
+        {
+            fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            fileAdapter.notifyDataSetChanged(); 
+        }  
+    };
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////// FRAGMENT CREATE FUNCTIONS /////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -19,16 +19,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
-import android.widget.*;
 import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import com.calcprogrammer1.calctunes.*;
-import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemAdapter;
 import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemFragment;
-import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryDatabaseAdapter;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryFragment;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaInfo.MediaInfoFragment;
@@ -144,7 +140,7 @@ public class CalcTunesActivity extends FragmentActivity
         {
             if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
             {
-                setContentSource("/mnt/sdcard", contentType);
+                setContentSource("/", contentType);
             }
             else if(contentType == ContentPlaybackService.CONTENT_TYPE_LIBRARY)
             {
@@ -371,12 +367,14 @@ public class CalcTunesActivity extends FragmentActivity
         if(contentType == ContentPlaybackService.CONTENT_TYPE_LIBRARY)
         {
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_LIBRARY;
+            libraryfragment = new ContentLibraryFragment();
             libraryfragment.setLibrary(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, libraryfragment).commit();          
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
         {
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_FILESYSTEM;
+            filesystemfragment = new ContentFilesystemFragment();
             filesystemfragment.setDirectory(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, filesystemfragment).commit();
         }

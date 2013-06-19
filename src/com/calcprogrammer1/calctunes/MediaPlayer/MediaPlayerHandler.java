@@ -120,28 +120,28 @@ public class MediaPlayerHandler
         {
             mp.release();
             mp = null;
-//            ls = new LosslessMediaCodecHandler();
-//            ls.setCallback(new LosslessMediaCodecHandlerCallback()
-//            {
-//                public void onCompletion()
-//                {
-//                    prepared = false;
-//                    ls = null;
-//                    current_path = "";
-//                    current_title = "";
-//                    current_artist = "";
-//                    current_album = "";
-//                    current_year = "";
-//                    if(cb != null) cb.onSongFinished();
-//                }
-//            });
-//            ls.setDataSource(current_path);
-//            prepared = true;
-//            if(playonprepare)
-//            {
-//                ls.start();
-//                playonprepare = false;
-//            }
+            ls = new LosslessMediaCodecHandler();
+            ls.setCallback(new LosslessMediaCodecHandlerCallback()
+            {
+                public void onCompletion()
+                {
+                    prepared = false;
+                    ls = null;
+                    current_path = "";
+                    current_title = "";
+                    current_artist = "";
+                    current_album = "";
+                    current_year = "";
+                    if(cb != null) cb.onSongFinished();
+                }
+            });
+            ls.setDataSource(current_path);
+            prepared = true;
+            if(playonprepare)
+            {
+                ls.start();
+                playonprepare = false;
+            }
         }
     }
     
