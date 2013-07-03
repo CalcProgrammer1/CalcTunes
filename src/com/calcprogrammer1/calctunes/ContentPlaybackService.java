@@ -4,18 +4,25 @@ import java.util.ArrayList;
 
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
+import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
+import android.view.KeyEvent;
 
 
 public class ContentPlaybackService extends Service
@@ -52,6 +59,9 @@ public class ContentPlaybackService extends Service
     
     //MediaPlayer Handler for playback
     public MediaPlayerHandler mediaplayer;
+    
+    //Control buttons receiver
+    public RemoteControlReceiver remote;
     
     //Cursors - one for content list view and one for playback
     //private SQLiteDatabase libraryDatabase;
@@ -189,17 +199,7 @@ public class ContentPlaybackService extends Service
         
         updateNotification();
         
-        for(ContentPlaybackInterface callback : callbacks)
-        {
-            if(callback != null)
-            {
-                callback.onMediaInfoUpdated();
-            }
-            else
-            {
-                callbacks.remove(callback);
-            }
-        }
+        notifyMediaInfoUpdated();
     }
     
     public void StartPlayback()
@@ -233,17 +233,8 @@ public class ContentPlaybackService extends Service
         
         updateNotification();
         
-        for(ContentPlaybackInterface callback : callbacks)
-        {
-            if(callback != null)
-            {
-                callback.onMediaInfoUpdated();
-            }
-            else
-            {
-                callbacks.remove(callback);
-            }
-        }
+        notifyMediaInfoUpdated();
+        
         contentPlayMode = CONTENT_PLAYBACK_NONE;
     }
     
@@ -273,17 +264,7 @@ public class ContentPlaybackService extends Service
 
         updateNotification();
         
-        for(ContentPlaybackInterface callback : callbacks)
-        {
-            if(callback != null)
-            {
-                callback.onMediaInfoUpdated();
-            }
-            else
-            {
-                callbacks.remove(callback);
-            }
-        }
+        notifyMediaInfoUpdated();
     }
     
     public void PrevTrack()
@@ -313,17 +294,7 @@ public class ContentPlaybackService extends Service
 
         updateNotification();
         
-        for(ContentPlaybackInterface callback : callbacks)
-        {
-            if(callback != null)
-            {
-                callback.onMediaInfoUpdated();
-            }
-            else
-            {
-                callbacks.remove(callback);
-            }
-        }
+        notifyMediaInfoUpdated();
     }
 
     @SuppressWarnings("deprecation")
@@ -350,6 +321,21 @@ public class ContentPlaybackService extends Service
     {
         notificationManager.cancel(notificationId);
     }
+    
+    private void notifyMediaInfoUpdated()
+    {
+        for(ContentPlaybackInterface callback : callbacks)
+        {
+            if(callback != null)
+            {
+                callback.onMediaInfoUpdated();
+            }
+            else
+            {
+                callbacks.remove(callback);
+            }
+        }
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Service Functions//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -369,6 +355,10 @@ public class ContentPlaybackService extends Service
     {
         mediaplayer = new MediaPlayerHandler(this);
         mediaplayer.setCallback(mediaplayerCallback);
+        
+        ((AudioManager)getSystemService(AUDIO_SERVICE)).registerMediaButtonEventReceiver(new ComponentName( this, RemoteControlReceiver.class ) );
+               
+        registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT"));
         
         //Get the application preferences
         appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
@@ -392,4 +382,61 @@ public class ContentPlaybackService extends Service
     {
         return mBinder;
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /*---------------------------------------------------------------------*\
+    |                                                                       |
+    |   Remote Control Broadcast Receiver                                   |
+    |                                                                       |
+    |   Receives intent com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT   |
+    |                                                                       |
+    |   This intent contains a KeyEvent.KEYCODE_ value indicating which     |
+    |   media button key was pressed.  It is sent from the Media Buttons    |
+    |   event receiver for handling headset/Bluetooth key events.           |
+    |                                                                       | 
+    \*---------------------------------------------------------------------*/
+    
+    private BroadcastReceiver remoteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            Log.d("service", "received intent");
+            int keyCode = intent.getExtras().getInt("keyEvent");
+            
+            switch(keyCode)
+            {
+                case KeyEvent.KEYCODE_MEDIA_NEXT:
+                    NextTrack();
+                    break;
+                   
+                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+                    PrevTrack();
+                    break;
+                    
+                case KeyEvent.KEYCODE_MEDIA_STOP:
+                    StopPlayback();
+                    break;
+                    
+                case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                    PausePlayback();
+                    break;
+                    
+                case KeyEvent.KEYCODE_MEDIA_PLAY:
+                    StartPlayback();
+                    break;
+                    
+                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                    if(isPlaying())
+                    {
+                        PausePlayback();
+                    }
+                    else
+                    {
+                        StartPlayback();
+                    }
+                    break;
+            }
+        }
+    };
 }

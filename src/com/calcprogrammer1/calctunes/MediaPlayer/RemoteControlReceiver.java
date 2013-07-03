@@ -26,12 +26,12 @@ public class RemoteControlReceiver extends BroadcastReceiver
     {
         super();
     }
+    
     @Override
     public void onReceive(Context context, Intent intent)
     {
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) 
         {
-
             KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if(event == null)
             {
@@ -40,10 +40,10 @@ public class RemoteControlReceiver extends BroadcastReceiver
             int action = event.getAction();
             if(action == KeyEvent.ACTION_DOWN)
             {
-                if(event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_NEXT)
-                {
-                    if(cb != null) cb.onMediaNextPressed();
-                }
+                Intent broadcast = new Intent();
+                broadcast.putExtra("keyEvent", event.getKeyCode());
+                broadcast.setAction("com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT");
+                context.sendBroadcast(broadcast);
             }
             abortBroadcast();
         }

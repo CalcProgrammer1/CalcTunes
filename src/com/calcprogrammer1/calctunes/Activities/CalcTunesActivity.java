@@ -26,6 +26,7 @@ import android.graphics.Color;
 import com.calcprogrammer1.calctunes.*;
 import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemFragment;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryFragment;
+import com.calcprogrammer1.calctunes.ContentSubsonicFragment.ContentSubsonicFragment;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaInfo.MediaInfoFragment;
 import com.calcprogrammer1.calctunes.NowPlaying.NowPlayingFragment;
@@ -51,7 +52,7 @@ public class CalcTunesActivity extends FragmentActivity
 	private ContentFilesystemFragment  filesystemfragment;
     private ContentLibraryFragment     libraryfragment;
 //  private ContentPlaylistFragment    playlistfragment;
-//  private ContentSubsonicFragment    subsonicFragment;
+    private ContentSubsonicFragment    subsonicfragment;
 	private MediaInfoFragment          mediainfofragment;
 
 	//Currently open content fragment
@@ -98,28 +99,6 @@ public class CalcTunesActivity extends FragmentActivity
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Callbacks//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    MediaButtonsHandlerInterface buttonsCallback = new MediaButtonsHandlerInterface(){
-        public void onMediaNextPressed()
-        {
-            ButtonNextClick(null);
-        }
-
-        public void onMediaPrevPressed()
-        {
-            ButtonPrevClick(null);
-        }
-
-        public void onMediaPlayPausePressed()
-        {
-            ButtonPlayPauseClick(null);
-        }
-
-        public void onMediaStopPressed()
-        {
-            ButtonStopClick(null);
-        }  
-    };
     
     ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
         @Override
@@ -199,6 +178,7 @@ public class CalcTunesActivity extends FragmentActivity
             //Create Content Type Fragments
             libraryfragment = new ContentLibraryFragment();
             filesystemfragment = new ContentFilesystemFragment();
+            subsonicfragment = new ContentSubsonicFragment();
         }
         else
         {
@@ -321,30 +301,30 @@ public class CalcTunesActivity extends FragmentActivity
         }
     }
     
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if(keyCode == KeyEvent.KEYCODE_MEDIA_NEXT)
-        {
-            ButtonNextClick(null);
-            return true;
-        }
-        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-        {
-            ButtonPrevClick(null);
-            return true;
-        }
-        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
-        {
-            ButtonPlayPauseClick(null);
-            return true;
-        }
-        else if(keyCode == KeyEvent.KEYCODE_MEDIA_STOP)
-        {
-            ButtonStopClick(null);
-        }
-        return false;       
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event)
+//    {
+//        if(keyCode == KeyEvent.KEYCODE_MEDIA_NEXT)
+//        {
+//            ButtonNextClick(null);
+//            return true;
+//        }
+//        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+//        {
+//            ButtonPrevClick(null);
+//            return true;
+//        }
+//        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+//        {
+//            ButtonPlayPauseClick(null);
+//            return true;
+//        }
+//        else if(keyCode == KeyEvent.KEYCODE_MEDIA_STOP)
+//        {
+//            ButtonStopClick(null);
+//        }
+//        return false;       
+//    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +366,9 @@ public class CalcTunesActivity extends FragmentActivity
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
         {
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_SUBSONIC;
-            //getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, subsonicfragment).commit();
+            subsonicfragment = new ContentSubsonicFragment();
+            subsonicfragment.setSubsonicSource(contentName);
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, subsonicfragment).commit();
         }
     }
     
