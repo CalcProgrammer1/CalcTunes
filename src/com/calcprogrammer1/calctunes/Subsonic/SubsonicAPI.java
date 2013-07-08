@@ -371,34 +371,34 @@ public class SubsonicAPI
        return null;
     }
 
-    public void SubsonicStream(int id)
+    public void SubsonicStream(int id, String filename)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
     }
     
-    public void SubsonicStream(int id, String format)
+    public void SubsonicStream(int id, String filename, String format)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&format=" + format;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
     }
     
-    public void SubsonicStream(int id, int maxBitRate)
+    public void SubsonicStream(int id, String filename, int maxBitRate)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
     }
     
-    public void SubsonicStream(int id, int maxBitRate, String format)
+    public void SubsonicStream(int id, String filename, int maxBitRate, String format)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate + "&format=" + format;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_test.ogg");
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
     }
     
-    public void SubsonicDownload(int id)
+    public void SubsonicDownload(int id, String filename)
     {
         HTTPRequest = buildHTTPRequest("download") + "&id=" + id;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard1/calctunes/subsonic_dl_test.flac");
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
     }
     
     public SubsonicDirectory SubsonicGetMusicDirectory(int id)

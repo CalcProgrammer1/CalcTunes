@@ -125,6 +125,14 @@ public class CalcTunesActivity extends FragmentActivity
             {
                 setContentSource(SourceListOperations.readLibraryFile(filename).name, ContentPlaybackService.CONTENT_TYPE_LIBRARY);
             }
+            else if(contentType == ContentPlaybackService.CONTENT_TYPE_PLAYLIST)
+            {
+                
+            }
+            else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
+            {
+                setContentSource(filename, ContentPlaybackService.CONTENT_TYPE_SUBSONIC);
+            }
             horizontalpager.setCurrentScreen(1, true);
         }
     };
@@ -133,6 +141,16 @@ public class CalcTunesActivity extends FragmentActivity
         public void onInfoButtonPressed()
         {
             mediainfofragment.setTrackInfoFromFile(playbackservice.NowPlayingFile());
+            horizontalpager.setCurrentScreen(3, true);
+        }
+    };
+    
+    ContentFragmentInterface contentLibraryFragmentCallback = new ContentFragmentInterface(){
+
+        @Override
+        public void OnTrackInfoRequest(String file)
+        {
+            mediainfofragment.setTrackInfoFromFile(file);
             horizontalpager.setCurrentScreen(3, true);
         }
     };
@@ -196,6 +214,7 @@ public class CalcTunesActivity extends FragmentActivity
             {
                 case ContentPlaybackService.CONTENT_TYPE_LIBRARY:
                     libraryfragment = (ContentLibraryFragment) getSupportFragmentManager().findFragmentById(R.id.contentListFragmentContainer);
+                    libraryfragment.setCallback(contentLibraryFragmentCallback);
                     break;
                     
                 case ContentPlaybackService.CONTENT_TYPE_FILESYSTEM:
@@ -278,10 +297,6 @@ public class CalcTunesActivity extends FragmentActivity
                 ButtonMinimizeClick(null);
                 break;
                 
-            case R.id.collapseSidebar:
-                ButtonSidebarClick(null);
-                break;
-                
             case R.id.openSettings:
                 ButtonSettingsClick(null);
                 break;
@@ -300,31 +315,6 @@ public class CalcTunesActivity extends FragmentActivity
             }
         }
     }
-    
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event)
-//    {
-//        if(keyCode == KeyEvent.KEYCODE_MEDIA_NEXT)
-//        {
-//            ButtonNextClick(null);
-//            return true;
-//        }
-//        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-//        {
-//            ButtonPrevClick(null);
-//            return true;
-//        }
-//        else if(keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
-//        {
-//            ButtonPlayPauseClick(null);
-//            return true;
-//        }
-//        else if(keyCode == KeyEvent.KEYCODE_MEDIA_STOP)
-//        {
-//            ButtonStopClick(null);
-//        }
-//        return false;       
-//    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Other Activity Functions///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -349,7 +339,8 @@ public class CalcTunesActivity extends FragmentActivity
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_LIBRARY;
             libraryfragment = new ContentLibraryFragment();
             libraryfragment.setLibrary(contentName);
-            getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, libraryfragment).commit();          
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, libraryfragment).commit();
+            libraryfragment.setCallback(contentLibraryFragmentCallback);
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
         {
@@ -369,6 +360,7 @@ public class CalcTunesActivity extends FragmentActivity
             subsonicfragment = new ContentSubsonicFragment();
             subsonicfragment.setSubsonicSource(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, subsonicfragment).commit();
+            subsonicfragment.setCallback(contentLibraryFragmentCallback);
         }
     }
     
@@ -417,28 +409,6 @@ public class CalcTunesActivity extends FragmentActivity
     {
         findViewById(R.id.title_border).setBackgroundColor(color);
         findViewById(R.id.lower_border).setBackgroundColor(color);
-    }
-    
-    public void ButtonSidebarClick(View view)
-    {
-        //this button is pointless, so currently it is a subsonic api test
-        //get around stupid android 4.0 restrictions that are dumb
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-        StrictMode.setThreadPolicy(policy);
-        SubsonicAPI sub = new SubsonicAPI("192.168.3.100:4040", "user", "password");
-        if( sub.SubsonicPing() && sub.SubsonicGetLicense() )
-        {
-            int id = sub.SubsonicGetMusicFolders().get(0).id;
-            sub.SubsonicGetMusicDirectory(id);
-            sub.SubsonicGetIndexes();
-            SubsonicAPI.SubsonicSong song = sub.SubsonicGetAlbum(sub.SubsonicGetArtist(sub.SubsonicGetArtists().get(0).id).get(0).id).get(0);
-            Log.d("SubsonicTest", "Song: " + song.title);
-            sub.SubsonicDownload(song.id);
-            String subsonicFile = "/storage/sdcard1/calctunes/subsonic_dl_test.flac";
-            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, subsonicFile, 0, null);
-            playbackservice.StartPlayback();
-        }
     }
     
     public void ButtonSettingsClick(View view)

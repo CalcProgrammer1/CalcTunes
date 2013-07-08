@@ -56,15 +56,6 @@
 			    android:src="@drawable/ic_menu_preferences" />
 			
 			<ImageButton
-			    android:id="@+id/button_menu_sidebar"
-			    android:layout_width="30dip"
-			    android:layout_height="30dip"
-			    android:background="@android:color/transparent"
-			    android:onClick="ButtonSidebarClick"
-			    android:scaleType="centerInside"
-			    android:src="@drawable/button_showhide_sidebar" />
-			
-			<ImageButton
 			    android:id="@+id/button_menu_minimize"
 			    android:layout_width="30dip"
 			    android:layout_height="30dip"

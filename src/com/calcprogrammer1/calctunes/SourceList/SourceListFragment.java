@@ -162,53 +162,59 @@ public class SourceListFragment extends Fragment
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
-        ExpandableListContextMenuInfo info= (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
-        int id = (int) info.id;
-
-        switch(item.getItemId())
+        if(item.getGroupId() == 1)
         {
-            case CONTEXT_MENU_NEW_LIBRARY:
-                startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
-                break;
-                
-            case CONTEXT_MENU_EDIT_LIBRARY:
-                Intent libIntent = new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class);
-                libIntent.putExtra("EditFilename", libraryList.get(id).filename);
-                startActivityForResult(libIntent, 1);
-                break;
+            ExpandableListContextMenuInfo info= (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
+            int id = (int) info.id;
             
-            case CONTEXT_MENU_DELETE_LIBRARY:
-                File libraryToDelete = new File(libraryList.get(id).filename);
-                libraryToDelete.delete();
-                readSourceLists();
-                updateListView();
-                Toast.makeText(getActivity().getBaseContext(), "Library Deleted", Toast.LENGTH_SHORT).show();
-                break;
-            
-            case CONTEXT_MENU_RESCAN_LIBRARY:
-                LibraryScannerTask task = new LibraryScannerTask(getActivity().getBaseContext());
-                task.execute(libraryList.get(id).name);
-                break;
+            switch(item.getItemId())
+            {
+                case CONTEXT_MENU_NEW_LIBRARY:
+                    startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
+                    break;
+                    
+                case CONTEXT_MENU_EDIT_LIBRARY:
+                    Intent libIntent = new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class);
+                    libIntent.putExtra("EditFilename", libraryList.get(id).filename);
+                    startActivityForResult(libIntent, 1);
+                    break;
                 
-            case CONTEXT_MENU_NEW_SUBSONIC:
-                startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class), 1);
-                break;
+                case CONTEXT_MENU_DELETE_LIBRARY:
+                    File libraryToDelete = new File(libraryList.get(id).filename);
+                    libraryToDelete.delete();
+                    readSourceLists();
+                    updateListView();
+                    Toast.makeText(getActivity().getBaseContext(), "Library Deleted", Toast.LENGTH_SHORT).show();
+                    break;
                 
-            case CONTEXT_MENU_EDIT_SUBSONIC:
-                Intent subIntent = new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class);
-                subIntent.putExtra("EditFilename", subsonicList.get(id).filename);
-                startActivityForResult(subIntent, 1);
-                break;
-          
-            case CONTEXT_MENU_DELETE_SUBSONIC:
-                File subsonicToDelete = new File(subsonicList.get(id).filename);
-                subsonicToDelete.delete();
-                readSourceLists();
-                updateListView();
-                Toast.makeText(getActivity().getBaseContext(), "Subsonic Server Deleted", Toast.LENGTH_SHORT).show();
-                break;
+                case CONTEXT_MENU_RESCAN_LIBRARY:
+                    LibraryScannerTask task = new LibraryScannerTask(getActivity().getBaseContext());
+                    task.execute(libraryList.get(id).name);
+                    break;
+                    
+                case CONTEXT_MENU_NEW_SUBSONIC:
+                    startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class), 1);
+                    break;
+                    
+                case CONTEXT_MENU_EDIT_SUBSONIC:
+                    Intent subIntent = new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class);
+                    subIntent.putExtra("EditFilename", subsonicList.get(id).filename);
+                    startActivityForResult(subIntent, 1);
+                    break;
+              
+                case CONTEXT_MENU_DELETE_SUBSONIC:
+                    File subsonicToDelete = new File(subsonicList.get(id).filename);
+                    subsonicToDelete.delete();
+                    readSourceLists();
+                    updateListView();
+                    Toast.makeText(getActivity().getBaseContext(), "Subsonic Server Deleted", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
-        
+        else
+        {
+            return false;
+        }
         return(super.onOptionsItemSelected(item));
     }
     
@@ -263,6 +269,7 @@ public class SourceListFragment extends Fragment
                         break;
                         
                     case SOURCE_GROUP_SUBSONIC:
+                        callback.callback(ContentPlaybackService.CONTENT_TYPE_SUBSONIC, subsonicList.get(selectedChild).filename);
                         break;
                 }
                 return true;

@@ -1,5 +1,10 @@
 Release History
 ---------------
+Version 0.49 Alpha (6/18/2013)
+	- Content views are now replaced with Fragments - Library and Filesystem are implemented so far.
+	- Content view switching updated to use Fragment Transactions
+	- Skeleton code for playlist and subsonic content fragment types now implemented.
+	
 Version 0.48 Alpha (5/4/2013)
 	- Replaced source list and now playing views with Fragments for better code organization
 	- Added Android Support Library to provide Fragments on older Android versions
