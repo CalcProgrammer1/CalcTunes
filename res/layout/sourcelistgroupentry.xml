@@ -22,7 +22,7 @@
         android:layout_gravity="center_vertical"
         android:paddingLeft="4dip"
         android:text="SourceListEntry"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <View
         android:id="@+id/sourcelistentry_line2"

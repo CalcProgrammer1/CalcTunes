@@ -18,10 +18,62 @@ import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 
 public class AlbumArtManager
 {
+    static public void setImageAsync( final String artist, final String album, final Context c, final boolean thumb, final ImageView view)
+    {
+        Bitmap artwork = null;
+        File dirfile = new File(SourceListOperations.getAlbumArtPath(c));
+        dirfile.mkdirs();
+        String artfilepath = SourceListOperations.getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "_" + SourceListOperations.makeFilename(album) + ".png";
+        File infile = new File(artfilepath);
+        try
+        {
+            if(thumb)
+            {
+                artwork = decodeSampledBitmapFromFile(infile.getAbsolutePath(), 256, 256);
+            }
+            else
+            {
+                artwork = BitmapFactory.decodeFile(infile.getAbsolutePath());
+            }
+            if(view != null)
+            {
+                view.setImageBitmap(artwork);
+            }
+        }catch(Exception e){}
+        if(artwork == null)
+        {       
+            if(view != null)
+            {
+                view.setImageBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon));
+            }
+            
+            new AsyncTask<Void, Void, Void>(){
+                Bitmap artwork2;
+                @Override
+                protected Void doInBackground(Void... arg0)
+                {
+                    artwork2 = getAlbumArt(artist, album, c, thumb);
+                    return null;
+                }
+                
+                @Override
+                protected void onPostExecute(Void arg0)
+                {
+                    if( artwork2 != null )
+                    {
+                        view.setImageBitmap(artwork2);
+                    }
+                }
+            }.execute();
+        }
+    }
+    
     //Checks cache for album art, if it is not found return default icon
     static public Bitmap getAlbumArtFromCache(String artist, String album, Context c, boolean thumb)
     {

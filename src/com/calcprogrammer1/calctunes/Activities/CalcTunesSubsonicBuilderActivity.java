@@ -20,6 +20,7 @@ public class CalcTunesSubsonicBuilderActivity extends Activity
     EditText srvPortInput;
     EditText srvUserInput;
     EditText srvPassInput;
+    EditText srvCachInput;
     
     Intent i;
     
@@ -38,6 +39,7 @@ public class CalcTunesSubsonicBuilderActivity extends Activity
         srvPortInput = (EditText) findViewById(R.id.srvPortInput);
         srvUserInput = (EditText) findViewById(R.id.srvUserInput);
         srvPassInput = (EditText) findViewById(R.id.srvPassInput);
+        srvCachInput = (EditText) findViewById(R.id.srvCachInput);
         
         //If ICS, make the title border match the ICS Holo theme
         if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)
@@ -94,11 +96,12 @@ public class CalcTunesSubsonicBuilderActivity extends Activity
         else
         {
             SubsonicSource sub = new SubsonicSource();
-            sub.name     = srvNameInput.getText().toString();
-            sub.address  = srvAddrInput.getText().toString();
-            sub.port     = Integer.parseInt(srvPortInput.getText().toString());
-            sub.username = srvUserInput.getText().toString();
-            sub.password = srvPassInput.getText().toString();
+            sub.name      = srvNameInput.getText().toString();
+            sub.address   = srvAddrInput.getText().toString();
+            sub.port      = Integer.parseInt(srvPortInput.getText().toString());
+            sub.username  = srvUserInput.getText().toString();
+            sub.password  = srvPassInput.getText().toString();
+            sub.cachePath = srvCachInput.getText().toString();
             sub.filename = SourceListOperations.getSubsonicPath(this) + "/" + SourceListOperations.getFilename(sub.name);
             SourceListOperations.writeSubsonicFile(sub);
             setResult(Activity.RESULT_OK, i);

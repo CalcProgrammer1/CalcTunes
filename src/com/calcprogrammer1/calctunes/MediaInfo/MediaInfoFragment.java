@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
@@ -96,7 +97,7 @@ public class MediaInfoFragment extends Fragment
         File file               = new File(track_info_path);
         AudioFile f             = SourceListOperations.readAudioFileReadOnly(file);
         Tag tag                 = f.getTag();
-        //AudioHeader header    = f.getAudioHeader();
+        AudioHeader header      = f.getAudioHeader();
         
         //Album Art
         artwork_image   = AlbumArtManager.getAlbumArt(tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM), getActivity(), false);
@@ -138,6 +139,18 @@ public class MediaInfoFragment extends Fragment
         //Conductor
         adapter_data.add(new MediaInfoListType( "Conductor",    tag.getFirst(FieldKey.CONDUCTOR)    ));
         
+        //Duration
+        adapter_data.add(new MediaInfoListType( "Track Length", "" + header.getTrackLength()        ));
+        
+        //Format
+        adapter_data.add(new MediaInfoListType( "File Format",  header.getFormat()                  ));
+        
+        //Sample Rate
+        adapter_data.add(new MediaInfoListType( "Sample Rate",  "" + header.getSampleRateAsNumber() ));
+        
+        //Encoder
+        adapter_data.add(new MediaInfoListType( "Encoder",      tag.getFirst(FieldKey.ENCODER)      ));
+        
         adapter.setData(adapter_data);
         setTrackInfo();
     }
@@ -148,9 +161,11 @@ public class MediaInfoFragment extends Fragment
         track_info_list = (ListView)  view.findViewById(R.id.track_info_list);
         View separator  = (View)      view.findViewById(R.id.separator);
         
+        track_info_list.setDivider(null);
+        track_info_list.setDividerHeight(0);
+        
         track_artwork.setImageBitmap(artwork_image);
         track_info_list.setAdapter(adapter);
-        separator.setBackgroundColor(interfaceColor);
     }
     
 

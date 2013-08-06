@@ -15,6 +15,8 @@ import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.*;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -43,6 +45,10 @@ public class CalcTunesActivity extends FragmentActivity
 	//Horizontal Pager that holds fragments
     private HorizontalPager horizontalpager;
 
+    //Title bar icon and text
+    private TextView        title_text;
+    private ImageView       title_icon;
+    
 	//Shared Preferences
     private SharedPreferences appSettings;
 	
@@ -327,6 +333,8 @@ public class CalcTunesActivity extends FragmentActivity
     
     public void updateGuiElements()
     {   
+        title_text = (TextView) findViewById(R.id.title_text);
+        title_icon = (ImageView) findViewById(R.id.title_icon);
         horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);                       
         updateInterfaceColor(interfaceColor);
     }
@@ -341,6 +349,7 @@ public class CalcTunesActivity extends FragmentActivity
             libraryfragment.setLibrary(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, libraryfragment).commit();
             libraryfragment.setCallback(contentLibraryFragmentCallback);
+            title_text.setText("Library View");
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
         {
@@ -348,6 +357,7 @@ public class CalcTunesActivity extends FragmentActivity
             filesystemfragment = new ContentFilesystemFragment();
             filesystemfragment.setDirectory(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, filesystemfragment).commit();
+            title_text.setText("Filesystem View");
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_PLAYLIST)
         {
@@ -361,6 +371,7 @@ public class CalcTunesActivity extends FragmentActivity
             subsonicfragment.setSubsonicSource(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, subsonicfragment).commit();
             subsonicfragment.setCallback(contentLibraryFragmentCallback);
+            title_text.setText("Subsonic Server View");
         }
     }
     

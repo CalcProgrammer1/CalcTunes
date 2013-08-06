@@ -32,9 +32,12 @@ import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListAdapter;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
 import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
+import com.calcprogrammer1.calctunes.Interfaces.SubsonicAPICallback;
+import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
+import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
 
 public class ContentSubsonicFragment extends Fragment
 {
@@ -52,11 +55,8 @@ public class ContentSubsonicFragment extends Fragment
     //Library database adapter
     private ContentListAdapter libAdapter;
        
-    //Library list
-    ArrayList<ContentListElement> listData = new ArrayList<ContentListElement>();
-    
-    //Subsonic API
-    SubsonicAPI subsonicapi;
+    //Subsonic Connection
+    SubsonicConnection subcon;
     
     // Shared Preferences
     private SharedPreferences appSettings;
@@ -159,7 +159,7 @@ public class ContentSubsonicFragment extends Fragment
         if(v == rootView)
         {
             int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
-            switch(listData.get(position).type)
+            switch(subcon.listData.get(position).type)
             {
                 case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
                     menu.add(2, CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST, Menu.NONE, "Add Artist to Playlist");
@@ -196,7 +196,7 @@ public class ContentSubsonicFragment extends Fragment
                     break;
                     
                 case CONTEXT_MENU_VIEW_TRACK_INFO:
-                    callback.OnTrackInfoRequest(listData.get(position).path);
+                    callback.OnTrackInfoRequest(subcon.listData.get(position).path);
                     break;
             }
         }
@@ -215,23 +215,10 @@ public class ContentSubsonicFragment extends Fragment
     public void updateList()
     {
             //Load list of artists
-            listData = new ArrayList<ContentListElement>();
+            subcon.getArtistListAsync();
             
-            ArrayList<SubsonicAPI.SubsonicArtist> artists = subsonicapi.SubsonicGetArtists();
-            
-            for(int i = 0; i < artists.size(); i++)
-            {
-                ContentListElement newElement = new ContentListElement();
-                
-                newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_HEADING;
-                newElement.artist = artists.get(i).name;
-                newElement.id     = artists.get(i).id;
-                
-                listData.add(newElement);
-            }
-            if(getActivity() == null) Log.d("Subsonic Fragment", "Activity Context is Null");
             libAdapter = new ContentListAdapter(getActivity());
-            libAdapter.attachList(listData);
+            libAdapter.attachList(subcon.listData);
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.setNowPlayingColor(interfaceColor);
             
@@ -245,91 +232,34 @@ public class ContentSubsonicFragment extends Fragment
         {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
-                switch(listData.get(position).type)
+                switch(subcon.listData.get(position).type)
                 {
                     case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
-                        if(listData.get(position).expanded)
+                        if(subcon.listData.get(position).expanded)
                         {
-                            while(true)
-                            {
-                                if((position + 1 < listData.size()) &&
-                                  (listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM
-                                || listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK ))
-                                {
-                                    listData.remove(position + 1);
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            listData.get(position).expanded = false;
+                            subcon.collapseArtist(position);
                         }
                         else
                         {
-                            ArrayList<SubsonicAPI.SubsonicAlbum> albums = subsonicapi.SubsonicGetArtist((int)listData.get(position).id);
-                            for(int i = 0; i < albums.size(); i++)
-                            {
-                                ContentListElement newElement = new ContentListElement();
-                                
-                                newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_ALBUM;
-                                newElement.artist = listData.get(position).artist;
-                                newElement.album  = albums.get(i).name;
-                                //newElement.year   = albums.get(i).year;
-                                newElement.id     = albums.get(i).id;
-                                
-                                listData.add(position + (i + 1), newElement);
-                            }
-                            listData.get(position).expanded = true;
+                            subcon.expandArtistAsync(position);
                         }
                         break;
                         
                     case ContentListElement.LIBRARY_LIST_TYPE_ALBUM:
-                        if(listData.get(position).expanded)
+                        if(subcon.listData.get(position).expanded)
                         {
-                            while(true)
-                            {
-                                if((position + 1 < listData.size()) && (listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK))
-                                {
-                                    listData.remove(position + 1);
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            listData.get(position).expanded = false; 
+                            subcon.collapseAlbum(position);
                         }
                         else
                         {
-                            ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum((int)listData.get(position).id);
-                            for(int i = 0; i < songs.size(); i++)
-                            {
-                                ContentListElement newElement = new ContentListElement();
-                                
-                                newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
-                                newElement.artist = listData.get(position).artist;
-                                newElement.year   = listData.get(position).year;
-                                newElement.album  = songs.get(i).album;
-                                newElement.song   = songs.get(i).title;
-                                newElement.track  = songs.get(i).track;
-                                newElement.time   = songs.get(i).duration;
-                                newElement.id     = songs.get(i).id;
-                                newElement.path   = songs.get(i).suffix;
-                                
-                                listData.add(position + (i + 1), newElement);
-                            }
-                            
-                            listData.get(position).expanded = true;
+                            subcon.expandAlbumAsync(position);
                         }
                         break;
                         
                     case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
                         
-                        Log.d("Subsonic Fragment", "Path:" + listData.get(position).path);
-                        subsonicapi.SubsonicStream((int)listData.get(position).id, listData.get(position).track + " " + listData.get(position).song + ".ogg",
-                                "ogg");
-                        playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, "/storage/sdcard0/calctunes/" + listData.get(position).track + " " + listData.get(position).song + ".ogg", 0, null);
+                        Log.d("Subsonic Fragment", "Path:" + subcon.listData.get(position).path);
+                        subcon.testdownload(position);
                         libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
                         break;
                 }
@@ -343,8 +273,24 @@ public class ContentSubsonicFragment extends Fragment
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
-        SubsonicSource source = SourceListOperations.readSubsonicFile(subSource);
         
-        subsonicapi = new SubsonicAPI(source.address + ":" + source.port, source.username, source.password);
+        subcon = new SubsonicConnection(subSource);
+        subcon.SetCallback(subsonic_callback);
     }
+    
+    SubsonicConnectionCallback subsonic_callback = new SubsonicConnectionCallback(){
+
+        public void onListUpdated()
+        {
+            libAdapter.attachList(subcon.listData);
+            libAdapter.notifyDataSetChanged();
+        }
+        
+        @Override
+        public void onTrackLoaded(int id, String filename)
+        {
+            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, filename, 0, null);
+        }
+        
+    };
 }

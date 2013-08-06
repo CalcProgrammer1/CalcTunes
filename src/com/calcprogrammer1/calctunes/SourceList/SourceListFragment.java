@@ -276,6 +276,9 @@ public class SourceListFragment extends Fragment
             }       
         });
         view.expandGroup(0);
+        view.expandGroup(1);
+        view.expandGroup(2);
+        view.expandGroup(3);
     }
     
     public void setInterfaceColor(int color)

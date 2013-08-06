@@ -5,10 +5,16 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.calcprogrammer1.calctunes.Interfaces.SubsonicAPICallback;
+
+import android.os.AsyncTask;
 import android.util.Log;
 
 public class SubsonicAPI
 {
+    //Callback
+    SubsonicAPICallback callback;
+    
     //Class to store "musicFolder" elements
     public class SubsonicMusicFolder
     {
@@ -102,6 +108,11 @@ public class SubsonicAPI
         ServerURL = server;
         UserName = username;
         UserPass = password;
+    }
+    
+    public void SetCallback(SubsonicAPICallback call)
+    {
+        callback = call;
     }
     
     private String buildHTTPRequest(String method)
@@ -380,25 +391,35 @@ public class SubsonicAPI
     public void SubsonicStream(int id, String filename, String format)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&format=" + format;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
     }
     
     public void SubsonicStream(int id, String filename, int maxBitRate)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
     }
     
     public void SubsonicStream(int id, String filename, int maxBitRate, String format)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate + "&format=" + format;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
+    }
+    
+    public void SubsonicStreamAsync(int id, String filename, int maxBitRate, String format)
+    {
+        new SubsonicStreamTask().execute(id, filename, maxBitRate, format);
     }
     
     public void SubsonicDownload(int id, String filename)
     {
         HTTPRequest = buildHTTPRequest("download") + "&id=" + id;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
+        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
+    }
+    
+    public void SubsonicDownloadAsync(int id, String filename)
+    {
+        new SubsonicDownloadTask().execute(id, filename);
     }
     
     public SubsonicDirectory SubsonicGetMusicDirectory(int id)
@@ -432,5 +453,51 @@ public class SubsonicAPI
             return directory;
         }
         return null;
+    }
+    
+    public class SubsonicDownloadTask extends AsyncTask<Object, Void, Void>
+    {
+        private int id;
+        private String filename;
+        
+        @Override
+        protected Void doInBackground(Object... params)
+        {
+            id       = (Integer)params[0];
+            filename = (String)params[1];
+            SubsonicDownload(id, filename);
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            callback.onSubsonicDownloadComplete(id, filename);
+        }
+    }
+    
+    public class SubsonicStreamTask extends AsyncTask<Object, Void, Void>
+    {
+        private int id;
+        private int bitrate;
+        private String filename;
+        private String filetype;
+        
+        @Override
+        protected Void doInBackground(Object... params)
+        {
+            id       = (Integer)params[0];
+            filename = (String)params[1];
+            bitrate  = (Integer)params[2];
+            filetype = (String)params[3];
+            SubsonicStream(id, filename, bitrate, filetype);
+            return null;
+        }
+        
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            callback.onSubsonicDownloadComplete(id, filename);
+        }        
     }
 }

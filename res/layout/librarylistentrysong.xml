@@ -26,9 +26,10 @@
 	    android:layout_height="wrap_content"
 	    android:singleLine="true"
 	    android:text="Song"
-	    android:textAppearance="?android:attr/textAppearanceSmall" 
-	    android:paddingLeft="7dip"/>
-	</LinearLayout>
+	    android:textAppearance="?android:attr/textAppearanceMedium" 
+	    android:paddingLeft="7dip"/>    
+	</LinearLayout>
+	
     <TextView
         android:id="@+id/librarylistsong_time"
         android:layout_width="wrap_content"

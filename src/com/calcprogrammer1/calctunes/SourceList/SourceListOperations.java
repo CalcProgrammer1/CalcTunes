@@ -183,9 +183,9 @@ public class SourceListOperations
             serializer.endTag("", "password");
             
             //Download Path
-            serializer.startTag("", "downloadpath");
-            serializer.text(sub.downloadPath);
-            serializer.endTag("", "downloadpath");
+            serializer.startTag("", "cachepath");
+            serializer.text(sub.cachePath);
+            serializer.endTag("", "cachepath");
             
             //Streaming Format
             serializer.startTag("", "streamingformat");
@@ -259,10 +259,10 @@ public class SourceListOperations
             }
             
             //Get Download Path
-            NodeData         = DocData.getElementsByTagName("downloadpath");
+            NodeData         = DocData.getElementsByTagName("cachepath");
             if(NodeData.item(0).getChildNodes().getLength() > 0)
             {
-                sub.downloadPath = NodeData.item(0).getChildNodes().item(0).getNodeValue();
+                sub.cachePath = NodeData.item(0).getChildNodes().item(0).getNodeValue();
             }
             
             //Get Streaming Format

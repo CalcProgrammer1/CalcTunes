@@ -44,7 +44,14 @@ public class ContentListAdapter extends BaseAdapter
     
     public int getCount()
     {
-        return listData.size();
+        if( listData != null )
+        {
+            return listData.size();
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     public ContentListElement getItem(int position)
@@ -90,8 +97,9 @@ public class ContentListAdapter extends BaseAdapter
             artistText.setText(listData.get(position).artist);
             yearText.setText(listData.get(position).year);
             
-            Bitmap art = AlbumArtManager.getAlbumArtFromCache(listData.get(position).artist, listData.get(position).album, c, true);
-            artwork.setImageBitmap(art);
+            //Bitmap art = AlbumArtManager.getAlbumArtFromCache(listData.get(position).artist, listData.get(position).album, c, true);
+            //artwork.setImageBitmap(art);
+            AlbumArtManager.setImageAsync(listData.get(position).artist, listData.get(position).album, c, true, artwork);
         }
         else if(viewData.type == ContentListElement.LIBRARY_LIST_TYPE_TRACK)
         {

@@ -26,8 +26,8 @@ public class SubsonicSource
     //Server Password
     public String password = new String();
     
-    //Server Download Path
-    public String downloadPath = new String();
+    //Server Cache Path
+    public String cachePath = new String();
     
     //Server Streaming Format
     public String streamingFormat = new String();
