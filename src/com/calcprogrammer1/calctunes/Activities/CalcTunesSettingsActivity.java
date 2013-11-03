@@ -20,6 +20,7 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
     Preference interface_color_pref;
     CheckBoxPreference car_mode_pref;
     CheckBoxPreference hp_mode_pref;
+    CheckBoxPreference auto_close_pref;
     CheckBoxPreference system_service_notification_pref;
     CheckBoxPreference small_screen_layout_pref;
     
@@ -37,6 +38,7 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
         interface_color_pref =             (Preference)         findPreference("interface_color");
         car_mode_pref =                    (CheckBoxPreference) findPreference("car_mode");
         hp_mode_pref =                     (CheckBoxPreference) findPreference("hp_mode");
+        auto_close_pref =                  (CheckBoxPreference) findPreference("auto_close");
         system_service_notification_pref = (CheckBoxPreference) findPreference("service_notification");
         small_screen_layout_pref =         (CheckBoxPreference) findPreference("small_screen_layout");
         
@@ -61,6 +63,15 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
             public boolean onPreferenceClick(Preference arg0)
             {
                 appSettingsEditor.putBoolean("hp_mode", hp_mode_pref.isChecked());
+                appSettingsEditor.commit();
+                return true;                
+            }
+        });
+   
+        auto_close_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+            public boolean onPreferenceClick(Preference arg0)
+            {
+                appSettingsEditor.putBoolean("auto_close", auto_close_pref.isChecked());
                 appSettingsEditor.commit();
                 return true;                
             }

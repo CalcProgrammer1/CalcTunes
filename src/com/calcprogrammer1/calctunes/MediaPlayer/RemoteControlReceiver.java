@@ -38,8 +38,9 @@ public class RemoteControlReceiver extends BroadcastReceiver
         //Get the application preferences
         appSettings = context.getSharedPreferences("CalcTunes", Context.MODE_PRIVATE);
 
-        boolean car_mode = appSettings.getBoolean("car_mode", false);
-        boolean hp_mode  = appSettings.getBoolean("hp_mode", false);
+        boolean car_mode   = appSettings.getBoolean("car_mode", false);
+        boolean hp_mode    = appSettings.getBoolean("hp_mode", false);
+        boolean auto_close = appSettings.getBoolean("auto_close", false);
         
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) 
         {
@@ -71,6 +72,12 @@ public class RemoteControlReceiver extends BroadcastReceiver
                 default:
                 case 0:
                     Log.d("RemoteControlReceiver", "Bluetooth A2DP action: disconnected");
+                    if(car_mode && auto_close)
+                    {
+                        Intent broadcast = new Intent();
+                        broadcast.setAction("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT");
+                        context.sendBroadcast(broadcast);
+                    }
                     break;
                 
                 case 1:
@@ -95,22 +102,35 @@ public class RemoteControlReceiver extends BroadcastReceiver
         if(Intent.ACTION_HEADSET_PLUG.equals(intent.getAction()))
         {
             int state = intent.getIntExtra("state", -1);
-            
-            switch(state)
+            if(isInitialStickyBroadcast())
             {
-                case 0:
-                    Log.d("RemoteControlReceiver", "Headset plug action: unplugged");
-                    break;
-                    
-                case 1:
-                    Log.d("RemoteControlReceiver", "Headset plug action: plugged");
-                    if(hp_mode)
-                    {
-                        Intent activity = new Intent(context, com.calcprogrammer1.calctunes.Activities.CalcTunesActivity.class);
-                        activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(activity);
-                    }
-                    break;
+                Log.d("RemoteControlReceiver", "Headset state: " + state);
+            }
+            else
+            {
+                switch(state)
+                {
+                    case 0:
+                        Log.d("RemoteControlReceiver", "Headset plug action: unplugged");
+                        if(auto_close)
+                        {
+                            Log.d("RemoteControlReceiver", "Sending close app event");
+                            Intent broadcast = new Intent();
+                            broadcast.setAction("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT");
+                            context.sendBroadcast(broadcast);
+                        }
+                        break;
+                        
+                    case 1:
+                        Log.d("RemoteControlReceiver", "Headset plug action: plugged");
+                        if(hp_mode)
+                        {
+                            Intent activity = new Intent(context, com.calcprogrammer1.calctunes.Activities.CalcTunesActivity.class);
+                            activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(activity);
+                        }
+                        break;
+                }
             }
         }
         if("android.intent.action.BOOT_COMPLETED".equals(intent.getAction()))

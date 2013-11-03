@@ -13,6 +13,7 @@ import java.io.File;
 
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,6 +68,9 @@ public class CalcTunesActivity extends FragmentActivity
     
     //Interface Color
     int interfaceColor;
+
+    //Shutting down the activity?
+    private static boolean shuttingDown = false;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Service Connection/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,8 +184,12 @@ public class CalcTunesActivity extends FragmentActivity
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);      
         
+        registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT"));
+        
         Intent serviceIntent = new Intent(this, com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlService.class);
         startService(serviceIntent);
+        
+        shuttingDown = false;
         
         //Create or restore fragments
         if(savedInstanceState == null)
@@ -383,11 +391,15 @@ public class CalcTunesActivity extends FragmentActivity
     
     public void Exit()
     {
-        playbackservice.StopPlayback();
-        unbindService(playbackserviceConnection);
-        playbackservice_bound = false;
-        stopService(new Intent(this, ContentPlaybackService.class));
-        finish();
+        if(!shuttingDown)
+        {
+            shuttingDown = true;
+            playbackservice.StopPlayback();
+            unbindService(playbackserviceConnection);
+            playbackservice_bound = false;
+            stopService(new Intent(this, ContentPlaybackService.class));
+            finish();
+        }
     }
     
     public void Minimize()
@@ -447,4 +459,27 @@ public class CalcTunesActivity extends FragmentActivity
     {
         startActivityForResult(new Intent(this, CalcTunesLibraryBuilderActivity.class), 1);
     }
+    
+    /*---------------------------------------------------------------------*\
+    |                                                                       |
+    |   Remote Control Broadcast Receiver                                   |
+    |                                                                       |
+    |   Receives intent com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT   |
+    |                                                                       |
+    |   This intent contains a KeyEvent.KEYCODE_ value indicating which     |
+    |   media button key was pressed.  It is sent from the Media Buttons    |
+    |   event receiver for handling headset/Bluetooth key events.           |
+    |                                                                       | 
+    \*---------------------------------------------------------------------*/
+    
+    private BroadcastReceiver remoteReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            
+            Log.d("CalcTunesActivity", "Exit Intent Received");
+            Exit();
+        }
+    };
 }

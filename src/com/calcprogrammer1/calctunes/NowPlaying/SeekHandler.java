@@ -120,7 +120,7 @@ public class SeekHandler implements Runnable
                     {
                         sb.setMax(mp.NowPlayingDuration());
                         int currentPosition = mp.NowPlayingPosition();
-                        sb.setProgress(currentPosition);
+                        //sb.setProgress(currentPosition);
                         Thread.sleep(250);
                     }
                 }

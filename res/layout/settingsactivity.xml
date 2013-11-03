@@ -26,6 +26,18 @@
 	        android:defaultValue="false"
 	        android:key="hp_mode" />
 	    
+	    <CheckBoxPreference
+	        android:title="Automatic Close"
+	        android:summary="Close CalcTunes automatically if the device that opened it is disconnected"
+	        android:defaultValue="true"
+	        android:key="auto_close" />
+	    
+	    <CheckBoxPreference
+	        android:title="Background Service Only"
+	        android:summary="If checked, only opens the CalcTunes playback service; if unchecked, opens the app's main window"
+	        android:defaultValue="false"
+	        android:key="bkgd_only" />
+	    
 	</PreferenceCategory>
 
 	<PreferenceCategory
