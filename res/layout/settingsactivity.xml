@@ -12,6 +12,17 @@
 	</PreferenceCategory>
 	
 	<PreferenceCategory
+	    android:title="Audio Settings" >
+	    
+	    <CheckBoxPreference
+	        android:title="Audio Effects"
+	        android:summary="Enable the Android audio effects engine for CalcTunes playback"
+	        android:defaultValue="true"
+	        android:key="audio_fx" />
+	        
+	</PreferenceCategory>
+	
+	<PreferenceCategory
 	    android:title="Automatic Start Settings" >
 	    
 	    <CheckBoxPreference
@@ -29,7 +40,7 @@
 	    <CheckBoxPreference
 	        android:title="Automatic Close"
 	        android:summary="Close CalcTunes automatically if the device that opened it is disconnected"
-	        android:defaultValue="true"
+	        android:defaultValue="false"
 	        android:key="auto_close" />
 	    
 	    <CheckBoxPreference

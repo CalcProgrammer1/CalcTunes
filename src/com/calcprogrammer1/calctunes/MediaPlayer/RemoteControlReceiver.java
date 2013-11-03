@@ -1,5 +1,6 @@
 package com.calcprogrammer1.calctunes.MediaPlayer;
 
+import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Interfaces.MediaButtonsHandlerInterface;
 
 import android.content.BroadcastReceiver;
@@ -41,6 +42,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
         boolean car_mode   = appSettings.getBoolean("car_mode", false);
         boolean hp_mode    = appSettings.getBoolean("hp_mode", false);
         boolean auto_close = appSettings.getBoolean("auto_close", false);
+        boolean bkgd_only  = appSettings.getBoolean("bkgd_only", false);
         
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) 
         {
@@ -74,9 +76,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
                     Log.d("RemoteControlReceiver", "Bluetooth A2DP action: disconnected");
                     if(car_mode && auto_close)
                     {
-                        Intent broadcast = new Intent();
-                        broadcast.setAction("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT");
-                        context.sendBroadcast(broadcast);
+                        closeApplication(context, bkgd_only);
                     }
                     break;
                 
@@ -88,9 +88,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
                     Log.d("RemoteControlReceiver", "Bluetooth A2DP action: connected");
                     if(car_mode)
                     {
-                        Intent activity = new Intent(context, com.calcprogrammer1.calctunes.Activities.CalcTunesActivity.class);
-                        activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(activity);
+                        openApplication(context, bkgd_only);
                     }
                     break;
                     
@@ -114,10 +112,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
                         Log.d("RemoteControlReceiver", "Headset plug action: unplugged");
                         if(auto_close)
                         {
-                            Log.d("RemoteControlReceiver", "Sending close app event");
-                            Intent broadcast = new Intent();
-                            broadcast.setAction("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT");
-                            context.sendBroadcast(broadcast);
+                            closeApplication(context, bkgd_only);
                         }
                         break;
                         
@@ -125,9 +120,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
                         Log.d("RemoteControlReceiver", "Headset plug action: plugged");
                         if(hp_mode)
                         {
-                            Intent activity = new Intent(context, com.calcprogrammer1.calctunes.Activities.CalcTunesActivity.class);
-                            activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(activity);
+                            openApplication(context, bkgd_only);
                         }
                         break;
                 }
@@ -138,6 +131,36 @@ public class RemoteControlReceiver extends BroadcastReceiver
             Log.d("RemoteControlReceiver", "Boot completed");
             Intent serviceIntent = new Intent(context, com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlService.class);
             context.startService(serviceIntent);
+        }
+    }
+    
+    private void openApplication(Context context, boolean bkgd_only)
+    {
+        if(bkgd_only)
+        {
+            Intent intent = new Intent(context, ContentPlaybackService.class);
+            intent.putExtra("auto_start", 1);
+            context.startService(intent);
+        }
+        else
+        {
+            Intent activity = new Intent(context, com.calcprogrammer1.calctunes.Activities.CalcTunesActivity.class);
+            activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(activity);
+        }
+    }
+    
+    private void closeApplication(Context context, boolean bkgd_only)
+    {
+        if(bkgd_only)
+        {
+            context.stopService(new Intent(context, ContentPlaybackService.class));   
+        }
+        else
+        {
+            Intent broadcast = new Intent();
+            broadcast.setAction("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT");
+            context.sendBroadcast(broadcast);   
         }
     }
 }

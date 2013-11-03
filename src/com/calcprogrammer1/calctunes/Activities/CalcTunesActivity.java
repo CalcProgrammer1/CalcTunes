@@ -184,6 +184,7 @@ public class CalcTunesActivity extends FragmentActivity
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);      
         
+        //Register app close receiver
         registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT"));
         
         Intent serviceIntent = new Intent(this, com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlService.class);
@@ -274,6 +275,10 @@ public class CalcTunesActivity extends FragmentActivity
 	public void onDestroy()
 	{
 	    super.onDestroy();
+	    
+	    //Unregister app close receiver
+	    unregisterReceiver(remoteReceiver);
+	    
 	    if(playbackservice_bound)
 	    {
 	        unbindService(playbackserviceConnection);

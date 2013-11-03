@@ -11,6 +11,8 @@ import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
@@ -27,6 +29,7 @@ public class MediaPlayerHandler
     boolean running = false;
     boolean prepared = false;
     boolean playonprepare = false;
+    boolean audio_fx = false;
     
     public String current_path = "";
     public String current_title = "";
@@ -34,15 +37,31 @@ public class MediaPlayerHandler
     public String current_artist = "";
     public String current_year = "";
     
+    //Shared Preferences
+    private SharedPreferences appSettings;
+    
     public byte vis_buffer[];
     
     Context con;
     
     MediaPlayerHandlerInterface cb;
     
+    OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
+        public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
+        {
+            appSettings = arg0;
+            audio_fx = appSettings.getBoolean("audio_fx", true);
+        }
+    };
+    
     public MediaPlayerHandler(Context context)
     {
         con = context;
+        
+        //Get the application preferences
+        appSettings = con.getSharedPreferences("CalcTunes", Context.MODE_PRIVATE);
+        appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
+        audio_fx = appSettings.getBoolean("audio_fx", true);
     }
     
     public void setCallback(MediaPlayerHandlerInterface callback)
@@ -107,10 +126,13 @@ public class MediaPlayerHandler
                     if(cb != null) cb.onSongFinished();
                 }
             });
-            Intent i = new Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
-            i.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, mp.getAudioSessionId());
-            i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
-            con.sendBroadcast(i);
+            if(audio_fx)
+            {
+                Intent i = new Intent(AudioEffect.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
+                i.putExtra(AudioEffect.EXTRA_AUDIO_SESSION, mp.getAudioSessionId());
+                i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
+                con.sendBroadcast(i);
+            }
             if(Integer.parseInt(Build.VERSION.SDK) > 8)
             {
                 vis = new Visualizer(mp.getAudioSessionId());

@@ -2,6 +2,7 @@ package com.calcprogrammer1.calctunes;
 
 import java.util.ArrayList;
 
+import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
@@ -18,8 +19,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -52,6 +55,8 @@ public class ContentPlaybackService extends Service
     
     //Current Content Type
     private int contentPlayMode = CONTENT_PLAYBACK_NONE;
+    
+    private int auto_start;
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Local variables////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,15 +329,18 @@ public class ContentPlaybackService extends Service
     
     private void notifyMediaInfoUpdated()
     {
-        for(ContentPlaybackInterface callback : callbacks)
+        if(callbacks != null)
         {
-            if(callback != null)
+            for(ContentPlaybackInterface callback : callbacks)
             {
-                callback.onMediaInfoUpdated();
-            }
-            else
-            {
-                callbacks.remove(callback);
+                if(callback != null)
+                {
+                    callback.onMediaInfoUpdated();
+                }
+                else
+                {
+                    callbacks.remove(callback);
+                }
             }
         }
     }
@@ -351,13 +359,43 @@ public class ContentPlaybackService extends Service
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+        super.onStartCommand(intent, flags, startId);
+        Log.d("ContentPlaybackService", "onStartCommand");
+        Bundle extras = intent.getExtras();
+        if(extras != null)
+        {
+            auto_start = extras.getInt("auto_start", 0);
+        }
+        else
+        {
+            auto_start = 0;
+        }
+        
+        if(auto_start == 1)
+        {
+            SQLiteDatabase libraryDatabase;
+            
+            Log.d("ContentPlaybackService", "Automatic playback starting");
+            libraryDatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + "Music" + ".db", null);           
+            Cursor tmp = libraryDatabase.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;", null);
+            
+            SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, null, 0, tmp);
+            StartPlayback();
+        }
+        
+        return START_REDELIVER_INTENT;
+    }
+    
+    @Override
     public void onCreate()
     {
         mediaplayer = new MediaPlayerHandler(this);
         mediaplayer.setCallback(mediaplayerCallback);
-        
         ((AudioManager)getSystemService(AUDIO_SERVICE)).registerMediaButtonEventReceiver(new ComponentName( this, RemoteControlReceiver.class ) );
                
+        //Register media buttons receiver
         registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT"));
         
         //Get the application preferences
@@ -373,6 +411,12 @@ public class ContentPlaybackService extends Service
     @Override
     public void onDestroy()
     {
+        //Stop the media player
+        mediaplayer.stopPlayback();
+        
+        //Unregister media buttons receiver
+        unregisterReceiver(remoteReceiver);
+        
         //Stop the notification
         endNotification();
     }

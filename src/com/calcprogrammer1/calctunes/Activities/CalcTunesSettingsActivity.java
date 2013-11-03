@@ -18,9 +18,11 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
     SharedPreferences.Editor appSettingsEditor;
     
     Preference interface_color_pref;
+    CheckBoxPreference audio_fx_pref;
     CheckBoxPreference car_mode_pref;
     CheckBoxPreference hp_mode_pref;
     CheckBoxPreference auto_close_pref;
+    CheckBoxPreference bkgd_only_pref;
     CheckBoxPreference system_service_notification_pref;
     CheckBoxPreference small_screen_layout_pref;
     
@@ -36,9 +38,11 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
         appSettingsEditor = appSettings.edit();
         
         interface_color_pref =             (Preference)         findPreference("interface_color");
+        audio_fx_pref =                    (CheckBoxPreference) findPreference("audio_fx");
         car_mode_pref =                    (CheckBoxPreference) findPreference("car_mode");
         hp_mode_pref =                     (CheckBoxPreference) findPreference("hp_mode");
         auto_close_pref =                  (CheckBoxPreference) findPreference("auto_close");
+        bkgd_only_pref =                   (CheckBoxPreference) findPreference("bkgd_only");
         system_service_notification_pref = (CheckBoxPreference) findPreference("service_notification");
         small_screen_layout_pref =         (CheckBoxPreference) findPreference("small_screen_layout");
         
@@ -48,6 +52,15 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
                 color_picker.show();
                 return true;
             } 
+        });
+
+        audio_fx_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+            public boolean onPreferenceClick(Preference arg0)
+            {
+                appSettingsEditor.putBoolean("audio_fx", audio_fx_pref.isChecked());
+                appSettingsEditor.commit();
+                return true;                
+            }
         });
         
         car_mode_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -72,6 +85,15 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
             public boolean onPreferenceClick(Preference arg0)
             {
                 appSettingsEditor.putBoolean("auto_close", auto_close_pref.isChecked());
+                appSettingsEditor.commit();
+                return true;                
+            }
+        });
+     
+        bkgd_only_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+            public boolean onPreferenceClick(Preference arg0)
+            {
+                appSettingsEditor.putBoolean("bkgd_only", bkgd_only_pref.isChecked());
                 appSettingsEditor.commit();
                 return true;                
             }
