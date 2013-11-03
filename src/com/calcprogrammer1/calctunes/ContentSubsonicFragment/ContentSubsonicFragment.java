@@ -45,6 +45,8 @@ public class ContentSubsonicFragment extends Fragment
     public static final int CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST  = 1;
     public static final int CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST  = 2;
     public static final int CONTEXT_MENU_VIEW_TRACK_INFO        = 3;
+    public static final int CONTEXT_MENU_DWNLD_TRACK_TRANSCODED = 4;
+    public static final int CONTEXT_MENU_DWNLD_TRACK_ORIGINAL   = 5;
     
     //ListView to display on
     private ListView rootView;
@@ -66,6 +68,8 @@ public class ContentSubsonicFragment extends Fragment
     
     // Current library file
     private String currentLibrary = "";
+    
+    private int play_id;
     
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
@@ -170,8 +174,8 @@ public class ContentSubsonicFragment extends Fragment
                     break;
                    
                 case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                    menu.add(2, CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST, Menu.NONE, "Add Track to Playlist");
-                    menu.add(2, CONTEXT_MENU_VIEW_TRACK_INFO, Menu.NONE, "View Track Info");
+                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_TRANSCODED, Menu.NONE, "Download Track (Transcoded)");
+                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_ORIGINAL,   Menu.NONE, "Download Track (Original)");
                     break;
             }
         }
@@ -197,6 +201,14 @@ public class ContentSubsonicFragment extends Fragment
                     
                 case CONTEXT_MENU_VIEW_TRACK_INFO:
                     callback.OnTrackInfoRequest(subcon.listData.get(position).path);
+                    break;
+                    
+                case CONTEXT_MENU_DWNLD_TRACK_TRANSCODED:
+                    subcon.downloadTranscodedOgg(position);
+                    break;
+                    
+                case CONTEXT_MENU_DWNLD_TRACK_ORIGINAL:
+                    subcon.downloadOriginal(position);
                     break;
             }
         }
@@ -259,8 +271,8 @@ public class ContentSubsonicFragment extends Fragment
                     case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
                         
                         Log.d("Subsonic Fragment", "Path:" + subcon.listData.get(position).path);
-                        subcon.testdownload(position);
-                        libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+                        play_id = (int)subcon.listData.get(position).id;
+                        subcon.downloadTranscodedOgg(position);
                         break;
                 }
                 libAdapter.notifyDataSetChanged();
@@ -289,7 +301,7 @@ public class ContentSubsonicFragment extends Fragment
         @Override
         public void onTrackLoaded(int id, String filename)
         {
-            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, filename, 0, null);
+            if(id == play_id) playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, filename, 0, null);
         }
         
     };

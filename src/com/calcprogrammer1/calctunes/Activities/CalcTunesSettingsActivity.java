@@ -18,6 +18,8 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
     SharedPreferences.Editor appSettingsEditor;
     
     Preference interface_color_pref;
+    CheckBoxPreference car_mode_pref;
+    CheckBoxPreference hp_mode_pref;
     CheckBoxPreference system_service_notification_pref;
     CheckBoxPreference small_screen_layout_pref;
     
@@ -33,6 +35,8 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
         appSettingsEditor = appSettings.edit();
         
         interface_color_pref =             (Preference)         findPreference("interface_color");
+        car_mode_pref =                    (CheckBoxPreference) findPreference("car_mode");
+        hp_mode_pref =                     (CheckBoxPreference) findPreference("hp_mode");
         system_service_notification_pref = (CheckBoxPreference) findPreference("service_notification");
         small_screen_layout_pref =         (CheckBoxPreference) findPreference("small_screen_layout");
         
@@ -42,6 +46,24 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
                 color_picker.show();
                 return true;
             } 
+        });
+        
+        car_mode_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+            public boolean onPreferenceClick(Preference arg0)
+            {
+                appSettingsEditor.putBoolean("car_mode", car_mode_pref.isChecked());
+                appSettingsEditor.commit();
+                return true;                
+            }
+        });
+
+        hp_mode_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+            public boolean onPreferenceClick(Preference arg0)
+            {
+                appSettingsEditor.putBoolean("hp_mode", hp_mode_pref.isChecked());
+                appSettingsEditor.commit();
+                return true;                
+            }
         });
         
         system_service_notification_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){

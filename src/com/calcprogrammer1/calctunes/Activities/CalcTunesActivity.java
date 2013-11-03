@@ -13,14 +13,12 @@ import java.io.File;
 
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.StrictMode;
 import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
@@ -28,13 +26,13 @@ import android.graphics.Color;
 import com.calcprogrammer1.calctunes.*;
 import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemFragment;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryFragment;
+import com.calcprogrammer1.calctunes.ContentPlaylistFragment.ContentPlaylistFragment;
 import com.calcprogrammer1.calctunes.ContentSubsonicFragment.ContentSubsonicFragment;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaInfo.MediaInfoFragment;
 import com.calcprogrammer1.calctunes.NowPlaying.NowPlayingFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
-import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
 import com.github.ysamlan.horizontalpager.HorizontalPager;
 
 public class CalcTunesActivity extends FragmentActivity
@@ -57,7 +55,7 @@ public class CalcTunesActivity extends FragmentActivity
 	private NowPlayingFragment         nowplayingfragment;
 	private ContentFilesystemFragment  filesystemfragment;
     private ContentLibraryFragment     libraryfragment;
-//  private ContentPlaylistFragment    playlistfragment;
+    private ContentPlaylistFragment    playlistfragment;
     private ContentSubsonicFragment    subsonicfragment;
 	private MediaInfoFragment          mediainfofragment;
 
@@ -180,7 +178,10 @@ public class CalcTunesActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         
         //Remove title bar
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);      
+        
+        Intent serviceIntent = new Intent(this, com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlService.class);
+        startService(serviceIntent);
         
         //Create or restore fragments
         if(savedInstanceState == null)
@@ -228,9 +229,11 @@ public class CalcTunesActivity extends FragmentActivity
                     break;
                 
                 case ContentPlaybackService.CONTENT_TYPE_PLAYLIST:
+                    playlistfragment = (ContentPlaylistFragment) getSupportFragmentManager().findFragmentById(R.id.contentListFragmentContainer);
                     break;
                     
                 case ContentPlaybackService.CONTENT_TYPE_SUBSONIC:
+                    subsonicfragment = (ContentSubsonicFragment) getSupportFragmentManager().findFragmentById(R.id.contentListFragmentContainer);
                     break;
             }
         }
@@ -246,7 +249,7 @@ public class CalcTunesActivity extends FragmentActivity
         //Check if CalcTunes was opened from a file browser, and if so, open the file
         Intent intent = getIntent();
         String action = intent.getAction();
-        if(action.equals(Intent.ACTION_VIEW))
+        if(action != null && action.equals(Intent.ACTION_VIEW))
         {
             try{
                 Uri data = intent.getData();
@@ -318,6 +321,7 @@ public class CalcTunesActivity extends FragmentActivity
             if(requestCode == 1)
             {
                 sourcelistfragment.readSourceLists();
+                sourcelistfragment.updateListView();
             }
         }
     }
@@ -362,7 +366,9 @@ public class CalcTunesActivity extends FragmentActivity
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_PLAYLIST)
         {
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_PLAYLIST;
-            //getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, playlistfragment).commit();
+            playlistfragment = new ContentPlaylistFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, playlistfragment).commit();
+            title_text.setText("Playlist View");
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
         {

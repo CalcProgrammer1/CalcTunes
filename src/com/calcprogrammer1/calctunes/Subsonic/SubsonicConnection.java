@@ -1,5 +1,6 @@
 package com.calcprogrammer1.calctunes.Subsonic;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.os.AsyncTask;
@@ -56,6 +57,14 @@ public class SubsonicConnection
         @Override
         public void onSubsonicDownloadComplete(int id, String filename)
         {
+            for(int i = 0; i < listData.size(); i++)
+            {
+                if( listData.get(i).id == id )
+                {
+                    listData.get(i).cache = ContentListElement.CACHE_SDCARD;
+                }
+            }
+            callback.onListUpdated();
             callback.onTrackLoaded(id, filename);
         }
     };
@@ -208,6 +217,12 @@ public class SubsonicConnection
             newElement.id     = songs.get(i).id;
             newElement.path   = songs.get(i).suffix;
             
+            File testFile = new File( cachepath + songs.get(i).track + " " + songs.get(i).title + ".ogg" );
+            if(testFile.exists())
+            {
+                newElement.cache = ContentListElement.CACHE_SDCARD;
+            }
+            
             listData.add(position + (i + 1), newElement);
         }
         
@@ -249,9 +264,35 @@ public class SubsonicConnection
         listData.get(position).expanded = false; 
     }
     
-    public void testdownload(int position)
+    public void downloadTranscodedOgg(int position)
     {
-        subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, cachepath + listData.get(position).track + 
+        if(listData.get(position).cache != 0)
+        {
+            callback.onTrackLoaded((int)listData.get(position).id,
+                    cachepath + listData.get(position).track + " " + listData.get(position).song + ".ogg");
+        }
+        else
+        {
+            subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, cachepath + listData.get(position).track + 
                 " " + listData.get(position).song + ".ogg", 160, "ogg");
+            listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
+            callback.onListUpdated();
+        }
+    }
+    
+    public void downloadOriginal(int position)
+    {
+        if(listData.get(position).cache != 0)
+        {
+            callback.onTrackLoaded((int)listData.get(position).id,
+                    cachepath + listData.get(position).track + " " + listData.get(position).song + ".ogg");
+        }
+        else
+        {
+            subsonicapi.SubsonicDownloadAsync((int)listData.get(position).id, cachepath + listData.get(position).track + 
+                " " + listData.get(position).song + ".flac");
+            listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
+            callback.onListUpdated();
+        }
     }
 }

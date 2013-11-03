@@ -107,10 +107,18 @@ public class ContentListAdapter extends BaseAdapter
             TextView songText = (TextView) convertView.findViewById(R.id.librarylistsong_text);
             TextView songNum = (TextView) convertView.findViewById(R.id.librarylistsong_num);
             TextView songTime = (TextView) convertView.findViewById(R.id.librarylistsong_time);
+            ImageView songIcon = (ImageView) convertView.findViewById(R.id.librarylistsong_icon);
             songText.setText(listData.get(position).song);
             songNum.setText(""+listData.get(position).track);
             songTime.setText(SourceListOperations.formatTime(listData.get(position).time));
-            
+            if(listData.get(position).cache == ContentListElement.CACHE_DOWNLOADING)
+            {
+                songIcon.setImageResource(R.drawable.downloading_to_sdcard_icon);
+            }
+            if(listData.get(position).cache == ContentListElement.CACHE_SDCARD)
+            {
+                songIcon.setImageResource(R.drawable.cached_to_sdcard_icon);
+            }
             if(listData.get(position).path.equals(now_playing))
             {
                 int colors1[] = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};

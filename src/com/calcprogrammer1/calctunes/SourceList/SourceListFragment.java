@@ -170,7 +170,7 @@ public class SourceListFragment extends Fragment
             switch(item.getItemId())
             {
                 case CONTEXT_MENU_NEW_LIBRARY:
-                    startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
+                    getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
                     break;
                     
                 case CONTEXT_MENU_EDIT_LIBRARY:
@@ -193,7 +193,7 @@ public class SourceListFragment extends Fragment
                     break;
                     
                 case CONTEXT_MENU_NEW_SUBSONIC:
-                    startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class), 1);
+                    getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class), 1);
                     break;
                     
                 case CONTEXT_MENU_EDIT_SUBSONIC:

@@ -200,6 +200,11 @@ public class SourceListOperations
             //End document
             serializer.endTag("", "CalcTunesSubsonicServer");
             serializer.endDocument();
+            
+            //Make sure library directory exists before writing
+            File outdir = new File(sub.filename);
+            outdir.getParentFile().mkdirs();
+            
             PrintWriter out = new PrintWriter(sub.filename);
             out.println(writer.toString());
             out.close();
