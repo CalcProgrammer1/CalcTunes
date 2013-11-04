@@ -10,12 +10,15 @@ import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
+@SuppressWarnings("unused")
+
 public class SubsonicConnection
 {
     private String      url         = "";
     private String      user        = "";
     private String      password    = "";
     private String      cachepath   = "";
+    
     private boolean     available   = false;
     private boolean     licensed    = false;
     

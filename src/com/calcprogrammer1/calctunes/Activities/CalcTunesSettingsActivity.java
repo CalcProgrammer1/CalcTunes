@@ -4,27 +4,22 @@ import com.calcprogrammer1.calctunes.*;
 import com.example.android.apis.graphics.ColorPickerDialog;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-public class CalcTunesSettingsActivity extends PreferenceActivity implements ColorPickerDialog.OnColorChangedListener
+public class CalcTunesSettingsActivity extends PreferenceActivity implements ColorPickerDialog.OnColorChangedListener, OnSharedPreferenceChangeListener
 {
     ColorPickerDialog color_picker;
     SharedPreferences appSettings;
     SharedPreferences.Editor appSettingsEditor;
     
     Preference interface_color_pref;
-    CheckBoxPreference audio_fx_pref;
-    CheckBoxPreference car_mode_pref;
-    CheckBoxPreference hp_mode_pref;
-    CheckBoxPreference auto_close_pref;
-    CheckBoxPreference bkgd_only_pref;
-    CheckBoxPreference system_service_notification_pref;
-    CheckBoxPreference small_screen_layout_pref;
     
     @SuppressWarnings("deprecation")
     @Override
@@ -34,17 +29,11 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
         addPreferencesFromResource(R.layout.settingsactivity);
         
         color_picker = new ColorPickerDialog(this, this, Color.BLUE);
-        appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        appSettings.registerOnSharedPreferenceChangeListener(this);
         appSettingsEditor = appSettings.edit();
         
         interface_color_pref =             (Preference)         findPreference("interface_color");
-        audio_fx_pref =                    (CheckBoxPreference) findPreference("audio_fx");
-        car_mode_pref =                    (CheckBoxPreference) findPreference("car_mode");
-        hp_mode_pref =                     (CheckBoxPreference) findPreference("hp_mode");
-        auto_close_pref =                  (CheckBoxPreference) findPreference("auto_close");
-        bkgd_only_pref =                   (CheckBoxPreference) findPreference("bkgd_only");
-        system_service_notification_pref = (CheckBoxPreference) findPreference("service_notification");
-        small_screen_layout_pref =         (CheckBoxPreference) findPreference("small_screen_layout");
         
         interface_color_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
             public boolean onPreferenceClick(Preference arg0)
@@ -53,76 +42,18 @@ public class CalcTunesSettingsActivity extends PreferenceActivity implements Col
                 return true;
             } 
         });
-
-        audio_fx_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("audio_fx", audio_fx_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;                
-            }
-        });
-        
-        car_mode_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("car_mode", car_mode_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;                
-            }
-        });
-
-        hp_mode_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("hp_mode", hp_mode_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;                
-            }
-        });
-   
-        auto_close_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("auto_close", auto_close_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;                
-            }
-        });
-     
-        bkgd_only_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("bkgd_only", bkgd_only_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;                
-            }
-        });
-        
-        system_service_notification_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("service_notification", system_service_notification_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;
-            }
-        });
-        
-        small_screen_layout_pref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            public boolean onPreferenceClick(Preference arg0)
-            {
-                appSettingsEditor.putBoolean("small_screen_layout", small_screen_layout_pref.isChecked());
-                appSettingsEditor.commit();
-                return true;
-            }
-        });
     }
 
     public void colorChanged(int color)
     {
-        SharedPreferences appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
         SharedPreferences.Editor appSettingsEditor = appSettings.edit();
         appSettingsEditor.putInt("InterfaceColor", color);
         appSettingsEditor.commit();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
+    {
+        Log.d("onSharedPreferencesChanged", "sharedPreferences changed.  key: " + arg1);
     }
 }

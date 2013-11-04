@@ -49,6 +49,18 @@
 	        android:defaultValue="false"
 	        android:key="bkgd_only" />
 	    
+	    <CheckBoxPreference
+	        android:title="Automatically Start Playback"
+	        android:summary="If checked, will start playback immediately when CalcTunes is automatically started by connecting a device"
+	        android:defaultValue="false"
+	        android:key="auto_play" />
+	    
+	    <EditTextPreference
+	        android:title="Automatic Playback Source Library"
+	        android:summary="The name of the library source to automatically start playback from"
+	        android:defaultValue=""
+	        android:key="auto_play_lib" />
+	    
 	</PreferenceCategory>
 
 	<PreferenceCategory

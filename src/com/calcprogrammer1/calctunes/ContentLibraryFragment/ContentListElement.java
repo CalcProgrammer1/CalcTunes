@@ -1,7 +1,5 @@
 package com.calcprogrammer1.calctunes.ContentLibraryFragment;
 
-import android.graphics.Bitmap;
-
 public class ContentListElement
 {
     public final static int  LIBRARY_LIST_TYPE_HEADING   = 0;

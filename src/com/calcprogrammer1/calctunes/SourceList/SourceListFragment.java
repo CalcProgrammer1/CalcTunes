@@ -11,13 +11,13 @@ import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -85,7 +85,7 @@ public class SourceListFragment extends Fragment
         setRetainInstance(true);
         
         //Get the application preferences
-        appSettings = getActivity().getSharedPreferences("CalcTunes", Activity.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         

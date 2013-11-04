@@ -2,7 +2,6 @@ package com.calcprogrammer1.calctunes.ContentLibraryFragment;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -79,13 +79,14 @@ public class ContentLibraryFragment extends Fragment
     ///////////////////////////////////////////////////////////////////////////////////////////////
     
     private ContentPlaybackService playbackservice;
-    private boolean playbackservice_bound = false;
+    //private boolean playbackservice_bound = false;
+    
     private ServiceConnection playbackserviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
-            playbackservice_bound = true;
+            //playbackservice_bound = true;
             updateList();
             playbackservice.registerCallback(playbackCallback);
         }
@@ -94,7 +95,7 @@ public class ContentLibraryFragment extends Fragment
         public void onServiceDisconnected(ComponentName name)
         {
             playbackservice = null;
-            playbackservice_bound = false;
+            //playbackservice_bound = false;
         }    
     };
     
@@ -123,7 +124,7 @@ public class ContentLibraryFragment extends Fragment
         setRetainInstance(true);
         
         //Get the application preferences
-        appSettings = getActivity().getSharedPreferences("CalcTunes", Activity.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         
@@ -211,7 +212,7 @@ public class ContentLibraryFragment extends Fragment
     public void updateList()
     {
             //Load list of artists
-            libraryDatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + currentLibrary + ".db", null);
+            libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getActivity().getDatabasePath(currentLibrary + ".db"), null);
             listData = new ArrayList<ContentListElement>();
             viewCursorQuery = "SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;";
             

@@ -151,6 +151,7 @@ public class AlbumArtManager
                             File outfile = new File(artfilepath);
                             FileOutputStream fo = new FileOutputStream(outfile);
                             fo.write(bytes.toByteArray());
+                            fo.close();
                         }
                     }
                 }

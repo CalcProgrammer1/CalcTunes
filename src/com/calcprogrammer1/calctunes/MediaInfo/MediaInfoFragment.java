@@ -13,24 +13,19 @@ import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.Interfaces.MediaInfoViewInterface;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class MediaInfoFragment extends Fragment
 {
@@ -47,13 +42,13 @@ public class MediaInfoFragment extends Fragment
     private SharedPreferences appSettings;
     
     // Interface Color
-    private int interfaceColor;
+    //private int interfaceColor;
     
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
+            //interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
             setTrackInfo();
         }
     };
@@ -71,9 +66,9 @@ public class MediaInfoFragment extends Fragment
         super.onCreate(savedInstanceState);
         
         //Get the application preferences
-        appSettings = getActivity().getSharedPreferences("CalcTunes", Activity.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
+        //interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
     }
     
     @Override
@@ -159,7 +154,7 @@ public class MediaInfoFragment extends Fragment
     {
         track_artwork   = (ImageView) view.findViewById(R.id.track_artwork);
         track_info_list = (ListView)  view.findViewById(R.id.track_info_list);
-        View separator  = (View)      view.findViewById(R.id.separator);
+        //View separator  = (View)      view.findViewById(R.id.separator);
         
         track_info_list.setDivider(null);
         track_info_list.setDividerHeight(0);

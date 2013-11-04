@@ -19,6 +19,7 @@ import android.media.MediaPlayer;
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.Visualizer;
 import android.os.Build;
+import android.preference.PreferenceManager;
 
 public class MediaPlayerHandler
 {
@@ -59,7 +60,7 @@ public class MediaPlayerHandler
         con = context;
         
         //Get the application preferences
-        appSettings = con.getSharedPreferences("CalcTunes", Context.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(con);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         audio_fx = appSettings.getBoolean("audio_fx", true);
     }
@@ -133,7 +134,7 @@ public class MediaPlayerHandler
                 i.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, con.getPackageName());
                 con.sendBroadcast(i);
             }
-            if(Integer.parseInt(Build.VERSION.SDK) > 8)
+            if(Build.VERSION.SDK_INT > 8)
             {
                 vis = new Visualizer(mp.getAudioSessionId());
             }
@@ -326,7 +327,7 @@ public class MediaPlayerHandler
     
     public int computeFft()
     {
-        if(Integer.parseInt(Build.VERSION.SDK) > 8)
+        if(Build.VERSION.SDK_INT > 8)
         {
             return vis.getFft(vis_buffer);
         }
@@ -338,7 +339,7 @@ public class MediaPlayerHandler
     
     public int computeWave()
     {
-        if(Integer.parseInt(Build.VERSION.SDK) > 8)
+        if(Build.VERSION.SDK_INT > 8)
         {
             return vis.getWaveForm(vis_buffer);
         }

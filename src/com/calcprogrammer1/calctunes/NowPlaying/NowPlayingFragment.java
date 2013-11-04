@@ -6,7 +6,6 @@ import com.calcprogrammer1.calctunes.*;
 import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 import com.calcprogrammer1.calctunes.Interfaces.NowPlayingFragmentInterface;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,6 +17,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +66,7 @@ public class NowPlayingFragment extends Fragment
         setRetainInstance(true);
         
         //Get the application preferences
-        appSettings = getActivity().getSharedPreferences("CalcTunes", Activity.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         

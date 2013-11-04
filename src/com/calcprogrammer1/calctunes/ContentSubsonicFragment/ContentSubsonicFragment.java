@@ -1,20 +1,16 @@
 package com.calcprogrammer1.calctunes.ContentSubsonicFragment;
 
-import java.util.ArrayList;
-
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -32,12 +28,10 @@ import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListAdapter;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
 import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
-import com.calcprogrammer1.calctunes.Interfaces.SubsonicAPICallback;
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
-import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
-import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
-import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
+
+@SuppressWarnings("unused")
 
 public class ContentSubsonicFragment extends Fragment
 {
@@ -130,7 +124,7 @@ public class ContentSubsonicFragment extends Fragment
         setRetainInstance(true);
         
         //Get the application preferences
-        appSettings = getActivity().getSharedPreferences("CalcTunes", Activity.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         

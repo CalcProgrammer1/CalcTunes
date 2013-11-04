@@ -7,7 +7,6 @@ import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;

@@ -2,7 +2,6 @@ package com.calcprogrammer1.calctunes;
 
 import java.util.ArrayList;
 
-import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
@@ -24,6 +23,7 @@ import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -378,7 +378,7 @@ public class ContentPlaybackService extends Service
             SQLiteDatabase libraryDatabase;
             
             Log.d("ContentPlaybackService", "Automatic playback starting");
-            libraryDatabase = SQLiteDatabase.openOrCreateDatabase("/data/data/com.calcprogrammer1.calctunes/databases/" + "Music" + ".db", null);           
+            libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(appSettings.getString("auto_play_lib", "Music")+".db"), null);           
             Cursor tmp = libraryDatabase.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;", null);
             
             SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, null, 0, tmp);
@@ -399,7 +399,7 @@ public class ContentPlaybackService extends Service
         registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT"));
         
         //Get the application preferences
-        appSettings = getSharedPreferences("CalcTunes",MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(this);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         
         if(appSettings.getBoolean("service_notification", true))

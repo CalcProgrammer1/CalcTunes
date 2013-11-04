@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -37,7 +38,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
         //Get the application preferences
-        appSettings = context.getSharedPreferences("CalcTunes", Context.MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(context);
 
         boolean car_mode   = appSettings.getBoolean("car_mode", false);
         boolean hp_mode    = appSettings.getBoolean("hp_mode", false);

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
@@ -46,6 +47,7 @@ public class CalcTunesActivity extends FragmentActivity
 
     //Title bar icon and text
     private TextView        title_text;
+    @SuppressWarnings("unused")
     private ImageView       title_icon;
     
 	//Shared Preferences
@@ -248,7 +250,7 @@ public class CalcTunesActivity extends FragmentActivity
         }
         
         //Get the application preferences
-        appSettings = getSharedPreferences("CalcTunes", MODE_PRIVATE);
+        appSettings = PreferenceManager.getDefaultSharedPreferences(this);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
 

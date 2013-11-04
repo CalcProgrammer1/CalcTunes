@@ -32,6 +32,7 @@ public class CalcTunesXMLParser
         try{
             inFile = new BufferedReader(new FileReader(file));
             xml = inFile.readLine();
+            inFile.close();
         }catch(Exception e){}
         
         return xml;
@@ -77,7 +78,7 @@ public class CalcTunesXMLParser
             {
                 outstream.write(bytes, 0, read);
             }
- 
+            outstream.close();
         }catch(Exception e){}
     
         return "";
