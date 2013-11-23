@@ -295,7 +295,7 @@ public class ContentSubsonicFragment extends Fragment
         @Override
         public void onTrackLoaded(int id, String filename)
         {
-            if(id == play_id) playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, filename, 0, null);
+            if(id == play_id) playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, filename, 0);
         }
         
     };

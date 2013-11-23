@@ -341,7 +341,7 @@ public class ContentLibraryFragment extends Fragment
                             }
                             playbackCursor.moveToNext();
                         }
-                        playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_LIBRARY, null, playbackCursor.getPosition(), playbackCursor);
+                        playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_LIBRARY, currentLibrary, playbackCursor.getPosition());
                         libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
                         break;
                 }

@@ -147,7 +147,7 @@ public class ContentFilesystemFragment extends Fragment
                 }
                 else
                 {
-                    playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0, null);
+                    playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0);
                     fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
                     fileAdapter.notifyDataSetChanged();                
                 }

@@ -40,15 +40,6 @@
 		    android:orientation="horizontal" >
 
 			<ImageButton
-			    android:id="@+id/button_menu_add"
-			    android:layout_width="40dip"
-			    android:layout_height="40dip"
-			    android:background="@android:color/transparent"
-			    android:onClick="ButtonAddClick"
-			    android:scaleType="centerInside"
-			    android:src="@drawable/button_add" />
-
-			<ImageButton
 			    android:id="@+id/button_menu_settings"
 			    android:layout_width="40dip"
 			    android:layout_height="40dip"

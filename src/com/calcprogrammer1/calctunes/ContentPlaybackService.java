@@ -1,6 +1,7 @@
 package com.calcprogrammer1.calctunes;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
@@ -53,39 +54,24 @@ public class ContentPlaybackService extends Service
     public static final int CONTENT_PLAYBACK_LIBRARY = 2;
     public static final int CONTENT_PLAYBACK_PLAYLIST = 3;
     
-    //Current Content Type
-    private int contentPlayMode = CONTENT_PLAYBACK_NONE;
-    
-    private int auto_start;
-    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Local variables////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    //MediaPlayer Handler for playback
-    public MediaPlayerHandler mediaplayer;
-    
-    //Control buttons receiver
-    public RemoteControlReceiver remote;
-    
-    //Cursors - one for content list view and one for playback
-    //private SQLiteDatabase libraryDatabase;
-    private Cursor playbackCursor;
-    //private String playbackCursorQuery;
-    
-    //Now Playing
-    private String nowPlayingFile = new String();
-    private int nowPlayingCursorPos = -1;
-    
+    private int     currentContentType      = CONTENT_PLAYBACK_NONE;
+    private String  currentContentString    = "";
+    private int     auto_start              = 0;    
+    private MediaPlayerHandler      mediaplayer;
+    private SharedPreferences       appSettings;
+    private Cursor                  playbackCursor;
+    private String  nowPlayingFile  = new String();
+    private int     nowPlayingPos   = -1;
+    private int     nowPlayingMax   = -1;
     private ArrayList<ContentPlaybackInterface> callbacks;
-    
-    //Now Playing Notification
     private Notification notification;
     private NotificationManager notificationManager;
-    private static int notificationId = 2;
-
-    //Application Settings
-    SharedPreferences appSettings;
+    private static int notificationId = 2;  
+    private boolean random          = false;
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Callback Functions/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,29 +168,43 @@ public class ContentPlaybackService extends Service
         return mediaplayer.isPlaying();
     }
     
-    public void SetPlaybackContentSource(int contentType, String contentString, int contentPosition, Cursor contentCursor)
+    public void SetPlaybackContentSource(int contentType, String contentString, int contentPosition)
     {
         
         if(contentType == CONTENT_TYPE_LIBRARY)
         {
-            playbackCursor = contentCursor;
+            SQLiteDatabase libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(contentString + ".db"), null);
+            playbackCursor = libraryDatabase.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;", null);
             playbackCursor.moveToPosition(contentPosition);
             nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            nowPlayingCursorPos = contentPosition;              
+            nowPlayingPos  = contentPosition;       
+            nowPlayingMax  = playbackCursor.getCount() - 1;
         }
         else if(contentType == CONTENT_TYPE_FILESYSTEM)
         {
             nowPlayingFile = contentString;
+            nowPlayingPos  = 0;
+            nowPlayingMax  = 0;
         }
-        contentPlayMode = contentType;
+        currentContentType   = contentType;
+        currentContentString = contentString;
         
-        //Initialize media playback
         mediaplayer.stopPlayback();
         mediaplayer.initialize(nowPlayingFile);
         
         updateNotification();
         
         notifyMediaInfoUpdated();
+    }
+    
+    public int GetPlaybackContentType()
+    {
+        return currentContentType;
+    }
+    
+    public String GetPlaybackContentString()
+    {
+        return currentContentString;
     }
     
     public void StartPlayback()
@@ -219,14 +219,15 @@ public class ContentPlaybackService extends Service
     
     public void StopPlayback()
     {
-        if(contentPlayMode == CONTENT_PLAYBACK_FILESYSTEM)
+        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
         {
             nowPlayingFile = "";
         }
-        else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
+        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
         {
-            nowPlayingCursorPos = -1;
             nowPlayingFile = "";
+            nowPlayingPos  = -1;
+            nowPlayingMax  = 0;
             if(playbackCursor != null)
             {
             playbackCursor.close();
@@ -240,27 +241,34 @@ public class ContentPlaybackService extends Service
         
         notifyMediaInfoUpdated();
         
-        contentPlayMode = CONTENT_PLAYBACK_NONE;
+        currentContentType = CONTENT_PLAYBACK_NONE;
     }
     
     public void NextTrack()
     {
-        if(contentPlayMode == CONTENT_PLAYBACK_FILESYSTEM)
+        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
         {
             nowPlayingFile = "";
             mediaplayer.stopPlayback();            
         }
-        else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
+        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
         {
-            if(nowPlayingCursorPos >= playbackCursor.getCount()-1)
+            if( random )
             {
-                nowPlayingCursorPos = 0;
+                nowPlayingPos = new Random().nextInt(nowPlayingMax + 1);
             }
             else
             {
-                nowPlayingCursorPos++;
+                if(nowPlayingPos >= nowPlayingMax)
+                {
+                    nowPlayingPos = 0;
+                }
+                else
+                {
+                    nowPlayingPos++;
+                }
             }
-            playbackCursor.moveToPosition(nowPlayingCursorPos);
+            playbackCursor.moveToPosition(nowPlayingPos);
             nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
             mediaplayer.stopPlayback();
             mediaplayer.initialize(nowPlayingFile);
@@ -274,22 +282,22 @@ public class ContentPlaybackService extends Service
     
     public void PrevTrack()
     {
-        if(contentPlayMode == CONTENT_PLAYBACK_FILESYSTEM)
+        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
         {
             nowPlayingFile = "";
             mediaplayer.stopPlayback();
         }
-        else if(contentPlayMode == CONTENT_PLAYBACK_LIBRARY)
+        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
         {
-            if(nowPlayingCursorPos <= 0)
+            if(nowPlayingPos <= 0)
             {
-                nowPlayingCursorPos = playbackCursor.getCount() - 1;
+                nowPlayingPos = playbackCursor.getCount() - 1;
             }
             else
             {
-                nowPlayingCursorPos--;
+                nowPlayingPos--;
             }
-            playbackCursor.moveToPosition(nowPlayingCursorPos);
+            playbackCursor.moveToPosition(nowPlayingPos);
             nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
             
             mediaplayer.stopPlayback();
@@ -374,14 +382,10 @@ public class ContentPlaybackService extends Service
         }
         
         if(auto_start == 1)
-        {
-            SQLiteDatabase libraryDatabase;
-            
+        {           
             Log.d("ContentPlaybackService", "Automatic playback starting");
-            libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(appSettings.getString("auto_play_lib", "Music")+".db"), null);           
-            Cursor tmp = libraryDatabase.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;", null);
             
-            SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, null, 0, tmp);
+            SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, appSettings.getString("auto_play_lib", "Music"), 0);
             StartPlayback();
         }
         
