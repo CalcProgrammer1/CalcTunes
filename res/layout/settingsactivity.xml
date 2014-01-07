@@ -2,16 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 	
 	<PreferenceCategory
-	    android:title="Interface Customization" >
-		
-		<Preference
-		    android:title="Interface Color"
-		    android:summary="Select the interface background color"
-		    android:key="interface_color" />
-				
-	</PreferenceCategory>
-	
-	<PreferenceCategory
 	    android:title="Audio Settings" >
 	    
 	    <CheckBoxPreference
@@ -71,12 +61,6 @@
 		    android:summary="Show an ongoing notification when background service running"
 		    android:defaultValue="true"
 		    android:key="service_notification" />
-	    
-	    <CheckBoxPreference
-	        android:title="Use Small Screen Layout"
-	        android:summary="Re-arranges the Now Playing bar to fit small screens better"
-	        android:defaultValue="false"
-	        android:key="small_screen_layout" />
 	    
 	</PreferenceCategory>
 

@@ -3,15 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:background="@color/holo_dark_background"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:background="?android:attr/actionModeSplitBackground">
 
-	<View
-	   	android:id="@+id/lower_border"
-	    android:layout_width="match_parent"
-	    android:layout_height="2dip"
-	    android:background="#555" />
-    
     <RelativeLayout
         android:id="@+id/player_controls"
         android:layout_width="match_parent"

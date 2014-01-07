@@ -85,21 +85,21 @@ public class SourceListAdapter extends BaseExpandableListAdapter
         TextView sourceText = (TextView)      convertView.findViewById(R.id.sourcelistentry_text);
         ImageView sourceImage = (ImageView)   convertView.findViewById(R.id.sourcelistentry_icon);
 
-        if(groupPosition == selectedGroup && childPosition == selectedChild)
-        {
-            int colors1[] = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
-            GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors1);
-            back1.setShape(GradientDrawable.RECTANGLE);
-            int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
-            GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
-            back2.setShape(GradientDrawable.RECTANGLE);
-            LayerDrawable back = new LayerDrawable(new Drawable[] {back1, back2});
-            convertView.setBackgroundDrawable(back);
-        }
-        else
-        {
-            convertView.setBackgroundColor(Color.TRANSPARENT);
-        }
+//        if(groupPosition == selectedGroup && childPosition == selectedChild)
+//        {
+//            int colors1[] = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
+//            GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors1);
+//            back1.setShape(GradientDrawable.RECTANGLE);
+//            int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
+//            GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
+//            back2.setShape(GradientDrawable.RECTANGLE);
+//            LayerDrawable back = new LayerDrawable(new Drawable[] {back1, back2});
+//            convertView.setBackgroundDrawable(back);
+//        }
+//        else
+//        {
+//            convertView.setBackgroundColor(Color.TRANSPARENT);
+//        }
         
         switch(groupPosition)
         {
@@ -235,12 +235,6 @@ public class SourceListAdapter extends BaseExpandableListAdapter
     {
         selectedGroup = group;
         selectedChild = child;
-        notifyDataSetChanged();
-    }
-
-    public void setNowPlayingColor(int color)
-    {
-        interfaceColor = color;
         notifyDataSetChanged();
     }
 }

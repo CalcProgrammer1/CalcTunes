@@ -66,41 +66,41 @@ public class SeekHandler implements Runnable
     @SuppressWarnings("deprecation")
     public void setInterfaceColor(int color)
     {
-        int dip20 = px_to_dip(20);
-        int dip40 = px_to_dip(40);
-        Bitmap thumbbm = Bitmap.createBitmap(dip40, dip40, Bitmap.Config.ARGB_8888);
-        Canvas thumb = new Canvas(thumbbm);
-        Paint  thumbp = new Paint(Paint.ANTI_ALIAS_FLAG);
-        thumbp.setColor(Color.argb(Color.alpha(color)/2, Color.red(color), Color.green(color), Color.blue(color)));
-        thumb.drawCircle(dip20, dip20, dip20, thumbp);
-        thumbp.setColor(color);
-        thumb.drawCircle(dip20, dip20, px_to_dip(8), thumbp);
-        
-        BitmapDrawable thumbdraw = new BitmapDrawable(thumbbm);
-        thumbdraw.setBounds(new Rect(0, 0, thumbdraw.getIntrinsicWidth(), thumbdraw.getIntrinsicHeight()));
-        sb.setThumb(thumbdraw);
-        sb.setThumbOffset(0);
-              
-        DisplayMetrics metrics = res.getDisplayMetrics();
-        sb.measure(metrics.widthPixels, metrics.heightPixels);
-        Log.d("test", "screen width " + metrics.widthPixels);
-        Log.d("test", "screen height " + metrics.heightPixels);
-        Log.d("test", "bar width " + sb.getMeasuredWidth());
-        Log.d("test", "bar height " + sb.getMeasuredHeight());
-        Bitmap progbm = Bitmap.createBitmap(1, dip40, Bitmap.Config.ARGB_8888);
-        Canvas prog = new Canvas(progbm);
-        Paint progp = new Paint(Paint.ANTI_ALIAS_FLAG);
-        progp.setColor(Color.GRAY);
-        prog.drawLine(0, dip20, 1, dip20, progp);
-        BitmapDrawable progdraw = new BitmapDrawable(progbm);
-        
-       
-        Rect bounds = sb.getProgressDrawable().getBounds();
-        Log.d("test", "rect " + bounds.flattenToString());
-        bounds.offset(dip20, 0);
-        sb.setProgressDrawable(progdraw);
-        sb.getProgressDrawable().setBounds(bounds);
-        sb.refreshDrawableState();
+//        int dip20 = px_to_dip(20);
+//        int dip40 = px_to_dip(40);
+//        Bitmap thumbbm = Bitmap.createBitmap(dip40, dip40, Bitmap.Config.ARGB_8888);
+//        Canvas thumb = new Canvas(thumbbm);
+//        Paint  thumbp = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        thumbp.setColor(Color.argb(Color.alpha(color)/2, Color.red(color), Color.green(color), Color.blue(color)));
+//        thumb.drawCircle(dip20, dip20, dip20, thumbp);
+//        thumbp.setColor(color);
+//        thumb.drawCircle(dip20, dip20, px_to_dip(8), thumbp);
+//
+//        BitmapDrawable thumbdraw = new BitmapDrawable(thumbbm);
+//        thumbdraw.setBounds(new Rect(0, 0, thumbdraw.getIntrinsicWidth(), thumbdraw.getIntrinsicHeight()));
+//        sb.setThumb(thumbdraw);
+//        sb.setThumbOffset(0);
+//
+//        DisplayMetrics metrics = res.getDisplayMetrics();
+//        sb.measure(metrics.widthPixels, metrics.heightPixels);
+//        Log.d("test", "screen width " + metrics.widthPixels);
+//        Log.d("test", "screen height " + metrics.heightPixels);
+//        Log.d("test", "bar width " + sb.getMeasuredWidth());
+//        Log.d("test", "bar height " + sb.getMeasuredHeight());
+//        Bitmap progbm = Bitmap.createBitmap(1, dip40, Bitmap.Config.ARGB_8888);
+//        Canvas prog = new Canvas(progbm);
+//        Paint progp = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        progp.setColor(Color.GRAY);
+//        prog.drawLine(0, dip20, 1, dip20, progp);
+//        BitmapDrawable progdraw = new BitmapDrawable(progbm);
+//
+//
+//        Rect bounds = sb.getProgressDrawable().getBounds();
+//        Log.d("test", "rect " + bounds.flattenToString());
+//        bounds.offset(dip20, 0);
+//        sb.setProgressDrawable(progdraw);
+//        sb.getProgressDrawable().setBounds(bounds);
+//        sb.refreshDrawableState();
     }
     
     public void updateSeekBar(SeekBar seekb)

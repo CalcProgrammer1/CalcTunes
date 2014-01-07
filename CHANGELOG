@@ -1,5 +1,12 @@
 Release History
 ---------------
+Version 0.51 Alpha (8/5/2013)
+	- Subsonic downloads now occur asynchronously using a background thread, no more network on UI thread!
+	- Album art downloads also occur asynchronously, absolutely no network on UI thread!
+	- UI scaling tweaked to make it more visually attractive and easier to use on smaller screens
+	- Subsonic now allows you to set the cache path, no more hardcoded temporary path
+	- Title bar text now changes to reflect what source you have open, but it still needs work
+
 Version 0.50 Alpha (7/7/2013)
 	- Library adapter replaced with a new "tree view" style list with expand/collapsable artist/album entries
 	- Added context menu to library list - can view media info without playing track

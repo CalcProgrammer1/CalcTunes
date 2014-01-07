@@ -1,14 +1,27 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/createLibrary"
-        android:icon="@drawable/icon_add"
-        android:title="Create Library" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
+
     <item android:id="@+id/openSettings"
         android:icon="@drawable/ic_menu_preferences"
-        android:title="Settings" />
-    <item android:id="@+id/exitApplication"
-        android:title="Exit"
-        android:icon="@drawable/icon_exit" />
+        android:title="Settings"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/playMode"
+          android:icon="@drawable/downloading_to_sdcard_icon"
+          android:title="Playback Mode"
+          app:showAsAction="ifRoom" >
+        <menu>
+            <item android:id="@+id/playModeInOrder"
+                  android:title="In Order" />
+            <item android:id="@+id/playModeRandom"
+                  android:title="Random" />
+        </menu>
+    </item>
     <item android:id="@+id/minimizeApplication"
         android:title="Minimize"
-        android:icon="@drawable/icon_minimize" />
+        android:icon="@drawable/icon_minimize"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/exitApplication"
+        android:title="Exit"
+        android:icon="@drawable/icon_exit"
+        app:showAsAction="always" />
 </menu>

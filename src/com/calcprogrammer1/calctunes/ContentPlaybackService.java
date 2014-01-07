@@ -36,28 +36,37 @@ public class ContentPlaybackService extends Service
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     //Content Types
-    public static final int CONTENT_TYPE_NONE           = 0;
-    public static final int CONTENT_TYPE_FILESYSTEM     = 1;
-    public static final int CONTENT_TYPE_LIBRARY        = 2;
-    public static final int CONTENT_TYPE_PLAYLIST       = 3;
-    public static final int CONTENT_TYPE_SUBSONIC       = 4;
+    public static final int CONTENT_TYPE_NONE                   = 0;
+    public static final int CONTENT_TYPE_FILESYSTEM             = 1;
+    public static final int CONTENT_TYPE_LIBRARY                = 2;
+    public static final int CONTENT_TYPE_PLAYLIST               = 3;
+    public static final int CONTENT_TYPE_SUBSONIC               = 4;
+
     //Content View Modes
-    public static final int CONTENT_VIEW_NONE = 0;
-    public static final int CONTENT_VIEW_FILESYSTEM = 1;
-    public static final int CONTENT_VIEW_PLAYLIST_ALL = 2;
-    public static final int CONTENT_VIEW_LIBRARY_ALL = 3;
-    public static final int CONTENT_VIEW_LIBRARY_ARTIST = 4;
+    public static final int CONTENT_VIEW_NONE                   = 0;
+    public static final int CONTENT_VIEW_FILESYSTEM             = 1;
+    public static final int CONTENT_VIEW_PLAYLIST_ALL           = 2;
+    public static final int CONTENT_VIEW_LIBRARY_ALL            = 3;
+    public static final int CONTENT_VIEW_LIBRARY_ARTIST         = 4;
     
-    //Playback Modes
-    public static final int CONTENT_PLAYBACK_NONE = 0;
-    public static final int CONTENT_PLAYBACK_FILESYSTEM = 1;
-    public static final int CONTENT_PLAYBACK_LIBRARY = 2;
-    public static final int CONTENT_PLAYBACK_PLAYLIST = 3;
-    
+    //Playback Source Types
+    public static final int CONTENT_PLAYBACK_NONE               = 0;
+    public static final int CONTENT_PLAYBACK_FILESYSTEM         = 1;
+    public static final int CONTENT_PLAYBACK_LIBRARY            = 2;
+    public static final int CONTENT_PLAYBACK_PLAYLIST           = 3;
+
+    //Playback Order Modes
+    public static final int CONTENT_PLAYBACK_MODE_IN_ORDER      = 0;
+    public static final int CONTENT_PLAYBACK_MODE_RANDOM        = 1;
+    public static final int CONTENT_PLAYBACK_MODE_REPEAT_ONE    = 2;
+    public static final int CONTENT_PLAYBACK_MODE_REPEAT_ALBUM  = 3;
+    public static final int CONTENT_PLAYBACK_MODE_REPEAT_ARTIST = 4;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Local variables////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
+    private int     playbackMode            = CONTENT_PLAYBACK_MODE_IN_ORDER;
     private int     currentContentType      = CONTENT_PLAYBACK_NONE;
     private String  currentContentString    = "";
     private int     auto_start              = 0;    
@@ -101,6 +110,8 @@ public class ContentPlaybackService extends Service
             {
                 endNotification();
             }
+
+            SetPlaybackMode(appSettings.getInt("playback_mode", CONTENT_PLAYBACK_MODE_IN_ORDER));
         }
     };
     
@@ -157,7 +168,12 @@ public class ContentPlaybackService extends Service
     {
         return mediaplayer.getCurrentPosition();
     }
-    
+
+    public void SetPlaybackMode(int mode)
+    {
+        playbackMode = mode;
+    }
+
     public void SeekPlayback(int position)
     {
         mediaplayer.seekPlayback(position);
@@ -253,7 +269,7 @@ public class ContentPlaybackService extends Service
         }
         else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
         {
-            if( random )
+            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
             {
                 nowPlayingPos = new Random().nextInt(nowPlayingMax + 1);
             }

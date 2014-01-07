@@ -58,9 +58,6 @@ public class ContentLibraryFragment extends Fragment
     // Shared Preferences
     private SharedPreferences appSettings;
     
-    // Interface Color
-    private int interfaceColor;
-    
     // Current library file
     private String currentLibrary = "";
     
@@ -68,9 +65,6 @@ public class ContentLibraryFragment extends Fragment
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-            libAdapter.setNowPlayingColor(interfaceColor);
-            libAdapter.notifyDataSetChanged(); 
         }
     };
     
@@ -126,7 +120,6 @@ public class ContentLibraryFragment extends Fragment
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         
         //Start or Reconnect to the CalcTunes Playback Service
         getActivity().startService(new Intent(getActivity(), ContentPlaybackService.class));
@@ -232,7 +225,6 @@ public class ContentLibraryFragment extends Fragment
             libAdapter = new ContentListAdapter(getActivity());
             libAdapter.attachList(listData);
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
-            libAdapter.setNowPlayingColor(interfaceColor);
             
             rootView.setAdapter(libAdapter);
             rootView.setDivider(null);

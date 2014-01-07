@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -61,8 +60,7 @@ public class SourceListFragment extends Fragment
     SourceListInterface callback;
     
     private SharedPreferences appSettings;
-    
-    private int interfaceColor;
+
     private int selectedGroup;
     private int selectedChild;
     
@@ -70,8 +68,6 @@ public class SourceListFragment extends Fragment
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-            setInterfaceColor(interfaceColor);
         }
     };
     
@@ -87,7 +83,6 @@ public class SourceListFragment extends Fragment
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
         
         //Read the Source Lists
         readSourceLists();
@@ -104,7 +99,6 @@ public class SourceListFragment extends Fragment
         view.setDividerHeight(0);
         updateListView();
         registerForContextMenu(view);
-        setInterfaceColor(interfaceColor);
         return view;
     }
     
@@ -279,11 +273,5 @@ public class SourceListFragment extends Fragment
         view.expandGroup(1);
         view.expandGroup(2);
         view.expandGroup(3);
-    }
-    
-    public void setInterfaceColor(int color)
-    {
-        interfaceColor = color;
-        adapter.setNowPlayingColor(interfaceColor);
     }
 }

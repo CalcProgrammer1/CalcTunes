@@ -21,20 +21,15 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.R;
@@ -52,18 +47,13 @@ import com.calcprogrammer1.calctunes.SourceList.SourceListFragment;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.github.ysamlan.horizontalpager.HorizontalPager;
 
-public class CalcTunesActivity extends FragmentActivity
+public class CalcTunesActivity extends ActionBarActivity
 {    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Horizontal Pager that holds fragments
     private HorizontalPager horizontalpager;
-
-    //Title bar icon and text
-    private TextView        title_text;
-    @SuppressWarnings("unused")
-    private ImageView       title_icon;
     
     //Shared Preferences
     private SharedPreferences appSettings;
@@ -77,14 +67,14 @@ public class CalcTunesActivity extends FragmentActivity
     private ContentSubsonicFragment    subsonicfragment;
     private MediaInfoFragment          mediainfofragment;
 
+    //Menu Items
+    MenuItem                            playbackModeItem;
+
     //Currently open content fragment
     private int currentContentSource = ContentPlaybackService.CONTENT_TYPE_NONE;
 	
     //Filename if opened by Intent
     String openFile = null;
-    
-    //Interface Color
-    int interfaceColor;
 
     //Shutting down the activity?
     private static boolean shuttingDown = false;
@@ -171,7 +161,7 @@ public class CalcTunesActivity extends FragmentActivity
         public void onInfoButtonPressed()
         {
             mediainfofragment.setTrackInfoFromFile(playbackservice.NowPlayingFile());
-            horizontalpager.setCurrentScreen(3, true);
+            horizontalpager.setCurrentScreen(2, true);
         }
     };
     
@@ -181,7 +171,7 @@ public class CalcTunesActivity extends FragmentActivity
         public void OnTrackInfoRequest(String file)
         {
             mediainfofragment.setTrackInfoFromFile(file);
-            horizontalpager.setCurrentScreen(3, true);
+            horizontalpager.setCurrentScreen(2, true);
         }
     };
     
@@ -189,8 +179,8 @@ public class CalcTunesActivity extends FragmentActivity
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-            updateInterfaceColor(interfaceColor);
+
+            UpdatePlaybackModeIcon();
         }
     };
     
@@ -202,9 +192,10 @@ public class CalcTunesActivity extends FragmentActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
-        //Remove title bar
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);      
+
+        //Initialize Action Bar
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         
         //Register app close receiver
         registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT"));
@@ -272,7 +263,6 @@ public class CalcTunesActivity extends FragmentActivity
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(this);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
 
         //Set the content view
         setContentView(R.layout.main);
@@ -322,6 +312,8 @@ public class CalcTunesActivity extends FragmentActivity
     {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.layout.mainoptionsmenu, menu);
+        playbackModeItem = menu.findItem(R.id.playMode);
+        UpdatePlaybackModeIcon();
         return true;
     }
     
@@ -329,20 +321,36 @@ public class CalcTunesActivity extends FragmentActivity
     {
         switch(item.getItemId())
         {
-            case R.id.createLibrary:
-                startActivityForResult(new Intent(this, CalcTunesLibraryBuilderActivity.class), 1);
+            case android.R.id.home:
+                horizontalpager.setCurrentScreen(0, true);
                 break;
-                
+
+            case R.id.playModeInOrder:
+                {
+                    SharedPreferences.Editor editor = appSettings.edit();
+                    editor.putInt("playback_mode", ContentPlaybackService.CONTENT_PLAYBACK_MODE_IN_ORDER);
+                    editor.commit();
+                }
+                break;
+
+            case R.id.playModeRandom:
+                {
+                    SharedPreferences.Editor editor = appSettings.edit();
+                    editor.putInt("playback_mode", ContentPlaybackService.CONTENT_PLAYBACK_MODE_RANDOM);
+                    editor.commit();
+                }
+                break;
+
             case R.id.exitApplication:
-                ButtonExitClick(null);
+                ButtonExitClick();
                 break;
             
             case R.id.minimizeApplication:
-                ButtonMinimizeClick(null);
+                ButtonMinimizeClick();
                 break;
                 
             case R.id.openSettings:
-                ButtonSettingsClick(null);
+                ButtonSettingsClick();
                 break;
         }
         return true;
@@ -371,11 +379,8 @@ public class CalcTunesActivity extends FragmentActivity
     }
     
     public void updateGuiElements()
-    {   
-        title_text = (TextView) findViewById(R.id.title_text);
-        title_icon = (ImageView) findViewById(R.id.title_icon);
-        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);                       
-        updateInterfaceColor(interfaceColor);
+    {
+        horizontalpager = (HorizontalPager) findViewById(R.id.horizontal_pager);
     }
    
     //Set Content Source
@@ -388,7 +393,6 @@ public class CalcTunesActivity extends FragmentActivity
             libraryfragment.setLibrary(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, libraryfragment).commit();
             libraryfragment.setCallback(contentLibraryFragmentCallback);
-            title_text.setText(contentName);
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_FILESYSTEM)
         {
@@ -396,14 +400,12 @@ public class CalcTunesActivity extends FragmentActivity
             filesystemfragment = new ContentFilesystemFragment();
             filesystemfragment.setDirectory(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, filesystemfragment).commit();
-            title_text.setText(contentName);
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_PLAYLIST)
         {
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_PLAYLIST;
             playlistfragment = new ContentPlaylistFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, playlistfragment).commit();
-            title_text.setText("Playlist View");
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
         {
@@ -412,7 +414,6 @@ public class CalcTunesActivity extends FragmentActivity
             subsonicfragment.setSubsonicSource(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, subsonicfragment).commit();
             subsonicfragment.setCallback(contentLibraryFragmentCallback);
-            title_text.setText(contentName);
         }
     }
     
@@ -433,51 +434,35 @@ public class CalcTunesActivity extends FragmentActivity
     {
         finish();
     }
-    
-    public void ButtonStopClick(View view)
+
+    public void UpdatePlaybackModeIcon()
     {
-    	playbackservice.StopPlayback();
-    }
-    
-    public void ButtonPlayPauseClick(View view)
-    {
-        if(playbackservice.isPlaying())
+        if(playbackModeItem != null)
         {
-            playbackservice.PausePlayback();
+            switch(appSettings.getInt("playback_mode", ContentPlaybackService.CONTENT_PLAYBACK_MODE_IN_ORDER))
+            {
+                case ContentPlaybackService.CONTENT_PLAYBACK_MODE_IN_ORDER:
+                    playbackModeItem.setIcon(R.drawable.cached_to_sdcard_icon);
+                    break;
+
+                case ContentPlaybackService.CONTENT_PLAYBACK_MODE_RANDOM:
+                    playbackModeItem.setIcon(R.drawable.downloading_to_sdcard_icon);
+                    break;
+            }
         }
-        else
-        {
-            playbackservice.StartPlayback();
-        }
     }
-    
-    public void ButtonNextClick(View view)
-    {
-        playbackservice.NextTrack();
-    }
-    
-    public void ButtonPrevClick(View view)
-    {
-        playbackservice.PrevTrack();
-    }
-    
-    public void updateInterfaceColor(int color)
-    {
-        findViewById(R.id.title_border).setBackgroundColor(color);
-        findViewById(R.id.lower_border).setBackgroundColor(color);
-    }
-    
-    public void ButtonSettingsClick(View view)
+
+    public void ButtonSettingsClick()
     {
         startActivity(new Intent(this, CalcTunesSettingsActivity.class));
     }
     
-    public void ButtonMinimizeClick(View view)
+    public void ButtonMinimizeClick()
     {
         Minimize();
     }
     
-    public void ButtonExitClick(View view)
+    public void ButtonExitClick()
     {
         Exit();
     }

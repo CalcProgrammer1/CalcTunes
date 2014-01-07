@@ -28,8 +28,6 @@ public class ContentListAdapter extends BaseAdapter
     
     String now_playing = new String();
     
-    private int interfaceColor;
-    
     public ContentListAdapter(Context con)
     {
         c = con;
@@ -74,14 +72,6 @@ public class ContentListAdapter extends BaseAdapter
             final View      artistline1 =    convertView.findViewById(R.id.librarylistartist_line1);
             final View      artistline2 =    convertView.findViewById(R.id.librarylistartist_line2);
             final View      artistline3 =    convertView.findViewById(R.id.librarylistartist_line3);
-            int[] colors = {Color.TRANSPARENT, interfaceColor};
-            GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
-            GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
-            back1.setShape(GradientDrawable.RECTANGLE);
-            back2.setShape(GradientDrawable.RECTANGLE);
-            artistline1.setBackgroundDrawable(back1);
-            artistline2.setBackgroundColor(interfaceColor);
-            artistline3.setBackgroundDrawable(back2);
             artistText.setText(listData.get(position).artist);
         }
         else if(viewData.type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM)
@@ -95,9 +85,7 @@ public class ContentListAdapter extends BaseAdapter
             albumText.setText(listData.get(position).album);
             artistText.setText(listData.get(position).artist);
             yearText.setText(listData.get(position).year);
-            
-            //Bitmap art = AlbumArtManager.getAlbumArtFromCache(listData.get(position).artist, listData.get(position).album, c, true);
-            //artwork.setImageBitmap(art);
+
             AlbumArtManager.setImageAsync(listData.get(position).artist, listData.get(position).album, c, true, artwork);
         }
         else if(viewData.type == ContentListElement.LIBRARY_LIST_TYPE_TRACK)
@@ -120,14 +108,7 @@ public class ContentListAdapter extends BaseAdapter
             }
             if(listData.get(position).path.equals(now_playing))
             {
-                int colors1[] = {Color.TRANSPARENT, interfaceColor, Color.TRANSPARENT};
-                GradientDrawable back1 = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors1);
-                back1.setShape(GradientDrawable.RECTANGLE);
-                int colors2[] = {Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK};
-                GradientDrawable back2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors2);
-                back2.setShape(GradientDrawable.RECTANGLE);
-                LayerDrawable back = new LayerDrawable(new Drawable[] {back1, back2});
-                convertView.findViewById(R.id.librarylistsong_frame).setBackgroundDrawable(back);
+
             }
             else
             {
@@ -142,10 +123,4 @@ public class ContentListAdapter extends BaseAdapter
     {
         now_playing = nowPlayingFile;
     }
-
-    public void setNowPlayingColor(int new_color)
-    {
-        interfaceColor = new_color;
-    }
-
 }
