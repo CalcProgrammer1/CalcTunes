@@ -1,4 +1,4 @@
-package com.calcprogrammer1.calctunes.Activities;
+package com.calcprogrammer1.calctunes.Dialogs;
 
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
@@ -6,14 +6,20 @@ import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 
-public class CalcTunesSubsonicBuilderActivity extends Activity
+import java.io.File;
+
+public class SubsonicBuilderDialog extends Dialog implements View.OnClickListener
 {
     EditText srvNameInput;
     EditText srvAddrInput;
@@ -21,53 +27,89 @@ public class CalcTunesSubsonicBuilderActivity extends Activity
     EditText srvUserInput;
     EditText srvPassInput;
     EditText srvCachInput;
-    
-    Intent i;
-    
+    Button   buttonDone;
+    Button   buttonCache;
+
+    String editFilename = null;
+
+    public SubsonicBuilderDialog(Activity act)
+    {
+        super(act);
+    }
+
     @SuppressWarnings("deprecation")
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
-        //Remove title bar
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        
+
         setContentView(R.layout.subsonicbuilder);
-        
+        setTitle("Create New Subsonic Connection");
+
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.height = ViewGroup.LayoutParams.FILL_PARENT;
+        params.width = ViewGroup.LayoutParams.FILL_PARENT;
+        getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
         srvNameInput = (EditText) findViewById(R.id.srvNameInput);
         srvAddrInput = (EditText) findViewById(R.id.srvAddrInput);
         srvPortInput = (EditText) findViewById(R.id.srvPortInput);
         srvUserInput = (EditText) findViewById(R.id.srvUserInput);
         srvPassInput = (EditText) findViewById(R.id.srvPassInput);
         srvCachInput = (EditText) findViewById(R.id.srvCachInput);
-        
-        //If ICS, make the title border match the ICS Holo theme
-        if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)
+        buttonDone   = (Button)   findViewById(R.id.buttonSubsonicDone);
+        buttonCache  = (Button)   findViewById(R.id.buttonSubsonicCache);
+
+        buttonDone.setOnClickListener(this);
+        buttonCache.setOnClickListener(this);
+
+        if(editFilename != null)
         {
-            findViewById(R.id.title_border).setBackgroundResource(android.R.color.holo_blue_light);
-        }
-        
-        i = getIntent();
-        Bundle extras = i.getExtras();
-        if(extras != null)
-        {
-            String filename = extras.getString("EditFilename");
-            SubsonicSource EditSub = SourceListOperations.readSubsonicFile(filename);
+            setTitle("Edit Subsonic Connection");
+            SubsonicSource EditSub = SourceListOperations.readSubsonicFile(editFilename);
             srvNameInput.setText(EditSub.name);
             srvAddrInput.setText(EditSub.address);
             srvPortInput.setText(""+EditSub.port);
             srvUserInput.setText(EditSub.username);
             srvPassInput.setText(EditSub.password);
+            srvCachInput.setText(EditSub.cachePath);
         }
 
     }
-    
+
+    public void EditExistingSubsonic(String subFilename)
+    {
+        editFilename = subFilename;
+    }
+
+    public void onClick(View v)
+    {
+        switch(v.getId())
+        {
+            case R.id.buttonSubsonicDone:
+                DoneClick();
+                break;
+
+            case R.id.buttonSubsonicCache:
+                FolderSelectionDialog dialog = new FolderSelectionDialog(getContext());
+                dialog.show();
+                dialog.setFolderSelectionDialogCallback(new FolderSelectionDialog.FolderSelectionDialogCallback()
+                {
+                    @Override
+                    public void onCompleted(String folderPath)
+                    {
+                        srvCachInput.setText(folderPath + "/");
+                    }
+                });
+                break;
+        }
+    }
+
     @SuppressWarnings("deprecation")
-    public void DoneClick(View view)
+    public void DoneClick()
     {
         if(srvNameInput.getText().toString().equals(""))
         {
-            AlertDialog ad = new AlertDialog.Builder(this).create();
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
             ad.setCancelable(false);
             ad.setMessage("Please input a server name to continue.");
             ad.setButton("OK", new DialogInterface.OnClickListener()
@@ -81,7 +123,7 @@ public class CalcTunesSubsonicBuilderActivity extends Activity
         }
         else if(srvAddrInput.getText().toString().equals(""))
         {
-            AlertDialog ad = new AlertDialog.Builder(this).create();
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
             ad.setCancelable(false);
             ad.setMessage("Please input a server address to continue.");
             ad.setButton("OK", new DialogInterface.OnClickListener()
@@ -102,10 +144,17 @@ public class CalcTunesSubsonicBuilderActivity extends Activity
             sub.username  = srvUserInput.getText().toString();
             sub.password  = srvPassInput.getText().toString();
             sub.cachePath = srvCachInput.getText().toString();
-            sub.filename = SourceListOperations.getSubsonicPath(this) + "/" + SourceListOperations.getFilename(sub.name);
+            if(!sub.cachePath.endsWith("/")) sub.cachePath += "/";
+            sub.filename = SourceListOperations.getSubsonicPath(getContext()) + "/" + SourceListOperations.getFilename(sub.name);
+
+            if(editFilename != null)
+            {
+                File deleteFile = new File(editFilename);
+                deleteFile.delete();
+            }
+
             SourceListOperations.writeSubsonicFile(sub);
-            setResult(Activity.RESULT_OK, i);
-            finish();
+            dismiss();
         }
     }
 }

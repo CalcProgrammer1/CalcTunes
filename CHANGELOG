@@ -1,5 +1,14 @@
 Release History
 ---------------
+Version 0.52 Alpha (1/6/2014)
+	- Switched to Android Studio IDE for project development
+	- Updated API revisions for Android 4.2.2 KitKat
+	- Replaced custom title bar layout with ActionBar compatibility library
+	- Added headphones and car mode to auto-open CalcTunes upon audio device connection
+	- Reworked Bluetooth control buttons interface so they work properly
+	- Removed custom color setting, from now on using proper theming with style xml
+	- Added playback mode selector, switch between random and in-order playback
+
 Version 0.51 Alpha (8/5/2013)
 	- Subsonic downloads now occur asynchronously using a background thread, no more network on UI thread!
 	- Album art downloads also occur asynchronously, absolutely no network on UI thread!

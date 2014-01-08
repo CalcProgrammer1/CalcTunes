@@ -3,9 +3,9 @@ package com.calcprogrammer1.calctunes.SourceList;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.calcprogrammer1.calctunes.Dialogs.SubsonicBuilderDialog;
 import com.calcprogrammer1.calctunes.Dialogs.LibraryBuilderDialog;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
-import com.calcprogrammer1.calctunes.Activities.CalcTunesSubsonicBuilderActivity;
 import com.calcprogrammer1.calctunes.Interfaces.SourceListInterface;
 import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
@@ -14,7 +14,6 @@ import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -169,7 +168,6 @@ public class SourceListFragment extends Fragment
             {
                 case CONTEXT_MENU_NEW_LIBRARY:
                     {
-                        //getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
                         LibraryBuilderDialog dialog = new LibraryBuilderDialog(getActivity());
                         dialog.show();
                     }
@@ -177,9 +175,6 @@ public class SourceListFragment extends Fragment
                     
                 case CONTEXT_MENU_EDIT_LIBRARY:
                     {
-                        //Intent libIntent = new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class);
-                        //libIntent.putExtra("EditFilename", libraryList.get(id).filename);
-                        //startActivityForResult(libIntent, 1);
                         LibraryBuilderDialog dialog = new LibraryBuilderDialog(getActivity());
                         dialog.EditExistingLibrary(libraryList.get(id).filename);
                         dialog.show();
@@ -221,13 +216,18 @@ public class SourceListFragment extends Fragment
                     break;
 
                 case CONTEXT_MENU_NEW_SUBSONIC:
-                    getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class), 1);
+                    {
+                        SubsonicBuilderDialog dialog = new SubsonicBuilderDialog(getActivity());
+                        dialog.show();
+                    }
                     break;
                     
                 case CONTEXT_MENU_EDIT_SUBSONIC:
-                    Intent subIntent = new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class);
-                    subIntent.putExtra("EditFilename", subsonicList.get(id).filename);
-                    startActivityForResult(subIntent, 1);
+                    {
+                        SubsonicBuilderDialog dialog = new SubsonicBuilderDialog(getActivity());
+                        dialog.EditExistingSubsonic(subsonicList.get(id).filename);
+                        dialog.show();
+                    }
                     break;
               
                 case CONTEXT_MENU_DELETE_SUBSONIC:
