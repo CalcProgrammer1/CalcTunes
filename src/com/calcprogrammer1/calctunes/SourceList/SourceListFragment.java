@@ -3,26 +3,30 @@ package com.calcprogrammer1.calctunes.SourceList;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.calcprogrammer1.calctunes.Dialogs.LibraryBuilderDialog;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
-import com.calcprogrammer1.calctunes.Activities.CalcTunesLibraryBuilderActivity;
 import com.calcprogrammer1.calctunes.Activities.CalcTunesSubsonicBuilderActivity;
 import com.calcprogrammer1.calctunes.Interfaces.SourceListInterface;
 import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -164,13 +168,22 @@ public class SourceListFragment extends Fragment
             switch(item.getItemId())
             {
                 case CONTEXT_MENU_NEW_LIBRARY:
-                    getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
+                    {
+                        //getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class), 1);
+                        LibraryBuilderDialog dialog = new LibraryBuilderDialog(getActivity());
+                        dialog.show();
+                    }
                     break;
                     
                 case CONTEXT_MENU_EDIT_LIBRARY:
-                    Intent libIntent = new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class);
-                    libIntent.putExtra("EditFilename", libraryList.get(id).filename);
-                    startActivityForResult(libIntent, 1);
+                    {
+                        //Intent libIntent = new Intent(getActivity().getBaseContext(), CalcTunesLibraryBuilderActivity.class);
+                        //libIntent.putExtra("EditFilename", libraryList.get(id).filename);
+                        //startActivityForResult(libIntent, 1);
+                        LibraryBuilderDialog dialog = new LibraryBuilderDialog(getActivity());
+                        dialog.EditExistingLibrary(libraryList.get(id).filename);
+                        dialog.show();
+                    }
                     break;
                 
                 case CONTEXT_MENU_DELETE_LIBRARY:
@@ -182,10 +195,31 @@ public class SourceListFragment extends Fragment
                     break;
                 
                 case CONTEXT_MENU_RESCAN_LIBRARY:
-                    LibraryScannerTask task = new LibraryScannerTask(getActivity().getBaseContext());
+                    LibraryScannerTask task = new LibraryScannerTask(getActivity());
                     task.execute(libraryList.get(id).name);
                     break;
-                    
+
+                case CONTEXT_MENU_NEW_PLAYLIST:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Create New Playlist");
+                    final EditText input = new EditText(getActivity().getBaseContext());
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(input);
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                    break;
+
                 case CONTEXT_MENU_NEW_SUBSONIC:
                     getActivity().startActivityForResult(new Intent(getActivity().getBaseContext(), CalcTunesSubsonicBuilderActivity.class), 1);
                     break;

@@ -1,5 +1,6 @@
-package com.calcprogrammer1.calctunes.Activities;
+package com.calcprogrammer1.calctunes.Dialogs;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import com.calcprogrammer1.calctunes.R;
@@ -9,93 +10,128 @@ import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class CalcTunesLibraryBuilderActivity extends Activity
+public class LibraryBuilderDialog extends Dialog implements View.OnClickListener
 {
+    Activity activity;
     ListView librarylist;
     EditText libNameInput;
     ArrayList<String> libraryFolders;
     Intent i;
-    
+    String editFilename = null;
+
+    public LibraryBuilderDialog(Activity act)
+    {
+        super(act);
+    }
+
     @SuppressWarnings("deprecation")
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         
-        //Remove title bar
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        
         setContentView(R.layout.librarybuilder);
-        
+        setTitle("Create New Library");
+
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.height = ViewGroup.LayoutParams.FILL_PARENT;
+        params.width = ViewGroup.LayoutParams.FILL_PARENT;
+        getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
+        Button AddFolder = (Button) findViewById(R.id.buttonLibAddFolder);
+        Button RemoveSelected = (Button) findViewById(R.id.buttonLibRemoveSelected);
+        Button Done = (Button) findViewById(R.id.buttonLibDone);
+
+        AddFolder.setOnClickListener(this);
+        RemoveSelected.setOnClickListener(this);
+        Done.setOnClickListener(this);
+
         librarylist = (ListView) findViewById(R.id.libraryListView);
         libNameInput = (EditText) findViewById(R.id.libNameInput);
         
-        //If ICS, make the title border match the ICS Holo theme
-        if(Integer.valueOf(android.os.Build.VERSION.SDK) > 10)
-        {
-            findViewById(R.id.title_border).setBackgroundResource(android.R.color.holo_blue_light);
-        }
-        
-        i = getIntent();
-        Bundle extras = i.getExtras();
+
         libraryFolders = new ArrayList<String>();
-        if(extras != null)
+        if(editFilename != null)
         {
-            String filename = extras.getString("EditFilename");
-            LibrarySource EditLib = SourceListOperations.readLibraryFile(filename);
+            setTitle("Edit Existing Library");
+            LibrarySource EditLib = SourceListOperations.readLibraryFile(editFilename);
             String name = EditLib.name;
             libraryFolders = EditLib.folders;
             libNameInput.setText(name);
             updateFolderList();
         }
+    }
 
-    }
-    
-    public void AddFolderClick(View view)
+    public void onClick(View v)
     {
-        Intent intent = new Intent("org.openintents.action.PICK_DIRECTORY");
-        startActivityForResult(intent, 1);
-    }
-    
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if(resultCode == Activity.RESULT_OK)
+        switch(v.getId())
         {
-            Uri dirname = data.getData();
-            String newFolder = dirname.getPath();
-            boolean match = false;
-            for(int i = 0; i < libraryFolders.size(); i++)
-            {
-                if(newFolder.equals(libraryFolders.get(i)))
-                {
-                    match = true;
-                }
-            }
-            if(!match)
-            {
-                libraryFolders.add(newFolder);
-            }
-            updateFolderList();
+            case R.id.buttonLibAddFolder:
+                AddFolderClick();
+                break;
+
+            case R.id.buttonLibRemoveSelected:
+                RemoveSelectedClick();
+                break;
+
+            case R.id.buttonLibDone:
+                DoneClick();
+                break;
         }
+    }
+
+    public void EditExistingLibrary(String libFilename)
+    {
+        editFilename = libFilename;
+    }
+
+    public void AddFolderClick()
+    {
+        FolderSelectionDialog dialog = new FolderSelectionDialog(getContext());
+        dialog.show();
+        dialog.setFolderSelectionDialogCallback(new FolderSelectionDialog.FolderSelectionDialogCallback()
+        {
+            @Override
+            public void onCompleted(String folderPath)
+            {
+                boolean match = false;
+
+                for(int i = 0; i < libraryFolders.size(); i++)
+                {
+                    if(folderPath.equals(libraryFolders.get(i)))
+                    {
+                        match = true;
+                    }
+                }
+                if(!match)
+                {
+                    libraryFolders.add(folderPath);
+                }
+                updateFolderList();
+            }
+        });
     }
     
     public void updateFolderList()
     {
-        librarylist.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, libraryFolders.toArray(new String[libraryFolders.size()])));
+        librarylist.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_multiple_choice, libraryFolders.toArray(new String[libraryFolders.size()])));
         librarylist.setItemsCanFocus(false);
         librarylist.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
     
-    public void RemoveSelectedClick(View view)
+    public void RemoveSelectedClick()
     {
         ArrayList<Integer> indicesToRemove = new ArrayList<Integer>();
         for(int i = 0; i < libraryFolders.size(); i++)
@@ -113,11 +149,11 @@ public class CalcTunesLibraryBuilderActivity extends Activity
     }
     
     @SuppressWarnings("deprecation")
-    public void DoneClick(View view)
+    public void DoneClick()
     {
         if(libNameInput.getText().toString().equals(""))
         {
-            AlertDialog ad = new AlertDialog.Builder(this).create();
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
             ad.setCancelable(false);
             ad.setMessage("Please input a library name to continue.");
             ad.setButton("OK", new DialogInterface.OnClickListener()
@@ -131,7 +167,7 @@ public class CalcTunesLibraryBuilderActivity extends Activity
         }
         else if(libraryFolders.size() == 0)
         {
-            AlertDialog ad = new AlertDialog.Builder(this).create();
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
             ad.setCancelable(false);
             ad.setMessage("Please select at least one folder to continue.");
             ad.setButton("OK", new DialogInterface.OnClickListener()
@@ -147,22 +183,20 @@ public class CalcTunesLibraryBuilderActivity extends Activity
         {
             LibrarySource lib = new LibrarySource();
             lib.name = libNameInput.getText().toString();
-            lib.filename = SourceListOperations.getLibraryPath(this) + "/" + SourceListOperations.getFilename(lib.name);
+            lib.filename = SourceListOperations.getLibraryPath(getContext()) + "/" + SourceListOperations.getFilename(lib.name);
             lib.folders = libraryFolders;
             
-            //if(data.getStringExtra("EditFilename") != null)
-            //{
-              //  File deleteFile = new File(data.getStringExtra("EditFilename"));
-              //  deleteFile.delete();
-            //}
+            if(editFilename != null)
+            {
+                File deleteFile = new File(editFilename);
+                deleteFile.delete();
+            }
             
             SourceListOperations.writeLibraryFile(lib);
 
-            LibraryScannerTask task = new LibraryScannerTask(this);
+            LibraryScannerTask task = new LibraryScannerTask(getContext());
             task.execute(lib.name);
-            
-            setResult(Activity.RESULT_OK, i);
-            finish();
+            dismiss();
         }
     }
 }

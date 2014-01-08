@@ -35,20 +35,12 @@
                 <data android:mimeType="audio/*" />
             </intent-filter>
         </activity>
-        
-		<activity android:name=".Activities.CalcTunesLibraryBuilderActivity"
-		    	  android:configChanges="keyboardHidden|orientation|screenSize">
-		</activity>
 
 		<activity android:name=".Activities.CalcTunesSubsonicBuilderActivity"
 		    	  android:configChanges="keyboardHidden|orientation|screenSize">
 		</activity>
 				
 		<activity android:name=".Activities.CalcTunesSettingsActivity"
-		    	  android:configChanges="keyboardHidden|orientation|screenSize">
-		</activity>
-		
-		<activity android:name=".Activities.CalcTunesMediaInfoActivity"
 		    	  android:configChanges="keyboardHidden|orientation|screenSize">
 		</activity>
 		
