@@ -30,8 +30,10 @@ In addition to libraries, CalcTunes will support playlists.  These will likely b
 will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
 not sure whether or not playlists will be cached or not.
 
-Current Version - Version 0.53 Alpha (1/8/2014)
+Current Version - Version 0.54 Alpha (1/8/2014)
 ---------------
-    -Replaced library and subsonic builder activities with dialogs
-    -Removed dependence on OI File Manager for folder selection during library creation
-    -New Subsonic builder fits screen better and allows browsing for cache path
+    -Split Subsonic download paths for original and transcoded files
+    -Subsonic downloaded tracks now get organized in artist/album/xx song.ext format
+    -New "reorganize folder" option in file browser mode allows organizing files into artist/album/xx song.ext
+        folder layout based on tag metadata, supports both recursive and non-recursive scanning and can move
+        from one folder to another

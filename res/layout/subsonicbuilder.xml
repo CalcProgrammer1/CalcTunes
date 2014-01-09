@@ -53,15 +53,35 @@
                 android:layout_width="match_parent">
 
                 <EditText
-                    android:id="@+id/srvCachInput"
+                    android:id="@+id/srvTransInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:hint="Cache Directory"
+                    android:hint="Transcoded Files Directory"
                     android:layout_weight="1" />
 
                 <Button
-                    android:id="@+id/buttonSubsonicCache"
+                    android:id="@+id/buttonSubsonicTrans"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="..." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <EditText
+                    android:id="@+id/srvOrigInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Original Files Directory"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/buttonSubsonicOrig"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="..." />

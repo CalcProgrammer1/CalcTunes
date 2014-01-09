@@ -1,6 +1,8 @@
 package com.calcprogrammer1.calctunes.ContentFilesystemFragment;
 
+import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.Dialogs.FolderReorganizeDialog;
 import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 
 import android.content.ComponentName;
@@ -14,7 +16,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -115,7 +120,43 @@ public class ContentFilesystemFragment extends Fragment
         registerForContextMenu(rootView);
         return rootView;
     }
-    
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////// CONTEXT MENU //////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        if(v == rootView)
+        {
+            int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
+            boolean isDir = fileAdapter.files.get(position).isDirectory();
+
+            if(isDir)
+            {
+                menu.add(3, 0 , Menu.NONE, "Organize this directory");
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        if(item.getGroupId() == 3)
+        {
+            int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
+            FolderReorganizeDialog dialog = new FolderReorganizeDialog(getActivity(), fileAdapter.files.get(position).getAbsolutePath());
+            dialog.show();
+        }
+        else
+        {
+            return false;
+        }
+
+        return(super.onOptionsItemSelected(item));
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////// LIST UPDATING FUNCTIONS ///////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +194,7 @@ public class ContentFilesystemFragment extends Fragment
                 }
             }   
         });
+        registerForContextMenu(rootView);
     }
 
     public void setDirectory(String newDirectory)

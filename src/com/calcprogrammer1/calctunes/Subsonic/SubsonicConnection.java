@@ -17,7 +17,8 @@ public class SubsonicConnection
     private String      url         = "";
     private String      user        = "";
     private String      password    = "";
-    private String      cachepath   = "";
+    private String      transpath   = "";
+    private String      origpath    = "";
     
     private boolean     available   = false;
     private boolean     licensed    = false;
@@ -44,7 +45,8 @@ public class SubsonicConnection
         url         = source.address + ":" + source.port;
         user        = source.username;
         password    = source.password;
-        cachepath   = source.cachePath;
+        transpath   = source.transPath;
+        origpath    = source.origPath;
         
         subsonicapi = new SubsonicAPI(url, user, password);
         subsonicapi.SetCallback(subsonic_callback);
@@ -220,12 +222,24 @@ public class SubsonicConnection
             newElement.id     = songs.get(i).id;
             newElement.path   = songs.get(i).suffix;
             
-            File testFile = new File( cachepath + songs.get(i).track + " " + songs.get(i).title + ".ogg" );
+            File testFile = new File( transpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
+                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + ".ogg" );
+
             if(testFile.exists())
             {
                 newElement.cache = ContentListElement.CACHE_SDCARD;
             }
-            
+            else
+            {
+                testFile = new File( origpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
+                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + ".ogg" );
+
+                if(testFile.exists())
+                {
+                    newElement.cache = ContentListElement.CACHE_SDCARD;
+                }
+            }
+
             listData.add(position + (i + 1), newElement);
         }
         
@@ -272,12 +286,14 @@ public class SubsonicConnection
         if(listData.get(position).cache != 0)
         {
             callback.onTrackLoaded((int)listData.get(position).id,
-                    cachepath + listData.get(position).track + " " + listData.get(position).song + ".ogg");
+                    transpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist) + "/" + SourceListOperations.makeFilename(listData.get(position).album)
+                                + "/" + String.format("%02d", listData.get(position).track) + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".ogg");
         }
         else
         {
-            subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, cachepath + listData.get(position).track + 
-                " " + listData.get(position).song + ".ogg", 160, "ogg");
+            subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, transpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist)
+                    + "/" + SourceListOperations.makeFilename(listData.get(position).album) + "/" + String.format("%02d", listData.get(position).track)
+                    + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".ogg", 160, "ogg");
             listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
             callback.onListUpdated();
         }
@@ -288,12 +304,14 @@ public class SubsonicConnection
         if(listData.get(position).cache != 0)
         {
             callback.onTrackLoaded((int)listData.get(position).id,
-                    cachepath + listData.get(position).track + " " + listData.get(position).song + ".ogg");
+                    origpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist) + "/" + SourceListOperations.makeFilename(listData.get(position).album)
+                                + "/" + String.format("%02d", listData.get(position).track) + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".flac");
         }
         else
         {
-            subsonicapi.SubsonicDownloadAsync((int)listData.get(position).id, cachepath + listData.get(position).track + 
-                " " + listData.get(position).song + ".flac");
+            subsonicapi.SubsonicDownloadAsync((int)listData.get(position).id, origpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist)
+                    + "/" + SourceListOperations.makeFilename(listData.get(position).album) + "/" + String.format("%02d", listData.get(position).track)
+                    + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".flac");
             listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
             callback.onListUpdated();
         }

@@ -1,5 +1,10 @@
 Release History
 ---------------
+Version 0.53 Alpha (1/8/2014)
+    -Replaced library and subsonic builder activities with dialogs
+    -Removed dependence on OI File Manager for folder selection during library creation
+    -New Subsonic builder fits screen better and allows browsing for cache path
+
 Version 0.52 Alpha (1/6/2014)
 	- Switched to Android Studio IDE for project development
 	- Updated API revisions for Android 4.2.2 KitKat

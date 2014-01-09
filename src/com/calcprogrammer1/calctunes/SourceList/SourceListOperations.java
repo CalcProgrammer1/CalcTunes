@@ -182,11 +182,16 @@ public class SourceListOperations
             serializer.text(sub.password);
             serializer.endTag("", "password");
             
-            //Download Path
-            serializer.startTag("", "cachepath");
-            serializer.text(sub.cachePath);
-            serializer.endTag("", "cachepath");
-            
+            //Download Transcoded Files Path
+            serializer.startTag("", "transpath");
+            serializer.text(sub.transPath);
+            serializer.endTag("", "transpath");
+
+            //Download Original Files Path
+            serializer.startTag("", "origpath");
+            serializer.text(sub.origPath);
+            serializer.endTag("", "origpath");
+
             //Streaming Format
             serializer.startTag("", "streamingformat");
             serializer.text(sub.streamingFormat);
@@ -263,13 +268,20 @@ public class SourceListOperations
                 sub.password = NodeData.item(0).getChildNodes().item(0).getNodeValue();
             }
             
-            //Get Download Path
-            NodeData         = DocData.getElementsByTagName("cachepath");
+            //Get Download Transcoded Files Path
+            NodeData         = DocData.getElementsByTagName("transpath");
             if(NodeData.item(0).getChildNodes().getLength() > 0)
             {
-                sub.cachePath = NodeData.item(0).getChildNodes().item(0).getNodeValue();
+                sub.transPath = NodeData.item(0).getChildNodes().item(0).getNodeValue();
             }
-            
+
+            //Get Download Original Files Path
+            NodeData         = DocData.getElementsByTagName("origpath");
+            if(NodeData.item(0).getChildNodes().getLength() > 0)
+            {
+                sub.origPath = NodeData.item(0).getChildNodes().item(0).getNodeValue();
+            }
+
             //Get Streaming Format
             NodeData            = DocData.getElementsByTagName("streamingformat");
             if(NodeData.item(0).getChildNodes().getLength() > 0)
@@ -352,7 +364,19 @@ public class SourceListOperations
     
     public static String makeFilename(String s)
     {
-        return s.replaceAll("[^a-zA-Z0-9]", "");
+        String fileString = s;
+
+        // Replace : characters with - characters
+        s = s.replaceAll(":", "-");
+
+        // Replace $ characters with S characters
+        s = s.replaceAll("\\$", "S");
+
+        // Remove all other characters
+        s = s.replaceAll("[#%&\\{\\}\\\\<>\\*\\?/!`';@+|=]", "");
+
+        // Return complete string
+        return(s);
     }
     
     public static String getFilename(String name)

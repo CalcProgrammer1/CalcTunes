@@ -8,11 +8,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,9 +24,11 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
     EditText srvPortInput;
     EditText srvUserInput;
     EditText srvPassInput;
-    EditText srvCachInput;
+    EditText srvTransInput;
+    EditText srvOrigInput;
     Button   buttonDone;
-    Button   buttonCache;
+    Button   buttonTrans;
+    Button   buttonOrig;
 
     String editFilename = null;
 
@@ -50,17 +50,20 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
         params.width = ViewGroup.LayoutParams.FILL_PARENT;
         getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
-        srvNameInput = (EditText) findViewById(R.id.srvNameInput);
-        srvAddrInput = (EditText) findViewById(R.id.srvAddrInput);
-        srvPortInput = (EditText) findViewById(R.id.srvPortInput);
-        srvUserInput = (EditText) findViewById(R.id.srvUserInput);
-        srvPassInput = (EditText) findViewById(R.id.srvPassInput);
-        srvCachInput = (EditText) findViewById(R.id.srvCachInput);
-        buttonDone   = (Button)   findViewById(R.id.buttonSubsonicDone);
-        buttonCache  = (Button)   findViewById(R.id.buttonSubsonicCache);
+        srvNameInput  = (EditText) findViewById(R.id.srvNameInput);
+        srvAddrInput  = (EditText) findViewById(R.id.srvAddrInput);
+        srvPortInput  = (EditText) findViewById(R.id.srvPortInput);
+        srvUserInput  = (EditText) findViewById(R.id.srvUserInput);
+        srvPassInput  = (EditText) findViewById(R.id.srvPassInput);
+        srvTransInput = (EditText) findViewById(R.id.srvTransInput);
+        srvOrigInput  = (EditText) findViewById(R.id.srvOrigInput);
+        buttonDone    = (Button)   findViewById(R.id.buttonSubsonicDone);
+        buttonTrans   = (Button)   findViewById(R.id.buttonSubsonicTrans);
+        buttonOrig    = (Button)   findViewById(R.id.buttonSubsonicOrig);
 
         buttonDone.setOnClickListener(this);
-        buttonCache.setOnClickListener(this);
+        buttonTrans.setOnClickListener(this);
+        buttonOrig.setOnClickListener(this);
 
         if(editFilename != null)
         {
@@ -71,7 +74,8 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             srvPortInput.setText(""+EditSub.port);
             srvUserInput.setText(EditSub.username);
             srvPassInput.setText(EditSub.password);
-            srvCachInput.setText(EditSub.cachePath);
+            srvTransInput.setText(EditSub.transPath);
+            srvOrigInput.setText(EditSub.origPath);
         }
 
     }
@@ -89,17 +93,34 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
                 DoneClick();
                 break;
 
-            case R.id.buttonSubsonicCache:
-                FolderSelectionDialog dialog = new FolderSelectionDialog(getContext());
-                dialog.show();
-                dialog.setFolderSelectionDialogCallback(new FolderSelectionDialog.FolderSelectionDialogCallback()
+            case R.id.buttonSubsonicTrans:
                 {
-                    @Override
-                    public void onCompleted(String folderPath)
+                    FolderSelectionDialog dialog = new FolderSelectionDialog(getContext());
+                    dialog.show();
+                    dialog.setFolderSelectionDialogCallback(new FolderSelectionDialog.FolderSelectionDialogCallback()
                     {
-                        srvCachInput.setText(folderPath + "/");
-                    }
-                });
+                        @Override
+                        public void onCompleted(String folderPath)
+                        {
+                            srvTransInput.setText(folderPath + "/");
+                        }
+                    });
+                }
+                break;
+
+            case R.id.buttonSubsonicOrig:
+                {
+                    FolderSelectionDialog dialog = new FolderSelectionDialog(getContext());
+                    dialog.show();
+                    dialog.setFolderSelectionDialogCallback(new FolderSelectionDialog.FolderSelectionDialogCallback()
+                    {
+                        @Override
+                        public void onCompleted(String folderPath)
+                        {
+                            srvOrigInput.setText(folderPath + "/");
+                        }
+                    });
+                }
                 break;
         }
     }
@@ -143,10 +164,13 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             sub.port      = Integer.parseInt(srvPortInput.getText().toString());
             sub.username  = srvUserInput.getText().toString();
             sub.password  = srvPassInput.getText().toString();
-            sub.cachePath = srvCachInput.getText().toString();
-            if(!sub.cachePath.endsWith("/")) sub.cachePath += "/";
-            sub.filename = SourceListOperations.getSubsonicPath(getContext()) + "/" + SourceListOperations.getFilename(sub.name);
+            sub.transPath = srvTransInput.getText().toString();
+            sub.origPath  = srvOrigInput.getText().toString();
 
+            if(!sub.transPath.endsWith("/")) sub.transPath += "/";
+            if(!sub.origPath.endsWith("/")) sub.origPath += "/";
+
+            sub.filename = SourceListOperations.getSubsonicPath(getContext()) + "/" + SourceListOperations.getFilename(sub.name);
             if(editFilename != null)
             {
                 File deleteFile = new File(editFilename);

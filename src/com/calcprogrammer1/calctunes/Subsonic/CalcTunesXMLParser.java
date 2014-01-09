@@ -1,6 +1,7 @@
 package com.calcprogrammer1.calctunes.Subsonic;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -67,10 +68,14 @@ public class CalcTunesXMLParser
  
             HttpResponse httpResponse = httpClient.execute(httpPost);
             HttpEntity httpEntity = httpResponse.getEntity();
-            
+
+            File outdir = new File(path);
+            outdir.getParentFile().mkdirs();
+
             InputStream instream = httpEntity.getContent();
             FileOutputStream outstream = new FileOutputStream(path);
-            
+
+
             int read = 0;
             byte[] bytes = new byte[1024];
             

@@ -30,12 +30,26 @@ public class FileOperations
         }
         return dir_list.toArray(new File[dir_list.size()]);
     }
-    
+
+    public static void addFiles(File file, ArrayList<File> all)
+    {
+        final File[] children = file.listFiles();
+        if (children != null)
+        {
+            for (File child : children)
+            {
+                all.add(child);
+            }
+        }
+    }
+
     public static void addFilesRecursively(File file, ArrayList<File> all)
     {
         final File[] children = file.listFiles();
-        if (children != null) {
-            for (File child : children) {
+        if (children != null)
+        {
+            for (File child : children)
+            {
                 all.add(child);
                 addFilesRecursively(child, all);
             }
