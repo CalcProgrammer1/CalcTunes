@@ -38,7 +38,7 @@ public class MediaInfoAdapter extends BaseAdapter
         value.setText(values.get(position).value);
         if(position % 2 != 0)
         {
-            rowView.setBackgroundResource(R.color.holo_dark_background);
+
         }
         return rowView;
     }

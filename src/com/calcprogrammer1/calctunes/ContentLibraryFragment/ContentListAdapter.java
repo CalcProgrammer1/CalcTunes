@@ -8,9 +8,7 @@ import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,9 +67,6 @@ public class ContentListAdapter extends BaseAdapter
         {
             convertView = inflater.inflate(R.layout.librarylistentryartist, null);
             TextView artistText = (TextView) convertView.findViewById(R.id.librarylistartist_text);
-            final View      artistline1 =    convertView.findViewById(R.id.librarylistartist_line1);
-            final View      artistline2 =    convertView.findViewById(R.id.librarylistartist_line2);
-            final View      artistline3 =    convertView.findViewById(R.id.librarylistartist_line3);
             artistText.setText(listData.get(position).artist);
         }
         else if(viewData.type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM)
@@ -108,7 +103,10 @@ public class ContentListAdapter extends BaseAdapter
             }
             if(listData.get(position).path.equals(now_playing))
             {
-
+                TypedValue typedvalue = new TypedValue();
+                try{ c.getTheme().resolveAttribute(R.attr.highlight_color, typedvalue, true); } catch(Exception e){}
+                int color = typedvalue.resourceId;
+                convertView.findViewById(R.id.librarylistsong_frame).setBackgroundResource(color);
             }
             else
             {

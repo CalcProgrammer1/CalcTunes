@@ -14,6 +14,7 @@ import org.xmlpull.v1.XmlSerializer;
 import com.calcprogrammer1.calctunes.FileOperations;
 import com.calcprogrammer1.calctunes.Library.LibraryDatabaseHelper;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
+import com.calcprogrammer1.calctunes.SourceTypes.PlaylistSource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 import com.calcprogrammer1.calctunes.Subsonic.CalcTunesXMLParser;
 
@@ -319,7 +320,55 @@ public class SourceListOperations
             return new ArrayList<SubsonicSource>();
         }
     }
-    
+
+    public static PlaylistSource readPlaylistFile(String playFilePath)
+    {
+        PlaylistSource play = new PlaylistSource();
+
+        String XMLData;
+        Document DocData;
+        NodeList NodeData;
+
+        play.filename = playFilePath;
+
+        //Read XML file
+        XMLData = CalcTunesXMLParser.getXmlFromFile(playFilePath);
+        DocData = CalcTunesXMLParser.getDomElement(XMLData);
+        NodeData = DocData.getElementsByTagName("playlist");
+        if(NodeData.getLength() == 1)
+        {
+            //Get Name
+            NodeData = DocData.getElementsByTagName("title");
+            if(NodeData.item(0).getChildNodes().getLength() > 0)
+            {
+                play.name = NodeData.item(0).getChildNodes().item(0).getNodeValue();
+            }
+        }
+
+        return play;
+    }
+
+    public static ArrayList<PlaylistSource> readPlaylistList(String playPath)
+    {
+        try
+        {
+            File subDir = new File(playPath);
+            File[] playFiles = FileOperations.selectFilesOnly(subDir.listFiles());
+            ArrayList<PlaylistSource> playData = new ArrayList<PlaylistSource>();
+            for(int i = 0; i < playFiles.length; i++)
+            {
+                PlaylistSource play = readPlaylistFile(playFiles[i].getAbsolutePath());
+
+                playData.add(play);
+            }
+            return playData;
+        }
+        catch(Exception e)
+        {
+            return new ArrayList<PlaylistSource>();
+        }
+    }
+
     public static AudioFile readAudioFileReadOnly(File inFile)
     {
         AudioFile f = null;
@@ -351,7 +400,12 @@ public class SourceListOperations
     {
         return c.getApplicationContext().getExternalFilesDir(null).getPath() + "/libraries";
     }
-    
+
+    public static String getPlaylistPath(Context c)
+    {
+        return c.getApplicationContext().getExternalFilesDir(null).getPath() + "/playlists";
+    }
+
     public static String getAlbumArtPath(Context c)
     {
         return c.getApplicationContext().getExternalFilesDir(null).getPath() + "/albumart";
@@ -378,19 +432,28 @@ public class SourceListOperations
         // Return complete string
         return(s);
     }
-    
-    public static String getFilename(String name)
+
+    public static String getFilenameXml(String name)
     {
         String fileName = "";
-        
+
         fileName = makeFilename(name);
-        
+
         return fileName + ".xml";
     }
-    
+
+    public static String getFilenameXspf(String name)
+    {
+        String fileName = "";
+
+        fileName = makeFilename(name);
+
+        return fileName + ".xspf";
+    }
+
     public static String getLibraryFullPath(Context c, String libName)
     {
-        return getLibraryPath(c) + "/" + getFilename(libName);
+        return getLibraryPath(c) + "/" + getFilenameXml(libName);
     }
  
     public static void writeMediaDatabase(Context c, File[] files, String libName)

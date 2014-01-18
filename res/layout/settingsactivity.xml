@@ -61,7 +61,13 @@
 		    android:summary="Show an ongoing notification when background service running"
 		    android:defaultValue="true"
 		    android:key="service_notification" />
-	    
+
+        <CheckBoxPreference
+            android:title="Use Light Theme"
+            android:summary="Use a light style theme instead of the default dark theme"
+            android:defaultValue="false"
+            android:key="light_theme" />
+
 	</PreferenceCategory>
 
 </PreferenceScreen>

@@ -2,4 +2,12 @@
 <resources>
     <style name="NotificationText" parent="android:TextAppearance.StatusBar.EventContent" />
     <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
+
+    <style name="Theme.CalcTunes.Light" parent="@style/Theme.AppCompat.Light">
+        <item name="highlight_color">@color/highlighted_text_holo_light</item>
+    </style>
+
+    <style name="Theme.CalcTunes.Dark" parent="@style/Theme.AppCompat">
+        <item name="highlight_color">@color/highlighted_text_holo_dark</item>
+    </style>
 </resources>

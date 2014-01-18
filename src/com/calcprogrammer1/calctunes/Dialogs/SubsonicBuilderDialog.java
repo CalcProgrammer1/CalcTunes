@@ -170,7 +170,7 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             if(!sub.transPath.endsWith("/")) sub.transPath += "/";
             if(!sub.origPath.endsWith("/")) sub.origPath += "/";
 
-            sub.filename = SourceListOperations.getSubsonicPath(getContext()) + "/" + SourceListOperations.getFilename(sub.name);
+            sub.filename = SourceListOperations.getSubsonicPath(getContext()) + "/" + SourceListOperations.getFilenameXml(sub.name);
             if(editFilename != null)
             {
                 File deleteFile = new File(editFilename);

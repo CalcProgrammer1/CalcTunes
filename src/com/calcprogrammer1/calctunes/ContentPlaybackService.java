@@ -421,7 +421,9 @@ public class ContentPlaybackService extends Service
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(this);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        
+
+        SetPlaybackMode(appSettings.getInt("playback_mode", CONTENT_PLAYBACK_MODE_IN_ORDER));
+
         if(appSettings.getBoolean("service_notification", true))
         {
             initializeNotification();

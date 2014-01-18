@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="interface_color">#777</color>
-	<color name="holo_dark_background">#80323232</color>
-	<color name="holo_edge">#F00</color>
+    <color name="highlighted_text_holo_dark">#6633b5e5</color>
+    <color name="highlighted_text_holo_light">#6633b5e5</color>
 </resources>

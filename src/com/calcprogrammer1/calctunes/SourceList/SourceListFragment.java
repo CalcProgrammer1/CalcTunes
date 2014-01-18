@@ -3,12 +3,14 @@ package com.calcprogrammer1.calctunes.SourceList;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.calcprogrammer1.calctunes.Dialogs.PlaylistBuilderDialog;
 import com.calcprogrammer1.calctunes.Dialogs.SubsonicBuilderDialog;
 import com.calcprogrammer1.calctunes.Dialogs.LibraryBuilderDialog;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Interfaces.SourceListInterface;
 import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
+import com.calcprogrammer1.calctunes.SourceTypes.PlaylistSource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
 import android.app.AlertDialog;
@@ -57,6 +59,7 @@ public class SourceListFragment extends Fragment
     
     //Sources List Data
     ArrayList<LibrarySource> libraryList = new ArrayList<LibrarySource>();
+    ArrayList<PlaylistSource> playlistList = new ArrayList<PlaylistSource>();
     ArrayList<SubsonicSource> subsonicList = new ArrayList<SubsonicSource>();
     
     //Sources List Callback
@@ -92,6 +95,7 @@ public class SourceListFragment extends Fragment
         
         adapter = new SourceListAdapter(getActivity());
         adapter.attachLibraryList(libraryList);
+        adapter.attachPlaylistList(playlistList);
         adapter.attachSubsonicList(subsonicList);
     }
 
@@ -195,24 +199,10 @@ public class SourceListFragment extends Fragment
                     break;
 
                 case CONTEXT_MENU_NEW_PLAYLIST:
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Create New Playlist");
-                    final EditText input = new EditText(getActivity().getBaseContext());
-                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                    builder.setView(input);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    builder.show();
+                    {
+                        PlaylistBuilderDialog dialog = new PlaylistBuilderDialog(getActivity());
+                        dialog.show();
+                    }
                     break;
 
                 case CONTEXT_MENU_NEW_SUBSONIC:
@@ -263,6 +253,7 @@ public class SourceListFragment extends Fragment
     public void readSourceLists()
     {
         libraryList  = SourceListOperations.readLibraryList(SourceListOperations.getLibraryPath(getActivity()));
+        playlistList = SourceListOperations.readPlaylistList(SourceListOperations.getPlaylistPath(getActivity()));
         subsonicList = SourceListOperations.readSubsonicList(SourceListOperations.getSubsonicPath(getActivity()));
     }
     

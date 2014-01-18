@@ -2,40 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="30dip"
-    android:orientation="horizontal" >
-	
-	<View
-	    android:layout_width="0dip"
-	    android:layout_height="30dip" />
-	
-    <View
-        android:id="@+id/sourcelistentry_line1"
-        android:layout_width="20dip"
-        android:layout_height="2dip"
-        android:layout_gravity="center_vertical"
-        android:background="@color/interface_color" />
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/sourcelistentry_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="4dip"
+        android:paddingTop="5dip"
+        android:paddingLeft="15dip"
         android:text="SourceListEntry"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <View
-        android:id="@+id/sourcelistentry_line2"
-        android:layout_width="0dip"
-        android:layout_height="2dip"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="0.33"
-        android:background="@color/interface_color" />
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:paddingBottom="2dip"
+        android:background="?highlight_color" />
 
-    <View
-        android:id="@+id/sourcelistentry_line3"
-        android:layout_width="20dip"
-        android:layout_height="2dip"
-        android:layout_gravity="center_vertical"
-        android:background="@color/interface_color" />
 </LinearLayout>

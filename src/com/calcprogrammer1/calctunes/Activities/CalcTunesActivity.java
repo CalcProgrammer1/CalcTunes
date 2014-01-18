@@ -195,7 +195,19 @@ public class CalcTunesActivity extends ActionBarActivity
 	@Override
     public void onCreate(Bundle savedInstanceState)
     {
+        //Get the application preferences
+        appSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
+
+        if(appSettings.getBoolean("light_theme", false))
+        {
+            setTheme(R.style.Theme_CalcTunes_Light);
+        }
+
         super.onCreate(savedInstanceState);
+
+        //Set the content view
+        setContentView(R.layout.main);
 
         //Initialize Action Bar
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -263,13 +275,6 @@ public class CalcTunesActivity extends ActionBarActivity
                     break;
             }
         }
-        
-        //Get the application preferences
-        appSettings = PreferenceManager.getDefaultSharedPreferences(this);
-        appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-
-        //Set the content view
-        setContentView(R.layout.main);
 
         //Check if CalcTunes was opened from a file browser, and if so, open the file
         Intent intent = getIntent();

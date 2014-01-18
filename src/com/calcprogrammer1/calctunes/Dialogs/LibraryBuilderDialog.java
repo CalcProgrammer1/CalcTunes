@@ -183,7 +183,7 @@ public class LibraryBuilderDialog extends Dialog implements View.OnClickListener
         {
             LibrarySource lib = new LibrarySource();
             lib.name = libNameInput.getText().toString();
-            lib.filename = SourceListOperations.getLibraryPath(getContext()) + "/" + SourceListOperations.getFilename(lib.name);
+            lib.filename = SourceListOperations.getLibraryPath(getContext()) + "/" + SourceListOperations.getFilenameXml(lib.name);
             lib.folders = libraryFolders;
             
             if(editFilename != null)

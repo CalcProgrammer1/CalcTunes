@@ -15,7 +15,7 @@
         	android:allowBackup="true"
         	android:label="@string/app_name"
         	android:hardwareAccelerated="true"
-        	android:theme="@style/Theme.AppCompat" >
+        	android:theme="@style/Theme.CalcTunes.Dark" >
 
         <activity android:name=".Activities.CalcTunesActivity"
                   android:label="@string/app_name"

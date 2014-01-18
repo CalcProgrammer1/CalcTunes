@@ -3,22 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-	
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dip" />	
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <View
-            android:id="@+id/librarylistartist_line1"
-            android:layout_width="40dip"
-            android:layout_height="2dip"
-            android:layout_gravity="center_vertical"
-            android:background="@color/interface_color" />
 
         <TextView
             android:id="@+id/librarylistartist_text"
@@ -26,22 +10,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:singleLine="true"
+            android:paddingTop="5dip"
+            android:paddingLeft="15dip"
             android:text="Artist"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <View
-            android:id="@+id/librarylistartist_line2"
-            android:layout_width="0dip"
-            android:layout_height="2dip"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.33"
-            android:background="@color/interface_color" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:paddingBottom="2dip"
+        android:background="?highlight_color" />
 
-        <View
-            android:id="@+id/librarylistartist_line3"
-            android:layout_width="40dip"
-            android:layout_height="2dip"
-            android:layout_gravity="center_vertical"
-            android:background="@color/interface_color" />
-    </LinearLayout>
 </LinearLayout>
