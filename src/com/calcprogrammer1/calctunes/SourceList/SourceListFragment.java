@@ -173,7 +173,7 @@ public class SourceListFragment extends Fragment
         if(item.getGroupId() == 1)
         {
             ExpandableListContextMenuInfo info= (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
-            int id = (int) info.id;
+            final int id = (int) info.id;
             
             switch(item.getItemId())
             {
@@ -197,10 +197,33 @@ public class SourceListFragment extends Fragment
                     break;
                 
                 case CONTEXT_MENU_DELETE_LIBRARY:
-                    File libraryToDelete = new File(libraryList.get(id).filename);
-                    libraryToDelete.delete();
-                    readSourceLists();
-                    updateListView();
+                    {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                switch (which)
+                                {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        //Yes button clicked
+                                        File libraryToDelete = new File(libraryList.get(id).filename);
+                                        libraryToDelete.delete();
+                                        readSourceLists();
+                                        updateListView();
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Are you sure you want to delete this library?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
                     break;
                 
                 case CONTEXT_MENU_RESCAN_LIBRARY:
@@ -218,10 +241,33 @@ public class SourceListFragment extends Fragment
                     break;
 
                 case CONTEXT_MENU_DELETE_PLAYLIST:
-                    File playlistToDelete = new File(playlistList.get(id).filename);
-                    playlistToDelete.delete();
-                    readSourceLists();
-                    updateListView();
+                    {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                switch (which)
+                                {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        //Yes button clicked
+                                        File playlistToDelete = new File(playlistList.get(id).filename);
+                                        playlistToDelete.delete();
+                                        readSourceLists();
+                                        updateListView();
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Are you sure you want to delete this playlist?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
                     break;
 
                 case CONTEXT_MENU_NEW_SUBSONIC:
@@ -244,10 +290,33 @@ public class SourceListFragment extends Fragment
                     break;
               
                 case CONTEXT_MENU_DELETE_SUBSONIC:
-                    File subsonicToDelete = new File(subsonicList.get(id).filename);
-                    subsonicToDelete.delete();
-                    readSourceLists();
-                    updateListView();
+                    {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                switch (which)
+                                {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        //Yes button clicked
+                                        File subsonicToDelete = new File(subsonicList.get(id).filename);
+                                        subsonicToDelete.delete();
+                                        readSourceLists();
+                                        updateListView();
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Are you sure you want to delete this Subsonic source?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
                     break;
             }
         }

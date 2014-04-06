@@ -163,7 +163,7 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
         //Create a playlist editor
         playlist = new PlaylistEditor(getActivity());
         playlist.readPlaylistFile(playlistFilename);
-        
+
         //Start or Reconnect to the CalcTunes Playback Service
         getActivity().startService(new Intent(getActivity(), ContentPlaybackService.class));
         getActivity().bindService(new Intent(getActivity(), ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
