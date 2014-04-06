@@ -53,6 +53,18 @@
 	    
 	</PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="Control Settings" >
+
+        <EditTextPreference
+            android:title="Multi-click Threshold"
+            android:summary="The maximum time threshold (in milliseconds) below which two simultaneous button presses will count as a multi-click"
+            android:defaultValue="500"
+            android:inputType="number"
+            android:key="multi_click_thrshld" />
+
+    </PreferenceCategory>
+
 	<PreferenceCategory
 	    android:title="System Settings" >
 	    

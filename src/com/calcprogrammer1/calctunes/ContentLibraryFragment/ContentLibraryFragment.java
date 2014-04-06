@@ -2,9 +2,11 @@ package com.calcprogrammer1.calctunes.ContentLibraryFragment;
 
 import java.util.ArrayList;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -27,8 +29,8 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
-import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 
 public class ContentLibraryFragment extends Fragment
 {
@@ -82,7 +84,6 @@ public class ContentLibraryFragment extends Fragment
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             //playbackservice_bound = true;
             updateList();
-            playbackservice.registerCallback(playbackCallback);
         }
 
         @Override
@@ -92,16 +93,10 @@ public class ContentLibraryFragment extends Fragment
             //playbackservice_bound = false;
         }    
     };
-    
-    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
-        @Override
-        public void onTrackEnd()
-        {
-            //Do nothing on track end
-        }
 
+    private BroadcastReceiver infoUpdateReceiver = new BroadcastReceiver() {
         @Override
-        public void onMediaInfoUpdated()
+        public void onReceive(Context context, Intent intent)
         {
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.notifyDataSetChanged();
@@ -120,13 +115,15 @@ public class ContentLibraryFragment extends Fragment
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        
+
         //Start or Reconnect to the CalcTunes Playback Service
         getActivity().startService(new Intent(getActivity(), ContentPlaybackService.class));
         getActivity().bindService(new Intent(getActivity(), ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
-        
+
+        //Register media info update receiver
+        getActivity().registerReceiver(infoUpdateReceiver, new IntentFilter("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT"));
+
         libAdapter = new ContentListAdapter(getActivity());
-       
     }
     
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
@@ -178,12 +175,27 @@ public class ContentLibraryFragment extends Fragment
             switch(item.getItemId())
             {
                 case CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST:
+                    {
+                        AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
+                        dialog.show();
+                    }
                     break;
                     
                 case CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST:
+                    {
+                        AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
+                        dialog.show();
+                    }
                     break;
                     
                 case CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST:
+                    {
+                        AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
+                        ArrayList<String> fileList = new ArrayList<String>();
+                        fileList.add(listData.get(position).path);
+                        dialog.addFileList(fileList);
+                        dialog.show();
+                    }
                     break;
                     
                 case CONTEXT_MENU_VIEW_TRACK_INFO:

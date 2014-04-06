@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 public class RemoteControlReceiver extends BroadcastReceiver
 {    
@@ -23,7 +24,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
     
     //Shared Preferences
     private SharedPreferences appSettings;
-    
+
     public void setCallback(MediaButtonsHandlerInterface call)
     {
         cb = call;
@@ -44,7 +45,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
         boolean hp_mode    = appSettings.getBoolean("hp_mode", false);
         boolean auto_close = appSettings.getBoolean("auto_close", false);
         boolean bkgd_only  = appSettings.getBoolean("bkgd_only", false);
-        
+
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) 
         {
             KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
@@ -75,9 +76,16 @@ public class RemoteControlReceiver extends BroadcastReceiver
                 default:
                 case 0:
                     Log.d("RemoteControlReceiver", "Bluetooth A2DP action: disconnected");
-                    if(car_mode && auto_close)
+                    if(car_mode)
                     {
-                        closeApplication(context, bkgd_only);
+                        if(auto_close)
+                        {
+                            closeApplication(context, bkgd_only);
+                        }
+                        else
+                        {
+
+                        }
                     }
                     break;
                 
@@ -153,15 +161,15 @@ public class RemoteControlReceiver extends BroadcastReceiver
     
     private void closeApplication(Context context, boolean bkgd_only)
     {
-        if(bkgd_only)
-        {
+        //if(bkgd_only)
+        //{
             context.stopService(new Intent(context, ContentPlaybackService.class));   
-        }
-        else
-        {
+        //}
+        //else
+        //{
             Intent broadcast = new Intent();
             broadcast.setAction("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT");
             context.sendBroadcast(broadcast);   
-        }
+        //}
     }
 }

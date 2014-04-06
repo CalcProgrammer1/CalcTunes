@@ -14,7 +14,11 @@ import com.calcprogrammer1.calctunes.SourceTypes.PlaylistSource;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -89,7 +93,10 @@ public class SourceListFragment extends Fragment
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        
+
+        //Register refresh event receiver
+        getActivity().registerReceiver(refreshReceiver, new IntentFilter("com.calcprogrammer1.calctunes.SOURCE_REFRESH_EVENT"));
+
         //Read the Source Lists
         readSourceLists();
         
@@ -174,6 +181,8 @@ public class SourceListFragment extends Fragment
                     {
                         LibraryBuilderDialog dialog = new LibraryBuilderDialog(getActivity());
                         dialog.show();
+                        readSourceLists();
+                        updateListView();
                     }
                     break;
                     
@@ -182,6 +191,8 @@ public class SourceListFragment extends Fragment
                         LibraryBuilderDialog dialog = new LibraryBuilderDialog(getActivity());
                         dialog.EditExistingLibrary(libraryList.get(id).filename);
                         dialog.show();
+                        readSourceLists();
+                        updateListView();
                     }
                     break;
                 
@@ -190,7 +201,6 @@ public class SourceListFragment extends Fragment
                     libraryToDelete.delete();
                     readSourceLists();
                     updateListView();
-                    Toast.makeText(getActivity().getBaseContext(), "Library Deleted", Toast.LENGTH_SHORT).show();
                     break;
                 
                 case CONTEXT_MENU_RESCAN_LIBRARY:
@@ -202,13 +212,24 @@ public class SourceListFragment extends Fragment
                     {
                         PlaylistBuilderDialog dialog = new PlaylistBuilderDialog(getActivity());
                         dialog.show();
+                        readSourceLists();
+                        updateListView();
                     }
+                    break;
+
+                case CONTEXT_MENU_DELETE_PLAYLIST:
+                    File playlistToDelete = new File(playlistList.get(id).filename);
+                    playlistToDelete.delete();
+                    readSourceLists();
+                    updateListView();
                     break;
 
                 case CONTEXT_MENU_NEW_SUBSONIC:
                     {
                         SubsonicBuilderDialog dialog = new SubsonicBuilderDialog(getActivity());
                         dialog.show();
+                        readSourceLists();
+                        updateListView();
                     }
                     break;
                     
@@ -217,6 +238,8 @@ public class SourceListFragment extends Fragment
                         SubsonicBuilderDialog dialog = new SubsonicBuilderDialog(getActivity());
                         dialog.EditExistingSubsonic(subsonicList.get(id).filename);
                         dialog.show();
+                        readSourceLists();
+                        updateListView();
                     }
                     break;
               
@@ -225,7 +248,6 @@ public class SourceListFragment extends Fragment
                     subsonicToDelete.delete();
                     readSourceLists();
                     updateListView();
-                    Toast.makeText(getActivity().getBaseContext(), "Subsonic Server Deleted", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -263,6 +285,7 @@ public class SourceListFragment extends Fragment
     public void updateListView()
     {
         adapter.attachLibraryList(libraryList);
+        adapter.attachPlaylistList(playlistList);
         adapter.attachSubsonicList(subsonicList);
         view.setAdapter(adapter);
         view.setOnChildClickListener(new OnChildClickListener() 
@@ -281,6 +304,7 @@ public class SourceListFragment extends Fragment
                         break;
                         
                     case SOURCE_GROUP_PLAYLIST:
+                        callback.callback(ContentPlaybackService.CONTENT_TYPE_PLAYLIST, playlistList.get(selectedChild).filename);
                         break;
                         
                     case SOURCE_GROUP_SYSTEM:
@@ -299,4 +323,13 @@ public class SourceListFragment extends Fragment
         view.expandGroup(2);
         view.expandGroup(3);
     }
+
+    private BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            readSourceLists();
+            updateListView();
+        }
+    };
 }

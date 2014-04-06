@@ -2,7 +2,10 @@ package com.calcprogrammer1.calctunes;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
@@ -21,12 +24,14 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 
 public class ContentPlaybackService extends Service
@@ -76,12 +81,18 @@ public class ContentPlaybackService extends Service
     private String  nowPlayingFile  = new String();
     private int     nowPlayingPos   = -1;
     private int     nowPlayingMax   = -1;
-    private ArrayList<ContentPlaybackInterface> callbacks;
+    private int     multi_click_thrshld;
+    private long    NextTime        = 0;
+    private int     NextPressCount  = 0;
+    private long    PrevTime        = 0;
     private Notification notification;
     private NotificationManager notificationManager;
     private static int notificationId = 2;  
     private boolean random          = false;
-    
+    private PlaylistEditor playlist;
+
+    private Timer NextTimer;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Callback Functions/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +122,7 @@ public class ContentPlaybackService extends Service
                 endNotification();
             }
 
+            multi_click_thrshld = Integer.parseInt(appSettings.getString("multi_click_thrshld", "500"));
             SetPlaybackMode(appSettings.getInt("playback_mode", CONTENT_PLAYBACK_MODE_IN_ORDER));
         }
     };
@@ -118,20 +130,6 @@ public class ContentPlaybackService extends Service
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Class functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    public void registerCallback(ContentPlaybackInterface callback)
-    {
-        if(callbacks == null)
-        {
-            callbacks = new ArrayList<ContentPlaybackInterface>();
-        }
-        
-        if(callback != null)
-        {
-            callbacks.add(callback);
-            callback.onMediaInfoUpdated();
-        }
-    }
     
     //Access to MediaPlayer data
     public String NowPlayingTitle()
@@ -183,7 +181,22 @@ public class ContentPlaybackService extends Service
     {
         return mediaplayer.isPlaying();
     }
-    
+
+    public void SetPlaybackContentSourcePlaylist(PlaylistEditor playlist, int contentPosition)
+    {
+        currentContentType = CONTENT_TYPE_PLAYLIST;
+        this.playlist = playlist;
+        nowPlayingPos = contentPosition;
+        nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
+
+        mediaplayer.stopPlayback();
+        mediaplayer.initialize(nowPlayingFile);
+
+        updateNotification();
+
+        notifyMediaInfoUpdated();
+    }
+
     public void SetPlaybackContentSource(int contentType, String contentString, int contentPosition)
     {
         
@@ -259,7 +272,48 @@ public class ContentPlaybackService extends Service
         
         currentContentType = CONTENT_PLAYBACK_NONE;
     }
-    
+
+    public void NextPressed()
+    {
+        if( System.currentTimeMillis() - NextTime < multi_click_thrshld )
+        {
+            if(NextTimer != null)
+            {
+                NextTimer.cancel();
+            }
+            NextTimer = new Timer("NextTimer", true);
+            NextPressCount++;
+            NextTimer.schedule( new TimerTask(){
+                public void run()
+                {
+                    new ButtonPressTask().execute(2);
+                }
+            }, multi_click_thrshld);
+        }
+        else
+        {
+            NextTimer = new Timer("NextTimer", true);
+            NextTimer.schedule(new TimerTask()
+            {
+                public void run()
+                {
+                    new ButtonPressTask().execute(1);
+                }
+            }, multi_click_thrshld);
+        }
+        NextTime = System.currentTimeMillis();
+    }
+
+    public void PrevPressed()
+    {
+        if( System.currentTimeMillis() - PrevTime < multi_click_thrshld )
+        {
+            Log.d("ContentPlaybackService", "Double clicked Prev Track");
+        }
+        PrevTime = System.currentTimeMillis();
+        new ButtonPressTask().execute(0);
+    }
+
     public void NextTrack()
     {
         if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
@@ -290,12 +344,94 @@ public class ContentPlaybackService extends Service
             mediaplayer.initialize(nowPlayingFile);
             mediaplayer.startPlayback();
         }
+        else if(currentContentType == CONTENT_PLAYBACK_PLAYLIST)
+        {
+            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
+            {
+                nowPlayingPos = new Random().nextInt(playlist.maxIndex() + 1);
+            }
+            else
+            {
+                if(nowPlayingPos >= playlist.maxIndex())
+                {
+                    nowPlayingPos = 0;
+                }
+                else
+                {
+                    nowPlayingPos++;
+                }
+            }
+            nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
+            mediaplayer.stopPlayback();
+            mediaplayer.initialize(nowPlayingFile);
+            mediaplayer.startPlayback();
+        }
 
         updateNotification();
         
         notifyMediaInfoUpdated();
     }
-    
+
+    public void NextArtist()
+    {
+        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
+        {
+            nowPlayingFile = "";
+            mediaplayer.stopPlayback();
+        }
+        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
+        {
+            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
+            {
+                nowPlayingPos = new Random().nextInt(nowPlayingMax + 1);
+            }
+            else
+            {
+                    String currentAlbum = playbackCursor.getString(playbackCursor.getColumnIndex("ALBUM"));
+                    for( ; nowPlayingPos < nowPlayingMax; nowPlayingPos++)
+                    {
+                        playbackCursor.moveToPosition(nowPlayingPos);
+                        String newAlbum = playbackCursor.getString(playbackCursor.getColumnIndex("ALBUM"));
+                        if(!currentAlbum.equals(newAlbum))
+                        {
+                            break;
+                        }
+                    }
+            }
+            playbackCursor.moveToPosition(nowPlayingPos);
+            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
+            mediaplayer.stopPlayback();
+            mediaplayer.initialize(nowPlayingFile);
+            mediaplayer.startPlayback();
+        }
+        else if(currentContentType == CONTENT_PLAYBACK_PLAYLIST)
+        {
+            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
+            {
+                nowPlayingPos = new Random().nextInt(playlist.maxIndex() + 1);
+            }
+            else
+            {
+                if(nowPlayingPos >= playlist.maxIndex())
+                {
+                    nowPlayingPos = 0;
+                }
+                else
+                {
+                    nowPlayingPos++;
+                }
+            }
+            nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
+            mediaplayer.stopPlayback();
+            mediaplayer.initialize(nowPlayingFile);
+            mediaplayer.startPlayback();
+        }
+
+        updateNotification();
+
+        notifyMediaInfoUpdated();
+    }
+
     public void PrevTrack()
     {
         if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
@@ -316,6 +452,22 @@ public class ContentPlaybackService extends Service
             playbackCursor.moveToPosition(nowPlayingPos);
             nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
             
+            mediaplayer.stopPlayback();
+            mediaplayer.initialize(nowPlayingFile);
+            mediaplayer.startPlayback();
+        }
+        else if(currentContentType == CONTENT_PLAYBACK_PLAYLIST)
+        {
+            if(nowPlayingPos <= 0)
+            {
+                nowPlayingPos = playlist.maxIndex();
+            }
+            else
+            {
+                nowPlayingPos--;
+            }
+            nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
+
             mediaplayer.stopPlayback();
             mediaplayer.initialize(nowPlayingFile);
             mediaplayer.startPlayback();
@@ -353,21 +505,11 @@ public class ContentPlaybackService extends Service
     
     private void notifyMediaInfoUpdated()
     {
-        if(callbacks != null)
-        {
-            for(ContentPlaybackInterface callback : callbacks)
-            {
-                if(callback != null)
-                {
-                    callback.onMediaInfoUpdated();
-                }
-                else
-                {
-                    callbacks.remove(callback);
-                }
-            }
-        }
+        Intent broadcast = new Intent();
+        broadcast.setAction("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT");
+        sendBroadcast(broadcast);
     }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Service Functions//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -422,6 +564,7 @@ public class ContentPlaybackService extends Service
         appSettings = PreferenceManager.getDefaultSharedPreferences(this);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
 
+        multi_click_thrshld = Integer.parseInt(appSettings.getString("multi_click_thrshld", "500"));
         SetPlaybackMode(appSettings.getInt("playback_mode", CONTENT_PLAYBACK_MODE_IN_ORDER));
 
         if(appSettings.getBoolean("service_notification", true))
@@ -449,6 +592,36 @@ public class ContentPlaybackService extends Service
         return mBinder;
     }
 
+    public class ButtonPressTask extends AsyncTask<Object, Void, Void>
+    {
+        private int id;
+
+        @Override
+        protected Void doInBackground(Object... params)
+        {
+            id       = (Integer)params[0];
+            switch(id)
+            {
+                case 0:
+                    PrevTrack();
+                    break;
+
+                case 1:
+                    NextTrack();
+                    break;
+
+                case 2:
+                    NextArtist();
+                    break;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+        }
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     /*---------------------------------------------------------------------*\
@@ -473,11 +646,11 @@ public class ContentPlaybackService extends Service
             switch(keyCode)
             {
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    NextTrack();
+                    NextPressed();
                     break;
                    
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    PrevTrack();
+                    PrevPressed();
                     break;
                     
                 case KeyEvent.KEYCODE_MEDIA_STOP:

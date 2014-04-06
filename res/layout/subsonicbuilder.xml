@@ -48,6 +48,20 @@
                 android:inputType="text"
                 android:hint="Password" />
 
+            <EditText
+                android:id="@+id/srvFormatInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Transcode Format" />
+
+            <EditText
+                android:id="@+id/srvBitrateInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Transcode Bitrate" />
+
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">

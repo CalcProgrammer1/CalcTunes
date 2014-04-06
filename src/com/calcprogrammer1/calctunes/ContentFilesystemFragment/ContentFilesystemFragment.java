@@ -2,12 +2,19 @@ package com.calcprogrammer1.calctunes.ContentFilesystemFragment;
 
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
+import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistElement;
+import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Dialogs.FolderReorganizeDialog;
-import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
+import com.calcprogrammer1.calctunes.Interfaces.ContentFilesystemAdapterInterface;
+import com.calcprogrammer1.calctunes.R;
+import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -23,33 +30,48 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
 
-public class ContentFilesystemFragment extends Fragment
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+
+import java.io.File;
+import java.util.ArrayList;
+
+public class ContentFilesystemFragment extends Fragment implements View.OnClickListener
 {
-    //ListView to display on
-    private ListView rootView;
-    
+    //View to display on
+    private View rootView;
+
+    //ListView for main files
+    private ListView mainView;
+
+    //Selected items text
+    private TextView selectedItemsView;
+
+    //Add to playlist button
+    private Button addToPlaylistButton;
+
     // Filesystem content adapter for listview
     private ContentFilesystemAdapter fileAdapter;
     
     // Shared Preferences
     private SharedPreferences appSettings;
     
-    // Interface Color
-    private int interfaceColor;
-    
     // Current directory
     private String currentDirectory = "/";
-    
+
+    // Selected Files
+    private ArrayList<String> selectedFiles = new ArrayList<String>();
+
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-            fileAdapter.setNowPlayingColor(interfaceColor);
-            fileAdapter.notifyDataSetChanged(); 
         }
     };
     
@@ -67,7 +89,6 @@ public class ContentFilesystemFragment extends Fragment
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             //playbackservice_bound = true;
             updateList();
-            playbackservice.registerCallback(playbackCallback);
         }
 
         @Override
@@ -77,21 +98,35 @@ public class ContentFilesystemFragment extends Fragment
             //playbackservice_bound = false;
         }    
     };
-    
-    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
-        @Override
-        public void onTrackEnd()
-        {
-            //Do nothing on track end
-        }
 
+    private BroadcastReceiver infoUpdateReceiver = new BroadcastReceiver() {
         @Override
-        public void onMediaInfoUpdated()
+        public void onReceive(Context context, Intent intent)
         {
             fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             fileAdapter.notifyDataSetChanged(); 
         }  
     };
+
+    ContentFilesystemAdapterInterface adapterCallback = new ContentFilesystemAdapterInterface(){
+        @Override
+        public void onCheckboxClicked(int position, String filename, boolean checked)
+        {
+            if(checked)
+            {
+                if(!selectedFiles.contains(filename))
+                {
+                    selectedFiles.add(filename);
+                }
+            }
+            else
+            {
+                selectedFiles.remove(filename);
+            }
+            selectedItemsView.setText(selectedFiles.size() + " files selected");
+        }
+    };
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////// FRAGMENT CREATE FUNCTIONS /////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,23 +139,40 @@ public class ContentFilesystemFragment extends Fragment
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-        
+
         //Start or Reconnect to the CalcTunes Playback Service
         getActivity().startService(new Intent(getActivity(), ContentPlaybackService.class));
         getActivity().bindService(new Intent(getActivity(), ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
-        
+
+        //Register media info update receiver
+        getActivity().registerReceiver(infoUpdateReceiver, new IntentFilter("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT"));
+
         //Create starting file adapter
         fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
     }
     
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
     {
-        rootView = new ListView(getActivity());
-        registerForContextMenu(rootView);
+        rootView = inflater.inflate(R.layout.filesystemview, group, false);
+        mainView = (ListView) rootView.findViewById(R.id.listViewFilesystemMainList);
+        registerForContextMenu(mainView);
+        selectedItemsView = (TextView) rootView.findViewById(R.id.textViewFilesystemItemsSelected);
+        addToPlaylistButton = (Button) rootView.findViewById(R.id.buttonFilesystemAddToPlaylist);
+        addToPlaylistButton.setOnClickListener(this);
         return rootView;
     }
 
+    public void onClick(View v)
+    {
+        switch(v.getId())
+        {
+            case R.id.buttonFilesystemAddToPlaylist:
+                AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
+                dialog.addFileList(selectedFiles);
+                dialog.show();
+                break;
+        }
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////// CONTEXT MENU //////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +180,7 @@ public class ContentFilesystemFragment extends Fragment
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
-        if(v == rootView)
+        if(v == mainView)
         {
             int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
             boolean isDir = fileAdapter.files.get(position).isDirectory();
@@ -164,35 +216,32 @@ public class ContentFilesystemFragment extends Fragment
     public void updateList()
     {
         fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
-        fileAdapter.setNowPlayingColor(interfaceColor);
-        rootView.setAdapter(fileAdapter);
-        rootView.setOnItemClickListener(new OnItemClickListener() 
+        fileAdapter.setCallback(adapterCallback);
+        fileAdapter.setCheckList(selectedFiles);
+        mainView.setAdapter(fileAdapter);
+        mainView.setOnItemClickListener(new OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
             {
-                if(position == 0 && !fileAdapter.currentDirectory.getPath().equals("/"))
+                if (position == 0 && !fileAdapter.currentDirectory.getPath().equals("/"))
                 {
                     currentDirectory = fileAdapter.currentDirectory.getParent();
                     fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
                     fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
-                    fileAdapter.setNowPlayingColor(interfaceColor);
                     updateList();
-                }
-                else if(fileAdapter.files.get(position).isDirectory())
+                } else if (fileAdapter.files.get(position).isDirectory())
                 {
                     currentDirectory = fileAdapter.files.get(position).getPath();
                     fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
                     fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
-                    fileAdapter.setNowPlayingColor(interfaceColor);
                     updateList();
-                }
-                else
+                } else
                 {
                     playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0);
                     fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
-                    fileAdapter.notifyDataSetChanged();                
+                    fileAdapter.notifyDataSetChanged();
                 }
-            }   
+            }
         });
         registerForContextMenu(rootView);
     }

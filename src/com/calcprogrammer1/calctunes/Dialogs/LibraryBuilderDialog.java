@@ -196,6 +196,9 @@ public class LibraryBuilderDialog extends Dialog implements View.OnClickListener
 
             LibraryScannerTask task = new LibraryScannerTask(getContext());
             task.execute(lib.name);
+            Intent broadcast = new Intent();
+            broadcast.setAction("com.calcprogrammer1.calctunes.SOURCE_REFRESH_EVENT");
+            getContext().sendBroadcast(broadcast);
             dismiss();
         }
     }

@@ -17,9 +17,11 @@ public class SubsonicConnection
     private String      url         = "";
     private String      user        = "";
     private String      password    = "";
+    private String      transfrmt   = "mp3";
     private String      transpath   = "";
     private String      origpath    = "";
-    
+
+    private int         transbtrt   = 192;
     private boolean     available   = false;
     private boolean     licensed    = false;
     
@@ -47,7 +49,10 @@ public class SubsonicConnection
         password    = source.password;
         transpath   = source.transPath;
         origpath    = source.origPath;
-        
+
+        transfrmt   = source.streamingFormat;
+        transbtrt   = Integer.parseInt(source.streamingBitrate);
+
         subsonicapi = new SubsonicAPI(url, user, password);
         subsonicapi.SetCallback(subsonic_callback);
         updateStatusAsync();
@@ -223,7 +228,7 @@ public class SubsonicConnection
             newElement.path   = songs.get(i).suffix;
             
             File testFile = new File( transpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
-                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + ".ogg" );
+                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + "." + transfrmt );
 
             if(testFile.exists())
             {
@@ -232,7 +237,7 @@ public class SubsonicConnection
             else
             {
                 testFile = new File( origpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
-                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + ".ogg" );
+                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + "." + transfrmt );
 
                 if(testFile.exists())
                 {
@@ -287,13 +292,13 @@ public class SubsonicConnection
         {
             callback.onTrackLoaded((int)listData.get(position).id,
                     transpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist) + "/" + SourceListOperations.makeFilename(listData.get(position).album)
-                                + "/" + String.format("%02d", listData.get(position).track) + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".ogg");
+                                + "/" + String.format("%02d", listData.get(position).track) + " " + SourceListOperations.makeFilename(listData.get(position).song) + "." + transfrmt);
         }
         else
         {
             subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, transpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist)
                     + "/" + SourceListOperations.makeFilename(listData.get(position).album) + "/" + String.format("%02d", listData.get(position).track)
-                    + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".ogg", 160, "ogg");
+                    + " " + SourceListOperations.makeFilename(listData.get(position).song) + "." + transfrmt, transbtrt, transfrmt);
             listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
             callback.onListUpdated();
         }

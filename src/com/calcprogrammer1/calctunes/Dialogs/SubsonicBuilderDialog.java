@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
     EditText srvPortInput;
     EditText srvUserInput;
     EditText srvPassInput;
+    EditText srvFrmtInput;
+    EditText srvBtrtInput;
     EditText srvTransInput;
     EditText srvOrigInput;
     Button   buttonDone;
@@ -55,6 +58,8 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
         srvPortInput  = (EditText) findViewById(R.id.srvPortInput);
         srvUserInput  = (EditText) findViewById(R.id.srvUserInput);
         srvPassInput  = (EditText) findViewById(R.id.srvPassInput);
+        srvFrmtInput  = (EditText) findViewById(R.id.srvFormatInput);
+        srvBtrtInput  = (EditText) findViewById(R.id.srvBitrateInput);
         srvTransInput = (EditText) findViewById(R.id.srvTransInput);
         srvOrigInput  = (EditText) findViewById(R.id.srvOrigInput);
         buttonDone    = (Button)   findViewById(R.id.buttonSubsonicDone);
@@ -74,6 +79,8 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             srvPortInput.setText(""+EditSub.port);
             srvUserInput.setText(EditSub.username);
             srvPassInput.setText(EditSub.password);
+            srvFrmtInput.setText(EditSub.streamingFormat);
+            srvBtrtInput.setText(EditSub.streamingBitrate);
             srvTransInput.setText(EditSub.transPath);
             srvOrigInput.setText(EditSub.origPath);
         }
@@ -164,6 +171,8 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             sub.port      = Integer.parseInt(srvPortInput.getText().toString());
             sub.username  = srvUserInput.getText().toString();
             sub.password  = srvPassInput.getText().toString();
+            sub.streamingFormat = srvFrmtInput.getText().toString();
+            sub.streamingBitrate = srvBtrtInput.getText().toString();
             sub.transPath = srvTransInput.getText().toString();
             sub.origPath  = srvOrigInput.getText().toString();
 
@@ -179,6 +188,9 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
 
             SourceListOperations.writeSubsonicFile(sub);
             dismiss();
+            Intent broadcast = new Intent();
+            broadcast.setAction("com.calcprogrammer1.calctunes.SOURCE_REFRESH_EVENT");
+            getContext().sendBroadcast(broadcast);
         }
     }
 }

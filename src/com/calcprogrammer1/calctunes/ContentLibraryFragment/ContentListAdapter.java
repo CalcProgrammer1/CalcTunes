@@ -16,7 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 public class ContentListAdapter extends BaseAdapter
 {
     ArrayList<ContentListElement> listData = new ArrayList<ContentListElement>();

@@ -139,7 +139,10 @@ public class MediaInfoFragment extends Fragment
         
         //Format
         adapter_data.add(new MediaInfoListType( "File Format",  header.getFormat()                  ));
-        
+
+        //Bitrate
+        adapter_data.add(new MediaInfoListType( "File Bit Rate", header.getBitRate()                ));
+
         //Sample Rate
         adapter_data.add(new MediaInfoListType( "Sample Rate",  "" + header.getSampleRateAsNumber() ));
         

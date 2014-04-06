@@ -1,8 +1,10 @@
 package com.calcprogrammer1.calctunes.ContentSubsonicFragment;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -27,7 +29,6 @@ import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListAdapter;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
-import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
 
@@ -82,7 +83,6 @@ public class ContentSubsonicFragment extends Fragment
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             updateList();
-            playbackservice.registerCallback(playbackCallback);
         }
 
         @Override
@@ -92,16 +92,10 @@ public class ContentSubsonicFragment extends Fragment
             playbackservice_bound = false;
         }    
     };
-    
-    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
-        @Override
-        public void onTrackEnd()
-        {
-            //Do nothing on track end
-        }
 
+    private BroadcastReceiver infoUpdateReceiver = new BroadcastReceiver() {
         @Override
-        public void onMediaInfoUpdated()
+        public void onReceive(Context context, Intent intent)
         {
             libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
             libAdapter.notifyDataSetChanged();
@@ -124,7 +118,10 @@ public class ContentSubsonicFragment extends Fragment
         //Start or Reconnect to the CalcTunes Playback Service
         getActivity().startService(new Intent(getActivity(), ContentPlaybackService.class));
         getActivity().bindService(new Intent(getActivity(), ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
-        
+
+        //Register media info update receiver
+        getActivity().registerReceiver(infoUpdateReceiver, new IntentFilter("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT"));
+
         libAdapter = new ContentListAdapter(getActivity());
        
     }
@@ -268,10 +265,6 @@ public class ContentSubsonicFragment extends Fragment
 
     public void setSubsonicSource(String subSource)
     {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-        StrictMode.setThreadPolicy(policy);
-        
         subcon = new SubsonicConnection(subSource);
         subcon.SetCallback(subsonic_callback);
     }

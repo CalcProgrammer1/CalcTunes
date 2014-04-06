@@ -2,6 +2,7 @@ package com.calcprogrammer1.calctunes.Dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,9 @@ public class PlaylistBuilderDialog extends Dialog implements View.OnClickListene
                 newEditor.setPlaylistAuthor(authorText.getText().toString());
                 newEditor.setPlaylistInfo(infoText.getText().toString());
                 newEditor.writePlaylistFile(null);
+                Intent broadcast = new Intent();
+                broadcast.setAction("com.calcprogrammer1.calctunes.SOURCE_REFRESH_EVENT");
+                getContext().sendBroadcast(broadcast);
                 dismiss();
                 break;
         }

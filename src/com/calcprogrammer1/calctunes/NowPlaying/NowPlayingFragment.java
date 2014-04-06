@@ -3,9 +3,10 @@ package com.calcprogrammer1.calctunes.NowPlaying;
 import java.util.ArrayList;
 
 import com.calcprogrammer1.calctunes.*;
-import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 import com.calcprogrammer1.calctunes.Interfaces.NowPlayingFragmentInterface;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -69,7 +70,10 @@ public class NowPlayingFragment extends Fragment
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
         interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
-        
+
+        //Register media info update receiver
+        getActivity().registerReceiver(infoUpdateReceiver, new IntentFilter("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT"));
+
         //Start or Reconnect to the CalcTunes Playback Service
         getActivity().startService(new Intent(getActivity(), ContentPlaybackService.class));
         getActivity().bindService(new Intent(getActivity(), ContentPlaybackService.class), playbackserviceConnection, Context.BIND_AUTO_CREATE);
@@ -99,7 +103,6 @@ public class NowPlayingFragment extends Fragment
         if(playbackservice_bound)
         {
             updateGuiElements();
-            playbackservice.registerCallback(playbackCallback);
         }
     }
     
@@ -116,7 +119,6 @@ public class NowPlayingFragment extends Fragment
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             updateGuiElements();
-            playbackservice.registerCallback(playbackCallback);
         }
 
         @Override
@@ -130,23 +132,23 @@ public class NowPlayingFragment extends Fragment
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////// CALLBACKS /////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    
-    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
-        @Override
-        public void onTrackEnd()
-        {
-            //Do nothing on track end
-        }
 
+    private BroadcastReceiver infoUpdateReceiver = new BroadcastReceiver() {
         @Override
-        public void onMediaInfoUpdated()
+        public void onReceive(Context context, Intent intent)
         {
-            //On media info updated, update all the text fields and album art display
-            artisttext.setText(playbackservice.NowPlayingArtist());
-            albumtext.setText(playbackservice.NowPlayingAlbum());
-            tracktext.setText(playbackservice.NowPlayingTitle());
-            //albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), getActivity(), true));
-            AlbumArtManager.setImageAsync(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), getActivity(), true, albumartview);
+            getActivity().runOnUiThread(new Runnable()
+            {
+                public void run()
+                {
+                    //On media info updated, update all the text fields and album art display
+                    artisttext.setText(playbackservice.NowPlayingArtist());
+                    albumtext.setText(playbackservice.NowPlayingAlbum());
+                    tracktext.setText(playbackservice.NowPlayingTitle());
+                    //albumartview.setImageBitmap(AlbumArtManager.getAlbumArtFromCache(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), getActivity(), true));
+                    AlbumArtManager.setImageAsync(playbackservice.NowPlayingArtist(), playbackservice.NowPlayingAlbum(), getActivity(), true, albumartview);
+                }
+            });
         }  
     };
    
@@ -242,12 +244,12 @@ public class NowPlayingFragment extends Fragment
     
     public void ButtonNextClick(View view)
     {
-        playbackservice.NextTrack();
+        playbackservice.NextPressed();
     }
     
     public void ButtonPrevClick(View view)
     {
-        playbackservice.PrevTrack();
+        playbackservice.PrevPressed();
     }
     
     public void ButtonInfoClick(View view)

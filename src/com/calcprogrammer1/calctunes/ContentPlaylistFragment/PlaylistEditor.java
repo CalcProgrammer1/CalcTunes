@@ -8,6 +8,8 @@ import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.calcprogrammer1.calctunes.Subsonic.CalcTunesXMLParser;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -24,7 +26,7 @@ public class PlaylistEditor
     private String playlistAuthor = "";
     private String playlistInfo   = "";
 
-    private ArrayList<String> playlistData = new ArrayList<String>();
+    public ArrayList<PlaylistElement> playlistData = new ArrayList<PlaylistElement>();
 
     public PlaylistEditor(Context c)
     {
@@ -40,6 +42,11 @@ public class PlaylistEditor
     public void setPlaylistName(String playlistName)
     {
         this.playlistName = playlistName;
+    }
+
+    public int maxIndex()
+    {
+        return playlistData.size() - 1;
     }
 
     public void setPlaylistAuthor(String playlistAuthor)
@@ -59,44 +66,65 @@ public class PlaylistEditor
             filename = SourceListOperations.getPlaylistPath(context) + "/" + SourceListOperations.getFilenameXspf(playlistName);
         }
 
+        Log.d("PlaylistEditor", "Opening playlist file " + filename);
+
         String XMLData;
         Document DocData;
+        Element DocElement;
         NodeList NodeData;
 
         //Read XML file
         XMLData = CalcTunesXMLParser.getXmlFromFile(filename);
         DocData = CalcTunesXMLParser.getDomElement(XMLData);
-        NodeData = DocData.getElementsByTagName("playlist");
+        DocElement = DocData.getDocumentElement();
+        NodeData = DocElement.getChildNodes();
 
-        if(NodeData.getLength() == 1)
+        if(NodeData != null && NodeData.getLength() > 0)
         {
-            //Get Name
-            NodeData = DocData.getElementsByTagName("title");
-            if(NodeData.item(0).getChildNodes().getLength() > 0)
+            for(int i = 0; i < NodeData.getLength(); i++)
             {
-                playlistName = NodeData.item(0).getChildNodes().item(0).getNodeValue();
-            }
-
-            //Get Author
-            NodeData = DocData.getElementsByTagName("creator");
-            if(NodeData.item(0).getChildNodes().getLength() > 0)
-            {
-                playlistAuthor = NodeData.item(0).getChildNodes().item(0).getNodeValue();
-            }
-
-            //Get Info
-            NodeData = DocData.getElementsByTagName("info");
-            if(NodeData.item(0).getChildNodes().getLength() > 0)
-            {
-                playlistInfo = NodeData.item(0).getChildNodes().item(0).getNodeValue();
-            }
-
-            //Get Track List
-            NodeData = DocData.getElementsByTagName("trackList");
-            if(NodeData.item(0).getChildNodes().getLength() > 0)
-            {
-                //Get Tracks
-                NodeList TrackData = DocData.getElementsByTagName("track");
+                if(NodeData.item(i).getNodeType() == Node.ELEMENT_NODE)
+                {
+                    Element NodeElement = (Element) NodeData.item(i);
+                    if(NodeElement.getNodeName().equals("title"))
+                    {
+                        playlistName = NodeElement.getTextContent();
+                    }
+                    else
+                    if(NodeElement.getNodeName().equals("creator"))
+                    {
+                        playlistAuthor = NodeElement.getTextContent();
+                    }
+                    else
+                    if(NodeElement.getNodeName().equals("info"))
+                    {
+                        playlistInfo = NodeElement.getTextContent();
+                    }
+                    else
+                    if(NodeElement.getNodeName().equals("trackList"))
+                    {
+                        NodeList TrackNodeData = NodeElement.getChildNodes();
+                        if(TrackNodeData != null && TrackNodeData.getLength() > 0)
+                        {
+                            for(int j = 0; j < TrackNodeData.getLength(); j++)
+                            {
+                                if(TrackNodeData.item(j).getNodeType() == Node.ELEMENT_NODE)
+                                {
+                                    Element TrackElement = (Element) TrackNodeData.item(j);
+                                    if(TrackElement.getNodeName().equals("track"))
+                                    {
+                                        PlaylistElement newElement = new PlaylistElement();
+                                        newElement.filename = TrackElement.getElementsByTagName("location").item(0).getTextContent();
+                                        newElement.artist   = TrackElement.getElementsByTagName("creator").item(0).getTextContent();
+                                        newElement.album    = TrackElement.getElementsByTagName("album").item(0).getTextContent();
+                                        newElement.title    = TrackElement.getElementsByTagName("title").item(0).getTextContent();
+                                        playlistData.add(newElement);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -153,8 +181,32 @@ public class PlaylistEditor
 
                 //Location
                 serializer.startTag("", "location");
-                serializer.text(playlistData.get(i));
+                serializer.text(playlistData.get(i).filename);
                 serializer.endTag("", "location");
+
+                if(!playlistData.get(i).artist.equals(""))
+                {
+                    //Artist
+                    serializer.startTag("", "creator");
+                    serializer.text(playlistData.get(i).artist);
+                    serializer.endTag("", "creator");
+                }
+
+                if(!playlistData.get(i).album.equals(""))
+                {
+                    //Album
+                    serializer.startTag("", "album");
+                    serializer.text(playlistData.get(i).album);
+                    serializer.endTag("", "album");
+                }
+
+                if(!playlistData.get(i).album.equals(""))
+                {
+                    //Title
+                    serializer.startTag("", "title");
+                    serializer.text(playlistData.get(i).title);
+                    serializer.endTag("", "title");
+                }
 
                 //End Track
                 serializer.endTag("", "track");
@@ -170,6 +222,12 @@ public class PlaylistEditor
             //Make sure library directory exists before writing
             File outdir = new File(filename);
             outdir.getParentFile().mkdirs();
+
+            //If playlist file already exists, delete before writing
+            if(outdir.exists())
+            {
+                outdir.delete();
+            }
 
             Log.d("PlaylistEditor", "Writing playlist file " + filename);
 

@@ -15,7 +15,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -27,13 +26,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.app.AlertDialog;
-import android.widget.EditText;
 
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.R;
@@ -42,7 +38,6 @@ import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryFragme
 import com.calcprogrammer1.calctunes.ContentPlaylistFragment.ContentPlaylistFragment;
 import com.calcprogrammer1.calctunes.ContentSubsonicFragment.ContentSubsonicFragment;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
-import com.calcprogrammer1.calctunes.Interfaces.ContentPlaybackInterface;
 import com.calcprogrammer1.calctunes.Interfaces.NowPlayingFragmentInterface;
 import com.calcprogrammer1.calctunes.Interfaces.SourceListInterface;
 import com.calcprogrammer1.calctunes.MediaInfo.MediaInfoFragment;
@@ -96,7 +91,6 @@ public class CalcTunesActivity extends ActionBarActivity
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
             playbackservice_bound = true;
             createGuiElements();
-            playbackservice.registerCallback(playbackCallback);
             if(openFile != null)
             {
                 File file = new File(openFile);
@@ -124,20 +118,6 @@ public class CalcTunesActivity extends ActionBarActivity
     //Callbacks//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    ContentPlaybackInterface playbackCallback = new ContentPlaybackInterface(){
-        @Override
-        public void onTrackEnd()
-        {
-            //Do nothing on track end
-        }
-
-        @Override
-        public void onMediaInfoUpdated()
-        {
-        }
-        
-    };
-    
     SourceListInterface sourcelisthandlerCallback = new SourceListInterface(){
         public void callback(int contentType, String filename)
         {
@@ -151,7 +131,7 @@ public class CalcTunesActivity extends ActionBarActivity
             }
             else if(contentType == ContentPlaybackService.CONTENT_TYPE_PLAYLIST)
             {
-                
+                setContentSource(filename, ContentPlaybackService.CONTENT_TYPE_PLAYLIST);
             }
             else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
             {
@@ -313,7 +293,6 @@ public class CalcTunesActivity extends ActionBarActivity
         if(playbackservice_bound)
         {
             updateGuiElements();
-            playbackservice.registerCallback(playbackCallback);
         }
     }
     
@@ -414,6 +393,7 @@ public class CalcTunesActivity extends ActionBarActivity
         {
             currentContentSource = ContentPlaybackService.CONTENT_TYPE_PLAYLIST;
             playlistfragment = new ContentPlaylistFragment();
+            playlistfragment.setPlaylist(contentName);
             getSupportFragmentManager().beginTransaction().replace(R.id.contentListFragmentContainer, playlistfragment).commit();
         }
         else if(contentType == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
