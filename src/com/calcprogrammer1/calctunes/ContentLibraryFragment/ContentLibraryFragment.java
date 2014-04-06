@@ -177,6 +177,14 @@ public class ContentLibraryFragment extends Fragment
                 case CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST:
                     {
                         AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
+                        ArrayList<String> fileList = new ArrayList<String>();
+                        Cursor tmp = libraryDatabase.rawQuery("SELECT PATH FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist + "\" ORDER BY ALBUM, DISC, TRACK;", null);
+                        tmp.moveToFirst();
+                        do
+                        {
+                            fileList.add(tmp.getString(tmp.getColumnIndex("PATH")));
+                        } while(tmp.moveToNext());
+                        dialog.addFileList(fileList);
                         dialog.show();
                     }
                     break;
@@ -184,6 +192,16 @@ public class ContentLibraryFragment extends Fragment
                 case CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST:
                     {
                         AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
+                        ArrayList<String> fileList = new ArrayList<String>();
+                        Cursor tmp = libraryDatabase.rawQuery("SELECT PATH FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist + "\" AND ALBUM = \""
+                                + listData.get(position).album + "\" ORDER BY DISC, TRACK;", null);
+
+                        tmp.moveToFirst();
+                        do
+                        {
+                            fileList.add(tmp.getString(tmp.getColumnIndex("PATH")));
+                        } while(tmp.moveToNext());
+                        dialog.addFileList(fileList);
                         dialog.show();
                     }
                     break;
