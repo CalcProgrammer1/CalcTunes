@@ -1,14 +1,10 @@
 package com.calcprogrammer1.calctunes.ContentFilesystemFragment;
 
-import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
-import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
-import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistElement;
 import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Dialogs.FolderReorganizeDialog;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFilesystemAdapterInterface;
 import com.calcprogrammer1.calctunes.R;
-import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,7 +14,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -35,11 +30,6 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
-
-import java.io.File;
 import java.util.ArrayList;
 
 public class ContentFilesystemFragment extends Fragment implements View.OnClickListener
