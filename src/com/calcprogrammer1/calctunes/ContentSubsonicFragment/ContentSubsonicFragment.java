@@ -1,8 +1,10 @@
 package com.calcprogrammer1.calctunes.ContentSubsonicFragment;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -32,16 +34,19 @@ import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
 
+import java.io.File;
+
 @SuppressWarnings("unused")
 
 public class ContentSubsonicFragment extends Fragment
 {
-    public static final int CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST = 0;
-    public static final int CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST  = 1;
-    public static final int CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST  = 2;
-    public static final int CONTEXT_MENU_VIEW_TRACK_INFO        = 3;
-    public static final int CONTEXT_MENU_DWNLD_TRACK_TRANSCODED = 4;
-    public static final int CONTEXT_MENU_DWNLD_TRACK_ORIGINAL   = 5;
+    public static final int CONTEXT_MENU_DWNLD_ARTIST_TRANSCODED = 0;
+    public static final int CONTEXT_MENU_DWNLD_ARTIST_ORIGINAL   = 1;
+    public static final int CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED  = 2;
+    public static final int CONTEXT_MENU_DWNLD_ALBUM_ORIGINAL    = 3;
+    public static final int CONTEXT_MENU_DWNLD_TRACK_TRANSCODED  = 4;
+    public static final int CONTEXT_MENU_DWNLD_TRACK_ORIGINAL    = 5;
+    public static final int CONTEXT_MENU_DELETE_DOWNLOADED_TRACK = 6;
     
     //ListView to display on
     private ListView rootView;
@@ -150,16 +155,20 @@ public class ContentSubsonicFragment extends Fragment
             switch(subcon.listData.get(position).type)
             {
                 case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
-                    menu.add(2, CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST, Menu.NONE, "Add Artist to Playlist");
+                    menu.add(2, CONTEXT_MENU_DWNLD_ARTIST_TRANSCODED, Menu.NONE, "Download All From Artist (Transcoded)");
+                    menu.add(2, CONTEXT_MENU_DWNLD_ARTIST_ORIGINAL,   Menu.NONE, "Download All From Artist (Original)");
                     break;
                     
                 case ContentListElement.LIBRARY_LIST_TYPE_ALBUM:
-                    menu.add(2, CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST, Menu.NONE, "Add Album to Playlist");
+                    menu.add(2, CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED, Menu.NONE, "Download All From Album (Transcoded)");
+                    menu.add(2, CONTEXT_MENU_DWNLD_ALBUM_ORIGINAL,   Menu.NONE, "Download All From Album (Original)");
                     break;
                    
                 case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_TRANSCODED, Menu.NONE, "Download Track (Transcoded)");
-                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_ORIGINAL,   Menu.NONE, "Download Track (Original)");
+                    if(subcon.listData.get(position).cache != 0)
+                    menu.add(2, CONTEXT_MENU_DELETE_DOWNLOADED_TRACK, Menu.NONE, "Delete Downloaded Track File");
+                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_TRANSCODED,  Menu.NONE, "Download Track (Transcoded)");
+                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_ORIGINAL,    Menu.NONE, "Download Track (Original)");
                     break;
             }
         }
@@ -170,21 +179,20 @@ public class ContentSubsonicFragment extends Fragment
     {
         if(item.getGroupId() == 2)
         {
-            int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
+            final int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
             
             switch(item.getItemId())
             {
-                case CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST:
+                case CONTEXT_MENU_DWNLD_ARTIST_TRANSCODED:
                     break;
                     
-                case CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST:
+                case CONTEXT_MENU_DWNLD_ARTIST_ORIGINAL:
                     break;
                     
-                case CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST:
+                case CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED:
                     break;
                     
-                case CONTEXT_MENU_VIEW_TRACK_INFO:
-                    callback.OnTrackInfoRequest(subcon.listData.get(position).path);
+                case CONTEXT_MENU_DWNLD_ALBUM_ORIGINAL:
                     break;
                     
                 case CONTEXT_MENU_DWNLD_TRACK_TRANSCODED:
@@ -193,6 +201,34 @@ public class ContentSubsonicFragment extends Fragment
                     
                 case CONTEXT_MENU_DWNLD_TRACK_ORIGINAL:
                     subcon.downloadOriginal(position);
+                    break;
+
+                case CONTEXT_MENU_DELETE_DOWNLOADED_TRACK:
+                    {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                switch (which)
+                                {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        //Yes button clicked
+                                        subcon.deleteCachedFile(position);
+                                        libAdapter.notifyDataSetChanged();
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Are you sure you want to delete this track?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
                     break;
             }
         }
@@ -252,10 +288,21 @@ public class ContentSubsonicFragment extends Fragment
                         break;
                         
                     case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                        
-                        Log.d("Subsonic Fragment", "Path:" + subcon.listData.get(position).path);
-                        play_id = (int)subcon.listData.get(position).id;
-                        subcon.downloadTranscodedOgg(position);
+                        if(subcon.listData.get(position).cache == ContentListElement.CACHE_SDCARD_ORIGINAL)
+                        {
+                            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM,
+                                subcon.listData.get(position).origPath + "." + subcon.listData.get(position).origExt, 0);
+                        }
+                        else if( subcon.listData.get(position).cache == ContentListElement.CACHE_SDCARD_TRANSCODED)
+                        {
+                            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM,
+                                    subcon.listData.get(position).transPath + "." + subcon.listData.get(position).transExt, 0);
+                        }
+                        else
+                        {
+                            play_id = (int) subcon.listData.get(position).id;
+                            subcon.downloadTranscodedOgg(position);
+                        }
                         break;
                 }
                 libAdapter.notifyDataSetChanged();

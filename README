@@ -1,39 +1,88 @@
-CalcTunes - An iTunes-ish Media Player For Android
+CalcTunes - A Desktop Style Music Player for Android
+----------------------------------------------------
 
-CalcTunes (working title) is a new media player for Android that is mainly targeted at tablets.  While many media players
-exist for phones and handhelds, most of these do not take advantage of the screen space provided by a larger tablet.
-To more efficiently use the space, I am creating a two-panel layout similar to iTunes, Songbird, Clementine, and other
-desktop media player applications.  On the left will be media sources (Libraries and Playlists).  The right (larger)
-panel is where media files will be listed (grouped by artist/album).
+CalcTunes is a music player designed from the ground up for power users.  I wanted an Android media player that let me be in control of where
+files are located, what files are part of my library, and when they should be scanned.  I also was tired of copying all my songs manually to
+my phone and having to organize them in folders and manually transcode my FLAC collection into Vorbis or MP3.  To that end I found Subsonic,
+a GPL media server that lets you browse and automatically transcode your library via a simple XML-based API.
+
+CalcTunes now supports a wide variety of media sources and organization types:
 
 Libraries
 ---------
-The problem I have with Android's stock media player is the stupid auto-media-scan thing.  It scans only where it feels
-like scanning and you can't access any media that it doesn't find.  This sucks, because a lot of people have media
-stored in places not in /mnt/sdcard and would still like to use it.  Android's built in library will not accept this and
-the stock music player won't play these files.
-
-To solve this problem, other developers (such as MortPlayer, a great improvement over the stock player) have created
-customized library systems.  MortPlayer revolves around selecting a "master" root folder which is scanned for media.
-While this is a lot better than the stock player, my complaint is that there can only be one "master" folder, still
-limiting you to one source at a time.
-
-CalcTunes will remedy this problem by allowing any number of user-defined libraries, and also these libraries can contain
-more than just one "master" folder.  For instance, one library named "My FLAC" could contain both /mnt/storage/FLAC and
-/mnt/sdcard/FLAC and possibly even /mnt/networkdrive/FLAC.  The plan is to build library data from these folders by
-scanning the tags from the audio files, then caching this tag data locally so that you don't have to wait around for long
-media rescans, especially on network drives.
+    Libraries are user-set groups of media folders that are scanned into a database of media files.  They are then organized by Artist/Album/
+    Track in a hierarchical list.  Libraries allow you to scan in files from both organized and unorganized folders from anywhere on your
+    device and view them in an organized list.
 
 Playlists
 ---------
-In addition to libraries, CalcTunes will support playlists.  These will likely be stored in a standard playlist format and
-will be created through the CalcTunes application.  They don't need a master folder, they just list tracks directly. I am
-not sure whether or not playlists will be cached or not.
+    Playlists are user-set lists of individual tracks.  Tracks can come from any location on your device.  Playlists are saved in the XSPF
+    XML playlist file format.
 
-Current Version - Version 0.54 Alpha (1/8/2014)
+Filesystem
+----------
+    CalcTunes has a built in file browser for playing media files directly from filesystem locations without putting them into a library or
+    playlist first.  Just open Filesystem, browse to the folder where your file resides, and select it to open it.  CalcTunes also handles
+    Intents from other file management apps, so you can open songs from browsers like ES File Explorer and Cyanogen File Manager into
+    CalcTunes.
+
+Subsonic Servers
+----------------
+    CalcTunes can connect to Subsonic servers using the mobile device API.  This allows you to browse through your full Subsonic library
+    and download tracks to your device from it.  CalcTunes supports both transcoded downloading ("streaming" in Subsonic terms) as well
+    as original, non-transcoded downloading.  When setting up a Subsonic server source, you can select locations for both transcoded and
+    original file downloading.  Downloaded files will automatically be saved in an Artist/Album/XX Song.ext naming convention.  Note that
+    CalcTunes does not currently support "streaming" - that is, the entire track must completely download before you can start listening
+    to it.  This is a limitation of the Android MediaPlayer API unfortunately, any way around it is an ugly hack or a big chunk of third
+    party media playback code so I don't plan on making this high priority.  I mainly recommend using Subsonic as a way to get media on
+    to your device without having to use your PC directly, then scan in the downloaded tracks as a Library or put them in a Playlist.
+
+Other Features:
+
+Media Information View
+----------------------
+    CalcTunes has a media information view page that is displayed for the current track if you click on the album art.  It shows a large
+    view of the artwork plus a list of all of the media file information tags as well as file path, bitrate, sample rate, and file codec
+    format information.  I hope to eventually pull artist and album info from Wikipedia and/or Last.FM and put it on this page as well.
+
+Automatic Playback Modes
+------------------------
+    CalcTunes can automatically start playback when certain external events occur.  These include plugging in headphones and connecting
+    a Bluetooth A2DP audio device.  This is optional and defaults to off.  When enabled, playback of a user-set media source will begin
+    as soon as the event occurs.  Additionally, playback may be set to automatically stop and close the application when the headphones
+    or Bluetooth device disconnects.  CalcTunes supports use of the media control buttons while minimized so you can change tracks and
+    pause the music from the buttons.
+
+Audio Effects Engine
+--------------------
+    CalcTunes does not contain an audio effects engine in itself, but it does support the Audio Effects subsystem of Android.  You may
+    enable Audio Effects in the settings which, when enabled, allows apps like CyanogenMod's DSP Manager and Viper's Audio For Android
+    to apply equalizer, bass boost, and other effects to the music.  I definitely recommend using CalcTunes in conjunction with one of
+    these audio effects apps for the best experience.
+
+Planned Features:
+
+Audio Tag Editor
+----------------
+    I hope to eventually add a tag editor to the Media Information view.  CalcTunes uses the JAudioTagger library to read audio file
+    tags and this great library also supports tag writing.  I hope to make use of this capability so you can fix tags without having
+    to use your PC.
+
+Android Media Database Source
+-----------------------------
+    Android maintains a system-wide media database of all the music and video files it thinks are on the device.  While it can miss
+    files in unconventional locations (such as user-determined Samba mounts), it does a reasonable job now in newer versions of
+    Android and having the ability to use this source provides a quick and easy alternative when you don't care about customizing
+    your own Library or Playlist.
+
+Current Version - Version 0.55 Alpha (4/6/2014)
 ---------------
-    -Split Subsonic download paths for original and transcoded files
-    -Subsonic downloaded tracks now get organized in artist/album/xx song.ext format
-    -New "reorganize folder" option in file browser mode allows organizing files into artist/album/xx song.ext
-        folder layout based on tag metadata, supports both recursive and non-recursive scanning and can move
-        from one folder to another
+    -Updated README
+    -Initial playlist functionality - create playlists, add songs to playlists, remove songs from playlists, and delete playlists supported.
+    -Playlists using XML XSPF playlist format
+    -Subsonic transcoding format and bitrate are now user settable in the subsonic source configuration dialog
+    -Subsonic downloaded tracks can be deleted through the Subsonic content view
+    -Better handling of Subsonic file paths to accommodate transcoded and original path types
+    -.flac no longer hard coded as the original format for Subsonic downloads - reads original suffix from server now
+    -New capability to jump to the next artist/album by quickly tapping next/prev buttons multiple times, still needs work
+     This will hopefully make it easier to browse large libraries using only the buttons while driving.

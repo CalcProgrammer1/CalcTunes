@@ -89,18 +89,20 @@ public class ContentListAdapter extends BaseAdapter
             TextView songNum = (TextView) convertView.findViewById(R.id.librarylistsong_num);
             TextView songTime = (TextView) convertView.findViewById(R.id.librarylistsong_time);
             ImageView songIcon = (ImageView) convertView.findViewById(R.id.librarylistsong_icon);
-            songText.setText(listData.get(position).song);
+            songText.setText(listData.get(position).title);
             songNum.setText(""+listData.get(position).track);
             songTime.setText(SourceListOperations.formatTime(listData.get(position).time));
             if(listData.get(position).cache == ContentListElement.CACHE_DOWNLOADING)
             {
                 songIcon.setImageResource(R.drawable.downloading_to_sdcard_icon);
             }
-            if(listData.get(position).cache == ContentListElement.CACHE_SDCARD)
+            if( (listData.get(position).cache == ContentListElement.CACHE_SDCARD_TRANSCODED)
+             || (listData.get(position).cache == ContentListElement.CACHE_SDCARD_ORIGINAL))
             {
                 songIcon.setImageResource(R.drawable.cached_to_sdcard_icon);
             }
-            if(listData.get(position).path.equals(now_playing))
+            if( (listData.get(position).origPath != null && listData.get(position).origPath.equals(now_playing))
+             || (listData.get(position).transPath != null && listData.get(position).transPath.equals(now_playing)))
             {
                 TypedValue typedvalue = new TypedValue();
                 try{ c.getTheme().resolveAttribute(R.attr.highlight_color, typedvalue, true); } catch(Exception e){}

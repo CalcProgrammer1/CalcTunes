@@ -209,14 +209,14 @@ public class ContentLibraryFragment extends Fragment
                     {
                         AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
                         ArrayList<String> fileList = new ArrayList<String>();
-                        fileList.add(listData.get(position).path);
+                        fileList.add(listData.get(position).origPath);
                         dialog.addFileList(fileList);
                         dialog.show();
                     }
                     break;
                     
                 case CONTEXT_MENU_VIEW_TRACK_INFO:
-                    callback.OnTrackInfoRequest(listData.get(position).path);
+                    callback.OnTrackInfoRequest(listData.get(position).origPath);
                     break;
             }
         }
@@ -332,15 +332,15 @@ public class ContentLibraryFragment extends Fragment
                             {
                                 ContentListElement newElement = new ContentListElement();
                                 
-                                newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
-                                newElement.artist = listData.get(position).artist;
-                                newElement.year   = listData.get(position).year;
-                                newElement.album  = listData.get(position).album;
-                                newElement.song   = tmp.getString(tmp.getColumnIndex("TITLE"));
-                                newElement.track  = tmp.getInt(tmp.getColumnIndex("TRACK"));
-                                newElement.time   = tmp.getInt(tmp.getColumnIndex("TIME"));
-                                newElement.id     = tmp.getLong(tmp.getColumnIndex("_id"));
-                                newElement.path   = tmp.getString(tmp.getColumnIndex("PATH"));
+                                newElement.type     = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
+                                newElement.artist   = listData.get(position).artist;
+                                newElement.year     = listData.get(position).year;
+                                newElement.album    = listData.get(position).album;
+                                newElement.title    = tmp.getString(tmp.getColumnIndex("TITLE"));
+                                newElement.track    = tmp.getInt(tmp.getColumnIndex("TRACK"));
+                                newElement.time     = tmp.getInt(tmp.getColumnIndex("TIME"));
+                                newElement.id       = tmp.getLong(tmp.getColumnIndex("_id"));
+                                newElement.origPath = tmp.getString(tmp.getColumnIndex("PATH"));
                                 
                                 listData.add(position+i++, newElement);
                             } while(tmp.moveToNext());

@@ -71,7 +71,7 @@ public class SubsonicConnection
             {
                 if( listData.get(i).id == id )
                 {
-                    listData.get(i).cache = ContentListElement.CACHE_SDCARD;
+                    listData.get(i).cache = ContentListElement.CACHE_SDCARD_TRANSCODED;
                 }
             }
             callback.onListUpdated();
@@ -209,6 +209,28 @@ public class SubsonicConnection
         }
         listData.get(position).expanded = false;   
     }
+
+    public void deleteCachedFile(int position)
+    {
+        switch(listData.get(position).cache)
+        {
+            case ContentListElement.CACHE_SDCARD_TRANSCODED:
+                {
+                    File deleteFile = new File(listData.get(position).transPath + "." + listData.get(position).transExt);
+                    deleteFile.delete();
+                    listData.get(position).cache = ContentListElement.CACHE_NONE;
+               }
+            break;
+
+            case ContentListElement.CACHE_SDCARD_ORIGINAL:
+                {
+                    File deleteFile = new File(listData.get(position).origPath + "." + listData.get(position).origExt);
+                    deleteFile.delete();
+                    listData.get(position).cache = ContentListElement.CACHE_NONE;
+                }
+            break;
+        }
+    }
     
     public void expandAlbum(int position)
     {
@@ -217,37 +239,39 @@ public class SubsonicConnection
         {
             ContentListElement newElement = new ContentListElement();
             
-            newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
-            newElement.artist = listData.get(position).artist;
-            newElement.year   = listData.get(position).year;
-            newElement.album  = songs.get(i).album;
-            newElement.song   = songs.get(i).title;
-            newElement.track  = songs.get(i).track;
-            newElement.time   = songs.get(i).duration;
-            newElement.id     = songs.get(i).id;
-            newElement.path   = songs.get(i).suffix;
-            
-            File testFile = new File( transpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
-                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + "." + transfrmt );
+            newElement.type      = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
+            newElement.artist    = listData.get(position).artist;
+            newElement.year      = listData.get(position).year;
+            newElement.album     = songs.get(i).album;
+            newElement.title     = songs.get(i).title;
+            newElement.track     = songs.get(i).track;
+            newElement.time      = songs.get(i).duration;
+            newElement.id        = songs.get(i).id;
+            newElement.cache     = ContentListElement.CACHE_NONE;
+            newElement.origExt   = songs.get(i).suffix;
+            newElement.origPath  = origpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
+                                  + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title);
+            newElement.transExt  = transfrmt;
+            newElement.transPath = transpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
+                                  + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title);
+
+            File testFile = new File( newElement.transPath + "." + newElement.transExt );
 
             if(testFile.exists())
             {
-                newElement.cache = ContentListElement.CACHE_SDCARD;
+                newElement.cache = ContentListElement.CACHE_SDCARD_TRANSCODED;
             }
             else
             {
-                testFile = new File( origpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
-                                    + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title) + "." + transfrmt );
+                testFile = new File( newElement.origPath + "." + newElement.origExt );
 
                 if(testFile.exists())
                 {
-                    newElement.cache = ContentListElement.CACHE_SDCARD;
+                    newElement.cache = ContentListElement.CACHE_SDCARD_ORIGINAL;
                 }
             }
-
             listData.add(position + (i + 1), newElement);
         }
-        
         listData.get(position).expanded = true;
     }
     
@@ -288,37 +312,15 @@ public class SubsonicConnection
     
     public void downloadTranscodedOgg(int position)
     {
-        if(listData.get(position).cache != 0)
-        {
-            callback.onTrackLoaded((int)listData.get(position).id,
-                    transpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist) + "/" + SourceListOperations.makeFilename(listData.get(position).album)
-                                + "/" + String.format("%02d", listData.get(position).track) + " " + SourceListOperations.makeFilename(listData.get(position).song) + "." + transfrmt);
-        }
-        else
-        {
-            subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, transpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist)
-                    + "/" + SourceListOperations.makeFilename(listData.get(position).album) + "/" + String.format("%02d", listData.get(position).track)
-                    + " " + SourceListOperations.makeFilename(listData.get(position).song) + "." + transfrmt, transbtrt, transfrmt);
-            listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
-            callback.onListUpdated();
-        }
+        subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, listData.get(position).transPath + "." + listData.get(position).transExt, transbtrt, listData.get(position).transExt);
+        listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
+        callback.onListUpdated();
     }
     
     public void downloadOriginal(int position)
     {
-        if(listData.get(position).cache != 0)
-        {
-            callback.onTrackLoaded((int)listData.get(position).id,
-                    origpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist) + "/" + SourceListOperations.makeFilename(listData.get(position).album)
-                                + "/" + String.format("%02d", listData.get(position).track) + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".flac");
-        }
-        else
-        {
-            subsonicapi.SubsonicDownloadAsync((int)listData.get(position).id, origpath + "/" + SourceListOperations.makeFilename(listData.get(position).artist)
-                    + "/" + SourceListOperations.makeFilename(listData.get(position).album) + "/" + String.format("%02d", listData.get(position).track)
-                    + " " + SourceListOperations.makeFilename(listData.get(position).song) + ".flac");
-            listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
-            callback.onListUpdated();
-        }
+        subsonicapi.SubsonicDownloadAsync((int)listData.get(position).id, listData.get(position).origPath + "." + listData.get(position).origExt);
+        listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
+        callback.onListUpdated();
     }
 }

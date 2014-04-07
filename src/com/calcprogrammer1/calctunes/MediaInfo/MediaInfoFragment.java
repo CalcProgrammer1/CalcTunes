@@ -136,7 +136,10 @@ public class MediaInfoFragment extends Fragment
         
         //Duration
         adapter_data.add(new MediaInfoListType( "Track Length", "" + header.getTrackLength()        ));
-        
+
+        //File Path
+        adapter_data.add(new MediaInfoListType( "File Path",    track_info_path                     ));
+
         //Format
         adapter_data.add(new MediaInfoListType( "File Format",  header.getFormat()                  ));
 
