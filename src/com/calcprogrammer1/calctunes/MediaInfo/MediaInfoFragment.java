@@ -8,7 +8,9 @@ import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
+import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
 import com.calcprogrammer1.calctunes.AlbumArtManager;
+import com.calcprogrammer1.calctunes.Dialogs.FolderSelectionDialog;
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.Interfaces.MediaInfoViewInterface;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
@@ -21,9 +23,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -37,7 +43,10 @@ public class MediaInfoFragment extends Fragment
     private ArrayList<MediaInfoListType>    adapter_data;
     
     private Bitmap                          artwork_image;
-    
+
+    private String                          artist;
+    private String                          album;
+
     // Shared Preferences
     private SharedPreferences appSettings;
     
@@ -95,7 +104,7 @@ public class MediaInfoFragment extends Fragment
         AudioHeader header      = f.getAudioHeader();
         
         //Album Art
-        artwork_image   = AlbumArtManager.getAlbumArt(tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM), getActivity(), false);
+        artwork_image   = AlbumArtManager.getAlbumArt(tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM), getActivity(), false, true, true);
         
         //Create new adapter and adapter data
         adapter         = new MediaInfoAdapter(getActivity());
@@ -105,9 +114,11 @@ public class MediaInfoFragment extends Fragment
         adapter_data.add(new MediaInfoListType( "Title",        tag.getFirst(FieldKey.TITLE)        ));
         
         //Artist
+        artist = tag.getFirst(FieldKey.ARTIST);
         adapter_data.add(new MediaInfoListType( "Artist",       tag.getFirst(FieldKey.ARTIST)       ));
         
         //Album
+        album = tag.getFirst(FieldKey.ALBUM);
         adapter_data.add(new MediaInfoListType( "Album",        tag.getFirst(FieldKey.ALBUM)        ));
         
         //Track Number
@@ -167,7 +178,50 @@ public class MediaInfoFragment extends Fragment
         
         track_artwork.setImageBitmap(artwork_image);
         track_info_list.setAdapter(adapter);
-    }
-    
 
+        registerForContextMenu(track_artwork);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////// CONTEXT MENU //////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        if(v == track_artwork)
+        {
+            //int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
+            menu.add(CalcTunesActivity.CONTEXT_MENU_MEDIA_INFO, 0, Menu.NONE, "Change Album Art");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        if (item.getGroupId() == CalcTunesActivity.CONTEXT_MENU_MEDIA_INFO)
+        {
+            switch (item.getItemId())
+            {
+                case 0:
+                    FolderSelectionDialog dialog = new FolderSelectionDialog(getActivity(), true);
+                    dialog.setFolderSelectionDialogCallback(new FolderSelectionDialog.FolderSelectionDialogCallback()
+                    {
+                        @Override
+                        public void onCompleted(String folderPath)
+                        {
+                            AlbumArtManager.replaceAlbumArtFile(artist, album, getActivity(), folderPath);
+                        }
+                    });
+                    dialog.show();
+                    break;
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

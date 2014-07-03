@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
@@ -149,16 +150,16 @@ public class ContentLibraryFragment extends Fragment
             switch(listData.get(position).type)
             {
                 case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
-                    menu.add(2, CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST, Menu.NONE, "Add Artist to Playlist");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_LIBRARY, CONTEXT_MENU_ADD_ARTIST_TO_PLAYLIST, Menu.NONE, "Add Artist to Playlist");
                     break;
                     
                 case ContentListElement.LIBRARY_LIST_TYPE_ALBUM:
-                    menu.add(2, CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST, Menu.NONE, "Add Album to Playlist");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_LIBRARY, CONTEXT_MENU_ADD_ALBUM_TO_PLAYLIST, Menu.NONE, "Add Album to Playlist");
                     break;
                    
                 case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                    menu.add(2, CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST, Menu.NONE, "Add Track to Playlist");
-                    menu.add(2, CONTEXT_MENU_VIEW_TRACK_INFO, Menu.NONE, "View Track Info");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_LIBRARY, CONTEXT_MENU_ADD_TRACK_TO_PLAYLIST, Menu.NONE, "Add Track to Playlist");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_LIBRARY, CONTEXT_MENU_VIEW_TRACK_INFO, Menu.NONE, "View Track Info");
                     break;
             }
         }
@@ -167,7 +168,7 @@ public class ContentLibraryFragment extends Fragment
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
-        if(item.getGroupId() == 2)
+        if(item.getGroupId() == CalcTunesActivity.CONTEXT_MENU_CONTENT_LIBRARY)
         {
             int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
             

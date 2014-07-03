@@ -26,7 +26,9 @@ public class FolderSelectionDialog extends Dialog implements View.OnClickListene
     ArrayList<String> dir_list;
     ArrayList<String> lbl_list;
 
-    interface FolderSelectionDialogCallback
+    boolean fileMode;
+
+    public interface FolderSelectionDialogCallback
     {
         void onCompleted(String folderPath);
     }
@@ -36,6 +38,13 @@ public class FolderSelectionDialog extends Dialog implements View.OnClickListene
     public FolderSelectionDialog(Context context)
     {
         super(context);
+        fileMode = false;
+    }
+
+    public FolderSelectionDialog(Context context, boolean file)
+    {
+        super(context);
+        fileMode = file;
     }
 
     public void onCreate(Bundle savedInstanceState)
@@ -43,7 +52,15 @@ public class FolderSelectionDialog extends Dialog implements View.OnClickListene
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.folderdialog);
-        setTitle("Select Folder");
+
+        if(fileMode)
+        {
+            setTitle("Select File");
+        }
+        else
+        {
+            setTitle("Select Folder");
+        }
 
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.height = ViewGroup.LayoutParams.FILL_PARENT;
@@ -105,6 +122,11 @@ public class FolderSelectionDialog extends Dialog implements View.OnClickListene
             for(int i = 0; i < currentDirectory.listFiles().length; i++)
             {
                 if(currentDirectory.listFiles()[i].isDirectory())
+                {
+                    lbl_list.add(currentDirectory.listFiles()[i].getPath());
+                    dir_list.add(currentDirectory.listFiles()[i].getAbsolutePath());
+                }
+                if(fileMode && currentDirectory.listFiles()[i].isFile())
                 {
                     lbl_list.add(currentDirectory.listFiles()[i].getPath());
                     dir_list.add(currentDirectory.listFiles()[i].getAbsolutePath());

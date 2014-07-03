@@ -47,7 +47,14 @@ import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.github.ysamlan.horizontalpager.HorizontalPager;
 
 public class CalcTunesActivity extends ActionBarActivity
-{    
+{
+    static public int CONTEXT_MENU_SOURCE_LIST              = 0;
+    static public int CONTEXT_MENU_CONTENT_LIBRARY          = 1;
+    static public int CONTEXT_MENU_CONTENT_PLAYLIST         = 2;
+    static public int CONTEXT_MENU_CONTENT_FILESYSTEM       = 3;
+    static public int CONTEXT_MENU_CONTENT_SUBSONIC         = 4;
+    static public int CONTEXT_MENU_MEDIA_INFO               = 5;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Class Variables////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

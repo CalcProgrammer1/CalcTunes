@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListAdapter;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
@@ -155,20 +156,20 @@ public class ContentSubsonicFragment extends Fragment
             switch(subcon.listData.get(position).type)
             {
                 case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
-                    menu.add(2, CONTEXT_MENU_DWNLD_ARTIST_TRANSCODED, Menu.NONE, "Download All From Artist (Transcoded)");
-                    menu.add(2, CONTEXT_MENU_DWNLD_ARTIST_ORIGINAL,   Menu.NONE, "Download All From Artist (Original)");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DWNLD_ARTIST_TRANSCODED, Menu.NONE, "Download All From Artist (Transcoded)");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DWNLD_ARTIST_ORIGINAL,   Menu.NONE, "Download All From Artist (Original)");
                     break;
                     
                 case ContentListElement.LIBRARY_LIST_TYPE_ALBUM:
-                    menu.add(2, CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED, Menu.NONE, "Download All From Album (Transcoded)");
-                    menu.add(2, CONTEXT_MENU_DWNLD_ALBUM_ORIGINAL,   Menu.NONE, "Download All From Album (Original)");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED, Menu.NONE, "Download All From Album (Transcoded)");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DWNLD_ALBUM_ORIGINAL,   Menu.NONE, "Download All From Album (Original)");
                     break;
                    
                 case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
                     if(subcon.listData.get(position).cache != 0)
-                    menu.add(2, CONTEXT_MENU_DELETE_DOWNLOADED_TRACK, Menu.NONE, "Delete Downloaded Track File");
-                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_TRANSCODED,  Menu.NONE, "Download Track (Transcoded)");
-                    menu.add(2, CONTEXT_MENU_DWNLD_TRACK_ORIGINAL,    Menu.NONE, "Download Track (Original)");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DELETE_DOWNLOADED_TRACK, Menu.NONE, "Delete Downloaded Track File");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DWNLD_TRACK_TRANSCODED,  Menu.NONE, "Download Track (Transcoded)");
+                    menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC, CONTEXT_MENU_DWNLD_TRACK_ORIGINAL,    Menu.NONE, "Download Track (Original)");
                     break;
             }
         }
@@ -177,7 +178,7 @@ public class ContentSubsonicFragment extends Fragment
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
-        if(item.getGroupId() == 2)
+        if(item.getGroupId() == CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC)
         {
             final int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
             

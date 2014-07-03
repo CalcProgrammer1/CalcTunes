@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 
@@ -94,14 +95,14 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
         if(v == view)
         {
             int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
-            menu.add(3, CONTEXT_MENU_REMOVE_FROM_PLAYLIST, Menu.NONE, "Remove Track From Playlist");
+            menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_PLAYLIST, CONTEXT_MENU_REMOVE_FROM_PLAYLIST, Menu.NONE, "Remove Track From Playlist");
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
-        if (item.getGroupId() == 3)
+        if (item.getGroupId() == CalcTunesActivity.CONTEXT_MENU_CONTENT_PLAYLIST)
         {
             final int position = (int) ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
 

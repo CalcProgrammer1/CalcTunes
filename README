@@ -75,14 +75,9 @@ Android Media Database Source
     Android and having the ability to use this source provides a quick and easy alternative when you don't care about customizing
     your own Library or Playlist.
 
-Current Version - Version 0.55 Alpha (4/6/2014)
+Current Version - Version 0.56 Alpha (7/2/2014)
 ---------------
-    -Updated README
-    -Initial playlist functionality - create playlists, add songs to playlists, remove songs from playlists, and delete playlists supported.
-    -Playlists using XML XSPF playlist format
-    -Subsonic transcoding format and bitrate are now user settable in the subsonic source configuration dialog
-    -Subsonic downloaded tracks can be deleted through the Subsonic content view
-    -Better handling of Subsonic file paths to accommodate transcoded and original path types
-    -.flac no longer hard coded as the original format for Subsonic downloads - reads original suffix from server now
-    -New capability to jump to the next artist/album by quickly tapping next/prev buttons multiple times, still needs work
-     This will hopefully make it easier to browse large libraries using only the buttons while driving.
+    -Updated Album Art subsystem
+    -Album art now stored in folders such as /Artist/Album.png
+    -Support extended to both .png and .jpg filetypes
+    -Can now manually replace the album art with your own files from the Media Info panel

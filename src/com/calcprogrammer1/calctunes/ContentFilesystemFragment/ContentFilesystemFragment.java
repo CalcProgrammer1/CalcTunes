@@ -1,5 +1,6 @@
 package com.calcprogrammer1.calctunes.ContentFilesystemFragment;
 
+import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
 import com.calcprogrammer1.calctunes.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Dialogs.FolderReorganizeDialog;
@@ -177,7 +178,7 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
 
             if(isDir)
             {
-                menu.add(3, 0 , Menu.NONE, "Organize this directory");
+                menu.add(CalcTunesActivity.CONTEXT_MENU_CONTENT_FILESYSTEM, 0 , Menu.NONE, "Organize this directory");
             }
         }
     }
@@ -185,7 +186,7 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
-        if(item.getGroupId() == 3)
+        if(item.getGroupId() == CalcTunesActivity.CONTEXT_MENU_CONTENT_FILESYSTEM)
         {
             int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
             FolderReorganizeDialog dialog = new FolderReorganizeDialog(getActivity(), fileAdapter.files.get(position).getAbsolutePath());

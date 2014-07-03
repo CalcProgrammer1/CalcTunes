@@ -1,5 +1,16 @@
 Release History
 ---------------
+Version 0.55 Alpha (4/6/2014)
+    -Updated README
+    -Initial playlist functionality - create playlists, add songs to playlists, remove songs from playlists, and delete playlists supported.
+    -Playlists using XML XSPF playlist format
+    -Subsonic transcoding format and bitrate are now user settable in the subsonic source configuration dialog
+    -Subsonic downloaded tracks can be deleted through the Subsonic content view
+    -Better handling of Subsonic file paths to accommodate transcoded and original path types
+    -.flac no longer hard coded as the original format for Subsonic downloads - reads original suffix from server now
+    -New capability to jump to the next artist/album by quickly tapping next/prev buttons multiple times, still needs work
+     This will hopefully make it easier to browse large libraries using only the buttons while driving.
+
 Version 0.54 Alpha (1/8/2014)
     -Split Subsonic download paths for original and transcoded files
     -Subsonic downloaded tracks now get organized in artist/album/xx song.ext format

@@ -1,6 +1,11 @@
 package com.calcprogrammer1.calctunes;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class FileOperations
@@ -90,5 +95,45 @@ public class FileOperations
             files[j + count] = file_list.get(j);
         }
         return files;  
-    }    
+    }
+
+    static public void copy(String src, String dst)
+    {
+        File srcFile = new File(src);
+        File dstFile = new File(dst);
+        copy(srcFile, dstFile);
+    }
+
+    static public void copy(File src, File dst)
+    {
+        try
+        {
+            InputStream in = new FileInputStream(src);
+            OutputStream out = new FileOutputStream(dst);
+
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0)
+            {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        }
+        catch(Exception e){}
+    }
+
+    static public String getExtension(String fileName)
+    {
+        String extension = "";
+
+        int i = fileName.lastIndexOf('.');
+        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+        if (i > p) {
+            extension = fileName.substring(i+1);
+        }
+        return(extension);
+    }
 }

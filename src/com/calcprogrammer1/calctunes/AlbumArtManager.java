@@ -24,48 +24,39 @@ import android.widget.ImageView;
 
 public class AlbumArtManager
 {
-    static public void setImageAsync( final String artist, final String album, final Context c, final boolean thumb, final ImageView view)
+    static public void setImageAsync(final String artist, final String album, final Context c, final boolean thumb, final ImageView view)
     {
         Bitmap artwork = null;
-        File dirfile = new File(SourceListOperations.getAlbumArtPath(c));
-        dirfile.mkdirs();
-        String artfilepath = SourceListOperations.getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "_" + SourceListOperations.makeFilename(album) + ".png";
-        File infile = new File(artfilepath);
-        try
+
+        artwork = getAlbumArt(artist, album, c, thumb, false, false);
+
+        if (view != null && artwork != null)
         {
-            if(thumb)
-            {
-                artwork = decodeSampledBitmapFromFile(infile.getAbsolutePath(), 256, 256);
-            }
-            else
-            {
-                artwork = BitmapFactory.decodeFile(infile.getAbsolutePath());
-            }
-            if(view != null)
-            {
-                view.setImageBitmap(artwork);
-            }
-        }catch(Exception e){}
-        if(artwork == null)
-        {       
-            if(view != null)
+            view.setImageBitmap(artwork);
+        }
+
+        if (artwork == null)
+        {
+            if (view != null)
             {
                 view.setImageBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon));
             }
-            
-            new AsyncTask<Void, Void, Void>(){
+
+            new AsyncTask<Void, Void, Void>()
+            {
                 Bitmap artwork2;
+
                 @Override
                 protected Void doInBackground(Void... arg0)
                 {
-                    artwork2 = getAlbumArt(artist, album, c, thumb);
+                    artwork2 = getAlbumArt(artist, album, c, thumb, true, true);
                     return null;
                 }
-                
+
                 @Override
                 protected void onPostExecute(Void arg0)
                 {
-                    if( artwork2 != null )
+                    if (artwork2 != null)
                     {
                         view.setImageBitmap(artwork2);
                     }
@@ -73,137 +64,192 @@ public class AlbumArtManager
             }.execute();
         }
     }
-    
+
+    static public void replaceAlbumArtFile(String artist, String album, Context c, String replaceFilePath)
+    {
+        String path = getAlbumArtFileName(c, artist, album);
+        String extension = FileOperations.getExtension(replaceFilePath);
+        if(new File(path + ".png").isFile())
+        {
+            new File(path + ".png").delete();
+        }
+        if(new File(path + ".jpg").isFile())
+        {
+            new File(path + ".jpg").delete();
+        }
+        FileOperations.copy(replaceFilePath, path + "." + extension);
+    }
+
+    static private String getAlbumArtPath(Context c)
+    {
+        return( SourceListOperations.getAlbumArtPath(c) );
+    }
+
+    static private String getAlbumArtFilePath(Context c, String artist)
+    {
+        return(getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "/");
+    }
+
+    static private String getAlbumArtFileName(Context c, String artist, String album)
+    {
+        return(getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "/" + SourceListOperations.makeFilename(album));
+    }
+
     //Checks cache for album art, if it is not found return default icon
-    static public Bitmap getAlbumArtFromCache(String artist, String album, Context c, boolean thumb)
+    static private Bitmap getAlbumArtFromCache(String artist, String album, Context c)
     {
         Bitmap artwork = null;
-        File dirfile = new File(SourceListOperations.getAlbumArtPath(c));
-        dirfile.mkdirs();
-        String artfilepath = SourceListOperations.getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "_" + SourceListOperations.makeFilename(album) + ".png";
-        File infile = new File(artfilepath);
-        try
+        String path = getAlbumArtFileName(c, artist, album);
+        String artPath = null;
+
+        if(new File(path + ".png").isFile())
         {
-            if(thumb)
-            {
-                artwork = decodeSampledBitmapFromFile(infile.getAbsolutePath(), 256, 256);
-            }
-            else
-            {
-                artwork = BitmapFactory.decodeFile(infile.getAbsolutePath());
-            }
-        }catch(Exception e){}
-        if(artwork == null)
+            artPath = path + ".png";
+        }
+        else if(new File(path + ".jpg").isFile())
         {
-            try
-            {
-                artwork = BitmapFactory.decodeResource(c.getResources(), R.drawable.icon);
-            }catch(Exception ex){}
+            artPath = path + ".jpg";
+        }
+        if(artPath != null)
+        {
+            artwork = BitmapFactory.decodeFile(artPath);
         }
         return artwork;
     }
 
-    //Check cache for album art, if not found then check Last.fm, if still not found then return default icon
-    static public Bitmap getAlbumArt(String artist, String album, Context c, boolean thumb)
+    static private Bitmap getAlbumArtFromLastFM(String artist, String album, Context c)
     {
-        Bitmap artwork = null;
-        String artfilepath = SourceListOperations.getAlbumArtPath(c) + File.separator + SourceListOperations.makeFilename(artist) + "_" + SourceListOperations.makeFilename(album) + ".png";
-        File infile = new File(artfilepath);
+        Bitmap artwork;
         try
         {
-            if(thumb)
-            {
-                artwork = decodeSampledBitmapFromFile(infile.getAbsolutePath(), 256, 256);
-            }
-            else
-            {
-                artwork = BitmapFactory.decodeFile(infile.getAbsolutePath());
-            }
-        }catch(Exception e){}
-        if(artwork == null)
-        {
-            try
-            {
-                String apiKey = "4b724a8d125b0c56965ad3e28a51530c";
-                String imageSize = "large";
-                String method = "album.getinfo";
-                
-                String request = "http://ws.audioscrobbler.com/2.0/?method=" + method + "&api_key="+apiKey + "&artist=" + artist.replaceAll(" ", "%20") + "&album=" + album.replaceAll(" ", "%20");
-                
-                URL url = new URL(request);
-                InputStream is = url.openStream();
-                DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document doc = db.parse(is);        
-                NodeList nl = doc.getElementsByTagName("image");
+            String apiKey = "4b724a8d125b0c56965ad3e28a51530c";
+            String imageSize = "large";
+            String method = "album.getinfo";
 
-                for (int i = 0; i < nl.getLength(); i++)
+            String request = "http://ws.audioscrobbler.com/2.0/?method=" + method + "&api_key=" + apiKey + "&artist=" + artist.replaceAll(" ", "%20") + "&album=" + album.replaceAll(" ", "%20");
+
+            URL url = new URL(request);
+            InputStream is = url.openStream();
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = db.parse(is);
+            NodeList nl = doc.getElementsByTagName("image");
+
+            for (int i = 0; i < nl.getLength(); i++)
+            {
+                Node n = nl.item(i);
+                if (n.getAttributes().item(0).getNodeValue().equals(imageSize))
                 {
-                    Node n = nl.item(i);
-                    if (n.getAttributes().item(0).getNodeValue().equals(imageSize))
+                    Node fc = n.getFirstChild();
+                    URL imgUrl = new URL(fc.getNodeValue());
+                    artwork = BitmapFactory.decodeStream(imgUrl.openStream());
+                    if (artwork != null)
                     {
-                        Node fc = n.getFirstChild();
-                        URL imgUrl = new URL(fc.getNodeValue());
-                        artwork = BitmapFactory.decodeStream(imgUrl.openStream());
-                        if(artwork != null)
-                        {
-                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                            artwork.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                            File outfile = new File(artfilepath);
-                            FileOutputStream fo = new FileOutputStream(outfile);
-                            fo.write(bytes.toByteArray());
-                            fo.close();
-                        }
+                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                        artwork.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+                        File outfile = new File(getAlbumArtFilePath(c, artist));
+                        outfile.mkdirs();
+                        outfile = new File(getAlbumArtFileName(c, artist, album) + ".png");
+                        FileOutputStream fo = new FileOutputStream(outfile);
+                        fo.write(bytes.toByteArray());
+                        fo.close();
+                        return artwork;
                     }
                 }
-                
-            }catch(Exception ex)
-            {
-                Log.d("AlbumArt Exception", ""+ex);
             }
+
+        }
+        catch(Exception ex)
+        {
+            Log.d("AlbumArt Exception", "" + ex);
+        }
+        return null;
+    }
+
+    static private Bitmap getDefaultAlbumArt(Context c)
+    {
+        try
+        {
+            return(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon));
+        } catch (Exception ex)
+        {
+        }
+        return null;
+    }
+
+    //Check cache for album art, if not found then check Last.fm, if still not found then return default icon
+    static public Bitmap getAlbumArt(String artist, String album, Context c, boolean thumb, boolean fetch, boolean icon)
+    {
+        Bitmap artwork = null;
+
+        if (artwork == null && thumb)
+        {
+            artwork = decodeSampledBitmapFromFile(artist, album, c, 256, 256);
+        }
+        if(artwork == null && fetch)
+        {
+            artwork = getAlbumArtFromLastFM(artist, album, c);
         }
         if(artwork == null)
         {
-            try
-            {
-                artwork = BitmapFactory.decodeResource(c.getResources(), R.drawable.icon);
-            }catch(Exception ex){}
+            artwork = getAlbumArtFromCache(artist, album, c);
         }
-        return artwork;   
+        if(artwork == null && icon)
+        {
+            artwork = getDefaultAlbumArt(c);
+        }
+        return artwork;
     }
-    
-    public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight)
+
+    public static Bitmap decodeSampledBitmapFromFile(String artist, String album, Context c, int reqWidth, int reqHeight)
     {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
+        String path = getAlbumArtFileName(c, artist, album);
+        String artPath = null;
 
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        if(new File(path + ".png").isFile())
+        {
+            artPath = path + ".png";
+        }
+        else if(new File(path + ".jpg").isFile())
+        {
+            artPath = path + ".jpg";
+        }
 
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path, options);
+        if(artPath != null)
+        {
+            // First decode with inJustDecodeBounds=true to check dimensions
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(artPath, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeFile(artPath, options);
+        }
+        return(null);
     }
-    
+
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
     {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
-    
-        if (height > reqHeight || width > reqWidth) {
-    
+
+        if (height > reqHeight || width > reqWidth)
+        {
+
             // Calculate ratios of height and width to requested height and width
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
-    
+
             // Choose the smallest ratio as inSampleSize value, this will guarantee
             // a final image with both dimensions larger than or equal to the
             // requested height and width.
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-    return inSampleSize;
+        return inSampleSize;
     }
 }
