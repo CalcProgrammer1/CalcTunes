@@ -40,7 +40,7 @@
 		    	  android:configChanges="keyboardHidden|orientation|screenSize">
 		</activity>
 		
-		<service android:name="com.calcprogrammer1.calctunes.ContentPlaybackService" />
+		<service android:name=".ContentPlaybackService.ContentPlaybackService" />
 		<service android:name="com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlService" />
 		
 		<receiver android:name="com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver">

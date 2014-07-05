@@ -24,10 +24,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
-import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
-
-import java.util.ArrayList;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackPlaylist;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 
 public class ContentPlaylistFragment extends Fragment implements ListView.OnItemClickListener
 {
@@ -80,7 +78,7 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            adapter.setNowPlaying(playbackservice.NowPlayingFile());
+            adapter.setNowPlaying(playbackservice.GetPlaybackContentString());
             adapter.notifyDataSetChanged();
         }
     };
@@ -195,6 +193,7 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
     {
         adapter.setNowPlaying(playlist.playlistData.get(position).filename);
         adapter.notifyDataSetChanged();
-        playbackservice.SetPlaybackContentSourcePlaylist(playlist, position);
+        ContentPlaybackPlaylist playlistsource = new ContentPlaybackPlaylist(playlist, position);
+        playbackservice.SetPlaybackContent(playlistsource);
     }
 }

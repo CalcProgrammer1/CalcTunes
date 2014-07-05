@@ -1,6 +1,5 @@
-package com.calcprogrammer1.calctunes;
+package com.calcprogrammer1.calctunes.ContentPlaybackService;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,6 +8,7 @@ import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
+import com.calcprogrammer1.calctunes.R;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -31,7 +31,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
 
 public class ContentPlaybackService extends Service
@@ -39,20 +38,43 @@ public class ContentPlaybackService extends Service
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Content Type, View, and Playback Mode Constants////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
+    public interface ContentPlaybackType
+    {
+        // Set now playing content to next track
+        public void NextTrack();
+
+        // Set now playing content to previous track
+        public void PrevTrack();
+
+        // Set now playing content to random track
+        public void RandomTrack();
+
+        // Set now playing content to next artist if possible
+        public void NextArtist();
+
+        // Set now playing content to previous artist if possible
+        public void PrevArtist();
+
+        // Return URI of content to play
+        public String getContentUri();
+
+        // Is content URI a stream?
+        public boolean getContentStream();
+
+        // Get type of content
+        public int getContentType();
+
+        // Called before closing the content source
+        public void CleanUp();
+    }
+
     //Content Types
     public static final int CONTENT_TYPE_NONE                   = 0;
     public static final int CONTENT_TYPE_FILESYSTEM             = 1;
     public static final int CONTENT_TYPE_LIBRARY                = 2;
     public static final int CONTENT_TYPE_PLAYLIST               = 3;
     public static final int CONTENT_TYPE_SUBSONIC               = 4;
-
-    //Content View Modes
-    public static final int CONTENT_VIEW_NONE                   = 0;
-    public static final int CONTENT_VIEW_FILESYSTEM             = 1;
-    public static final int CONTENT_VIEW_PLAYLIST_ALL           = 2;
-    public static final int CONTENT_VIEW_LIBRARY_ALL            = 3;
-    public static final int CONTENT_VIEW_LIBRARY_ARTIST         = 4;
     
     //Playback Source Types
     public static final int CONTENT_PLAYBACK_NONE               = 0;
@@ -71,25 +93,18 @@ public class ContentPlaybackService extends Service
     ////Local variables////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private ContentPlaybackType content = null;
     private int     playbackMode            = CONTENT_PLAYBACK_MODE_IN_ORDER;
-    private int     currentContentType      = CONTENT_PLAYBACK_NONE;
-    private String  currentContentString    = "";
     private int     auto_start              = 0;    
     private MediaPlayerHandler      mediaplayer;
     private SharedPreferences       appSettings;
-    private Cursor                  playbackCursor;
-    private String  nowPlayingFile  = new String();
-    private int     nowPlayingPos   = -1;
-    private int     nowPlayingMax   = -1;
     private int     multi_click_thrshld;
     private long    NextTime        = 0;
     private int     NextPressCount  = 0;
     private long    PrevTime        = 0;
     private Notification notification;
     private NotificationManager notificationManager;
-    private static int notificationId = 2;  
-    private boolean random          = false;
-    private PlaylistEditor playlist;
+    private static int notificationId = 2;
 
     private Timer NextTimer;
 
@@ -152,11 +167,6 @@ public class ContentPlaybackService extends Service
         return mediaplayer.current_year;
     }
     
-    public String NowPlayingFile()
-    {
-        return nowPlayingFile;
-    }
-    
     public int NowPlayingDuration()
     {
         return mediaplayer.getDuration();
@@ -182,18 +192,13 @@ public class ContentPlaybackService extends Service
         return mediaplayer.isPlaying();
     }
 
-    public void SetPlaybackContentSourcePlaylist(PlaylistEditor playlist, int contentPosition)
+    public void SetPlaybackContent(ContentPlaybackType c)
     {
-        currentContentType = CONTENT_TYPE_PLAYLIST;
-        this.playlist = playlist;
-        nowPlayingPos = contentPosition;
-        nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
+        content = c;
 
-        mediaplayer.stopPlayback();
-        mediaplayer.initialize(nowPlayingFile);
+        refreshMediaPlayer();
 
         updateNotification();
-
         notifyMediaInfoUpdated();
     }
 
@@ -202,38 +207,45 @@ public class ContentPlaybackService extends Service
         
         if(contentType == CONTENT_TYPE_LIBRARY)
         {
-            SQLiteDatabase libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(contentString + ".db"), null);
-            playbackCursor = libraryDatabase.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;", null);
-            playbackCursor.moveToPosition(contentPosition);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            nowPlayingPos  = contentPosition;       
-            nowPlayingMax  = playbackCursor.getCount() - 1;
+            content = new ContentPlaybackLibrary(contentString, contentPosition, getApplicationContext());
         }
         else if(contentType == CONTENT_TYPE_FILESYSTEM)
         {
-            nowPlayingFile = contentString;
-            nowPlayingPos  = 0;
-            nowPlayingMax  = 0;
+            content = new ContentPlaybackFilesystem(contentString);
         }
-        currentContentType   = contentType;
-        currentContentString = contentString;
-        
-        mediaplayer.stopPlayback();
-        mediaplayer.initialize(nowPlayingFile);
-        
+        else if(contentType == CONTENT_TYPE_SUBSONIC)
+        {
+            //content = new ContentPlaybackSubsonic();
+        }
+
+        refreshMediaPlayer();
+
         updateNotification();
-        
         notifyMediaInfoUpdated();
     }
     
     public int GetPlaybackContentType()
     {
-        return currentContentType;
+        if(content == null)
+        {
+            return CONTENT_TYPE_NONE;
+        }
+        else
+        {
+            return content.getContentType();
+        }
     }
     
     public String GetPlaybackContentString()
     {
-        return currentContentString;
+        if(content == null)
+        {
+            return "";
+        }
+        else
+        {
+            return content.getContentUri();
+        }
     }
     
     public void StartPlayback()
@@ -248,29 +260,12 @@ public class ContentPlaybackService extends Service
     
     public void StopPlayback()
     {
-        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
-        {
-            nowPlayingFile = "";
-            nowPlayingPos  = -1;
-            nowPlayingMax  = 0;
-            if(playbackCursor != null)
-            {
-            playbackCursor.close();
-            playbackCursor = null;
-            }
-        }
+        content.CleanUp();
         
         mediaplayer.stopPlayback();
         
         updateNotification();
-        
         notifyMediaInfoUpdated();
-        
-        currentContentType = CONTENT_PLAYBACK_NONE;
     }
 
     public void NextPressed()
@@ -316,167 +311,53 @@ public class ContentPlaybackService extends Service
 
     public void NextTrack()
     {
-        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-            mediaplayer.stopPlayback();            
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
-        {
-            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
-            {
-                nowPlayingPos = new Random().nextInt(nowPlayingMax + 1);
-            }
-            else
-            {
-                if(nowPlayingPos >= nowPlayingMax)
-                {
-                    nowPlayingPos = 0;
-                }
-                else
-                {
-                    nowPlayingPos++;
-                }
-            }
-            playbackCursor.moveToPosition(nowPlayingPos);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(nowPlayingFile);
-            mediaplayer.startPlayback();
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_PLAYLIST)
-        {
-            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
-            {
-                nowPlayingPos = new Random().nextInt(playlist.maxIndex() + 1);
-            }
-            else
-            {
-                if(nowPlayingPos >= playlist.maxIndex())
-                {
-                    nowPlayingPos = 0;
-                }
-                else
-                {
-                    nowPlayingPos++;
-                }
-            }
-            nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(nowPlayingFile);
-            mediaplayer.startPlayback();
-        }
+        content.NextTrack();
+
+        refreshMediaPlayer();
+        mediaplayer.startPlayback();
 
         updateNotification();
-        
-        notifyMediaInfoUpdated();
-    }
-
-    public void NextArtist()
-    {
-        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-            mediaplayer.stopPlayback();
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
-        {
-            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
-            {
-                nowPlayingPos = new Random().nextInt(nowPlayingMax + 1);
-            }
-            else
-            {
-                    String currentAlbum = playbackCursor.getString(playbackCursor.getColumnIndex("ALBUM"));
-                    for( ; nowPlayingPos < nowPlayingMax; nowPlayingPos++)
-                    {
-                        playbackCursor.moveToPosition(nowPlayingPos);
-                        String newAlbum = playbackCursor.getString(playbackCursor.getColumnIndex("ALBUM"));
-                        if(!currentAlbum.equals(newAlbum))
-                        {
-                            break;
-                        }
-                    }
-            }
-            playbackCursor.moveToPosition(nowPlayingPos);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(nowPlayingFile);
-            mediaplayer.startPlayback();
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_PLAYLIST)
-        {
-            if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM )
-            {
-                nowPlayingPos = new Random().nextInt(playlist.maxIndex() + 1);
-            }
-            else
-            {
-                if(nowPlayingPos >= playlist.maxIndex())
-                {
-                    nowPlayingPos = 0;
-                }
-                else
-                {
-                    nowPlayingPos++;
-                }
-            }
-            nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(nowPlayingFile);
-            mediaplayer.startPlayback();
-        }
-
-        updateNotification();
-
         notifyMediaInfoUpdated();
     }
 
     public void PrevTrack()
     {
-        if(currentContentType == CONTENT_PLAYBACK_FILESYSTEM)
-        {
-            nowPlayingFile = "";
-            mediaplayer.stopPlayback();
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_LIBRARY)
-        {
-            if(nowPlayingPos <= 0)
-            {
-                nowPlayingPos = playbackCursor.getCount() - 1;
-            }
-            else
-            {
-                nowPlayingPos--;
-            }
-            playbackCursor.moveToPosition(nowPlayingPos);
-            nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
-            
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(nowPlayingFile);
-            mediaplayer.startPlayback();
-        }
-        else if(currentContentType == CONTENT_PLAYBACK_PLAYLIST)
-        {
-            if(nowPlayingPos <= 0)
-            {
-                nowPlayingPos = playlist.maxIndex();
-            }
-            else
-            {
-                nowPlayingPos--;
-            }
-            nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
+        content.PrevTrack();
 
-            mediaplayer.stopPlayback();
-            mediaplayer.initialize(nowPlayingFile);
-            mediaplayer.startPlayback();
-        }
+        refreshMediaPlayer();
+        mediaplayer.startPlayback();
 
         updateNotification();
-        
         notifyMediaInfoUpdated();
     }
+
+    public void NextArtist()
+    {
+        content.NextArtist();
+
+        refreshMediaPlayer();
+        mediaplayer.startPlayback();
+
+        updateNotification();
+        notifyMediaInfoUpdated();
+    }
+
+    private void refreshMediaPlayer()
+    {
+        mediaplayer.stopPlayback();
+        if(content.getContentStream())
+        {
+            mediaplayer.initializeStream(content.getContentUri());
+        }
+        else
+        {
+            mediaplayer.initializeFile(content.getContentUri());
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////Notification Functions/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @SuppressWarnings("deprecation")
     private void initializeNotification()

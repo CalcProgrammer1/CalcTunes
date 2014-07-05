@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.calcprogrammer1.calctunes.Dialogs.PlaylistBuilderDialog;
 import com.calcprogrammer1.calctunes.Dialogs.SubsonicBuilderDialog;
 import com.calcprogrammer1.calctunes.Dialogs.LibraryBuilderDialog;
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Interfaces.SourceListInterface;
 import com.calcprogrammer1.calctunes.Library.LibraryScannerTask;
 import com.calcprogrammer1.calctunes.SourceTypes.LibrarySource;
@@ -24,18 +24,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.Toast;
 
 public class SourceListFragment extends Fragment
 {

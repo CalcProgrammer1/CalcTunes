@@ -25,7 +25,7 @@ public class SubsonicConnection
     private boolean     available   = false;
     private boolean     licensed    = false;
     
-    private SubsonicAPI subsonicapi;
+    public SubsonicAPI subsonicapi;
     
     private SubsonicConnectionCallback callback;
     
@@ -309,8 +309,13 @@ public class SubsonicConnection
         }
         listData.get(position).expanded = false; 
     }
-    
-    public void downloadTranscodedOgg(int position)
+
+    public String streamUrlTranscoded(int position)
+    {
+        return(subsonicapi.SubsonicStreamURL((int)listData.get(position).id, listData.get(position).transExt, transbtrt));
+    }
+
+    public void downloadTranscoded(int position)
     {
         subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, listData.get(position).transPath + "." + listData.get(position).transExt, transbtrt, listData.get(position).transExt);
         listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;

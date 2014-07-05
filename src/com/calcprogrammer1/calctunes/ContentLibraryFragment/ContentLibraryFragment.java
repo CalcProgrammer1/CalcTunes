@@ -28,7 +28,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
 
@@ -98,7 +98,7 @@ public class ContentLibraryFragment extends Fragment
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
             libAdapter.notifyDataSetChanged();
         }  
     };
@@ -254,7 +254,7 @@ public class ContentLibraryFragment extends Fragment
             
             libAdapter = new ContentListAdapter(getActivity());
             libAdapter.attachList(listData);
-            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
             
             rootView.setAdapter(libAdapter);
             rootView.setDivider(null);
@@ -364,7 +364,7 @@ public class ContentLibraryFragment extends Fragment
                             playbackCursor.moveToNext();
                         }
                         playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_LIBRARY, currentLibrary, playbackCursor.getPosition());
-                        libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+                        libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
                         break;
                 }
                 libAdapter.notifyDataSetChanged();

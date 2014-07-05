@@ -10,13 +10,11 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,14 +26,13 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListAdapter;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackSubsonic;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
-
-import java.io.File;
 
 @SuppressWarnings("unused")
 
@@ -103,7 +100,7 @@ public class ContentSubsonicFragment extends Fragment
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
             libAdapter.notifyDataSetChanged();
         }  
     };
@@ -197,7 +194,7 @@ public class ContentSubsonicFragment extends Fragment
                     break;
                     
                 case CONTEXT_MENU_DWNLD_TRACK_TRANSCODED:
-                    subcon.downloadTranscodedOgg(position);
+                    subcon.downloadTranscoded(position);
                     break;
                     
                 case CONTEXT_MENU_DWNLD_TRACK_ORIGINAL:
@@ -252,7 +249,7 @@ public class ContentSubsonicFragment extends Fragment
             
             libAdapter = new ContentListAdapter(getActivity());
             libAdapter.attachList(subcon.listData);
-            libAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
             
             rootView.setAdapter(libAdapter);
             rootView.setDivider(null);
@@ -289,21 +286,8 @@ public class ContentSubsonicFragment extends Fragment
                         break;
                         
                     case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                        if(subcon.listData.get(position).cache == ContentListElement.CACHE_SDCARD_ORIGINAL)
-                        {
-                            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM,
-                                subcon.listData.get(position).origPath + "." + subcon.listData.get(position).origExt, 0);
-                        }
-                        else if( subcon.listData.get(position).cache == ContentListElement.CACHE_SDCARD_TRANSCODED)
-                        {
-                            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM,
-                                    subcon.listData.get(position).transPath + "." + subcon.listData.get(position).transExt, 0);
-                        }
-                        else
-                        {
-                            play_id = (int) subcon.listData.get(position).id;
-                            subcon.downloadTranscodedOgg(position);
-                        }
+                        ContentPlaybackSubsonic sub = new ContentPlaybackSubsonic(subcon, position);
+                        playbackservice.SetPlaybackContent(sub);
                         break;
                 }
                 libAdapter.notifyDataSetChanged();

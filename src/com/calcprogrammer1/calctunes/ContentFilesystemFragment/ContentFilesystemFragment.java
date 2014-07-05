@@ -1,7 +1,7 @@
 package com.calcprogrammer1.calctunes.ContentFilesystemFragment;
 
 import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Dialogs.AddToPlaylistDialog;
 import com.calcprogrammer1.calctunes.Dialogs.FolderReorganizeDialog;
 import com.calcprogrammer1.calctunes.Interfaces.ContentFilesystemAdapterInterface;
@@ -94,7 +94,7 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+            fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
             fileAdapter.notifyDataSetChanged(); 
         }  
     };
@@ -206,7 +206,7 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
     
     public void updateList()
     {
-        fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+        fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
         fileAdapter.setCallback(adapterCallback);
         fileAdapter.setCheckList(selectedFiles);
         mainView.setAdapter(fileAdapter);
@@ -218,18 +218,18 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
                 {
                     currentDirectory = fileAdapter.currentDirectory.getParent();
                     fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
-                    fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+                    fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
                     updateList();
                 } else if (fileAdapter.files.get(position).isDirectory())
                 {
                     currentDirectory = fileAdapter.files.get(position).getPath();
                     fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
-                    fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+                    fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
                     updateList();
                 } else
                 {
                     playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0);
-                    fileAdapter.setNowPlaying(playbackservice.NowPlayingFile());
+                    fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
                     fileAdapter.notifyDataSetChanged();
                 }
             }

@@ -31,7 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.ContentFilesystemFragment.ContentFilesystemFragment;
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentLibraryFragment;
@@ -151,7 +151,7 @@ public class CalcTunesActivity extends ActionBarActivity
     NowPlayingFragmentInterface nowPlayingFragmentCallback = new NowPlayingFragmentInterface(){
         public void onInfoButtonPressed()
         {
-            mediainfofragment.setTrackInfoFromFile(playbackservice.NowPlayingFile());
+            mediainfofragment.setTrackInfoFromFile(playbackservice.GetPlaybackContentString());
             horizontalpager.setCurrentScreen(2, true);
         }
     };

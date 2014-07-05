@@ -1,6 +1,6 @@
 package com.calcprogrammer1.calctunes.MediaPlayer;
 
-import com.calcprogrammer1.calctunes.ContentPlaybackService;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Interfaces.MediaButtonsHandlerInterface;
 
 import android.content.BroadcastReceiver;
@@ -12,7 +12,6 @@ import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
 public class RemoteControlReceiver extends BroadcastReceiver
 {    

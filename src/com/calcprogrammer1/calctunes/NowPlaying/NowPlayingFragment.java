@@ -3,6 +3,7 @@ package com.calcprogrammer1.calctunes.NowPlaying;
 import java.util.ArrayList;
 
 import com.calcprogrammer1.calctunes.*;
+import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackService;
 import com.calcprogrammer1.calctunes.Interfaces.NowPlayingFragmentInterface;
 
 import android.content.BroadcastReceiver;

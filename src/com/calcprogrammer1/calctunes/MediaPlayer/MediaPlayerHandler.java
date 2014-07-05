@@ -1,6 +1,7 @@
 package com.calcprogrammer1.calctunes.MediaPlayer;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.tag.FieldKey;
@@ -9,17 +10,21 @@ import org.jaudiotagger.tag.Tag;
 import com.calcprogrammer1.calctunes.Interfaces.MediaPlayerHandlerInterface;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.Visualizer;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 
 public class MediaPlayerHandler
 {
@@ -31,7 +36,8 @@ public class MediaPlayerHandler
     boolean prepared = false;
     boolean playonprepare = false;
     boolean audio_fx = false;
-    
+    boolean stream = false;
+
     public String current_path = "";
     public String current_title = "";
     public String current_album = "";
@@ -69,28 +75,57 @@ public class MediaPlayerHandler
     {
         cb = callback;
     }
-    
-    public void initialize(String filePath)
+
+    public void initializeFile(String filePath)
     {
         current_path = filePath;
+        stream = false;
         initialize();
     }
-    
+
+    public void initializeStream(String streamPath)
+    {
+        current_path = streamPath;
+        stream = true;
+        initialize();
+    }
+
+    @SuppressLint("NewApi")
     public void initialize()
     {
         stopPlayback();
         mp = new MediaPlayer();
-        File song = new File(current_path);
-        AudioFile f;
+
         try
         {
-            f = SourceListOperations.readAudioFileReadOnly(song);
-            Tag tag = f.getTag();
-            current_artist = tag.getFirst(FieldKey.ARTIST);
-            current_album = tag.getFirst(FieldKey.ALBUM);
-            current_title = tag.getFirst(FieldKey.TITLE);
-            current_year = tag.getFirst(FieldKey.YEAR);
-            
+            if(stream && Build.VERSION.SDK_INT >= 10)
+            {
+                MediaMetadataRetriever mr = new MediaMetadataRetriever();
+                if (Build.VERSION.SDK_INT >= 14)
+                {
+                    mr.setDataSource(current_path, new HashMap<String, String>());
+                }
+                else
+                {
+                    mr.setDataSource(current_path);
+                }
+                current_artist = mr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                current_album = mr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                current_title = mr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                current_year = mr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
+            }
+            else
+            {
+                File song = new File(current_path);
+                AudioFile f;
+                f = SourceListOperations.readAudioFileReadOnly(song);
+                Tag tag = f.getTag();
+                current_artist = tag.getFirst(FieldKey.ARTIST);
+                current_album = tag.getFirst(FieldKey.ALBUM);
+                current_title = tag.getFirst(FieldKey.TITLE);
+                current_year = tag.getFirst(FieldKey.YEAR);
+            }
+
             mp.reset();
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mp.setDataSource(current_path);

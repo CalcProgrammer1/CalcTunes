@@ -7,6 +7,10 @@ import org.w3c.dom.NodeList;
 
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicAPICallback;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -380,6 +384,13 @@ public class SubsonicAPI
             return song;
         }
        return null;
+    }
+
+    public String SubsonicStreamURL(int id, String format, int maxBitRate)
+    {
+        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate + "&format=" + format;
+        Log.d("SubsonicAPI", HTTPRequest);
+        return(HTTPRequest);
     }
 
     public void SubsonicStream(int id, String filename)
