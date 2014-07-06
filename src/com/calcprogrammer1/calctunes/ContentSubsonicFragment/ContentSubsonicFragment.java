@@ -1,5 +1,6 @@
 package com.calcprogrammer1.calctunes.ContentSubsonicFragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -10,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -33,8 +33,6 @@ import com.calcprogrammer1.calctunes.ContentPlaybackService.ContentPlaybackSubso
 import com.calcprogrammer1.calctunes.Interfaces.ContentFragmentInterface;
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
-
-@SuppressWarnings("unused")
 
 public class ContentSubsonicFragment extends Fragment
 {
@@ -177,28 +175,20 @@ public class ContentSubsonicFragment extends Fragment
     {
         if(item.getGroupId() == CalcTunesActivity.CONTEXT_MENU_CONTENT_SUBSONIC)
         {
-            final int position = (int) ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
+            final int position = ((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position;
             
             switch(item.getItemId())
             {
                 case CONTEXT_MENU_DWNLD_ARTIST_TRANSCODED:
+                case CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED:
+                case CONTEXT_MENU_DWNLD_TRACK_TRANSCODED:
+                    subcon.downloadTranscoded(position, getActivity().getApplicationContext());
                     break;
                     
                 case CONTEXT_MENU_DWNLD_ARTIST_ORIGINAL:
-                    break;
-                    
-                case CONTEXT_MENU_DWNLD_ALBUM_TRANSCODED:
-                    break;
-                    
                 case CONTEXT_MENU_DWNLD_ALBUM_ORIGINAL:
-                    break;
-                    
-                case CONTEXT_MENU_DWNLD_TRACK_TRANSCODED:
-                    subcon.downloadTranscoded(position);
-                    break;
-                    
                 case CONTEXT_MENU_DWNLD_TRACK_ORIGINAL:
-                    subcon.downloadOriginal(position);
+                    subcon.downloadOriginal(position, getActivity().getApplicationContext());
                     break;
 
                 case CONTEXT_MENU_DELETE_DOWNLOADED_TRACK:
@@ -299,6 +289,13 @@ public class ContentSubsonicFragment extends Fragment
     {
         subcon = new SubsonicConnection(subSource);
         subcon.SetCallback(subsonic_callback);
+    }
+
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        subcon.registerDownloadReceiver(activity.getApplicationContext());
     }
     
     SubsonicConnectionCallback subsonic_callback = new SubsonicConnectionCallback(){

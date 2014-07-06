@@ -94,6 +94,12 @@ public class ContentPlaybackLibrary implements ContentPlaybackService.ContentPla
     }
 
     @Override
+    public void setContext(Context con)
+    {
+
+    }
+
+    @Override
     public void CleanUp()
     {
         if(playbackCursor != null)

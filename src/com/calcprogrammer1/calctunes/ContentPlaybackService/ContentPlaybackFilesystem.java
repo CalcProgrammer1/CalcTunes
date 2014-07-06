@@ -1,5 +1,6 @@
 package com.calcprogrammer1.calctunes.ContentPlaybackService;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -63,6 +64,12 @@ public class ContentPlaybackFilesystem implements ContentPlaybackService.Content
     public int getContentType()
     {
         return ContentPlaybackService.CONTENT_TYPE_FILESYSTEM;
+    }
+
+    @Override
+    public void setContext(Context con)
+    {
+
     }
 
     @Override

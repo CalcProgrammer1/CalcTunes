@@ -5,20 +5,10 @@ import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.calcprogrammer1.calctunes.Interfaces.SubsonicAPICallback;
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
 public class SubsonicAPI
 {
-    //Callback
-    SubsonicAPICallback callback;
-    
     //Class to store "musicFolder" elements
     public class SubsonicMusicFolder
     {
@@ -114,11 +104,6 @@ public class SubsonicAPI
         UserPass = password;
     }
     
-    public void SetCallback(SubsonicAPICallback call)
-    {
-        callback = call;
-    }
-    
     private String buildHTTPRequest(String method)
     {
         return "http://" + ServerURL + "/rest/" + method + ".view?u=" + UserName + "&p=" + UserPass + "&v=" + APIVersion + "&c=" + AppName;
@@ -176,6 +161,7 @@ public class SubsonicAPI
     {
         HTTPRequest = buildHTTPRequest("ping");
         XMLData = CalcTunesXMLParser.getXmlFromUrl(HTTPRequest);
+        Log.d("SubsonicAPI", "XML Data: " + XMLData);
         DocData = CalcTunesXMLParser.getDomElement(XMLData);
         NodeData = DocData.getElementsByTagName("subsonic-response");
         if(NodeData.getLength() == 1)
@@ -386,6 +372,20 @@ public class SubsonicAPI
        return null;
     }
 
+    public String SubsonicStreamURL(int id)
+    {
+        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id;
+        Log.d("SubsonicAPI", HTTPRequest);
+        return(HTTPRequest);
+    }
+
+    public String SubsonicStreamURL(int id, int maxBitRate)
+    {
+        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate;
+        Log.d("SubsonicAPI", HTTPRequest);
+        return(HTTPRequest);
+    }
+
     public String SubsonicStreamURL(int id, String format, int maxBitRate)
     {
         HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate + "&format=" + format;
@@ -393,44 +393,11 @@ public class SubsonicAPI
         return(HTTPRequest);
     }
 
-    public void SubsonicStream(int id, String filename)
-    {
-        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, "/storage/sdcard0/calctunes/" + filename);
-    }
-    
-    public void SubsonicStream(int id, String filename, String format)
-    {
-        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&format=" + format;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
-    }
-    
-    public void SubsonicStream(int id, String filename, int maxBitRate)
-    {
-        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
-    }
-    
-    public void SubsonicStream(int id, String filename, int maxBitRate, String format)
-    {
-        HTTPRequest = buildHTTPRequest("stream") + "&id=" + id + "&maxBitRate=" + maxBitRate + "&format=" + format;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
-    }
-    
-    public void SubsonicStreamAsync(int id, String filename, int maxBitRate, String format)
-    {
-        new SubsonicStreamTask().execute(id, filename, maxBitRate, format);
-    }
-    
-    public void SubsonicDownload(int id, String filename)
+    public String SubsonicDownloadURL(int id)
     {
         HTTPRequest = buildHTTPRequest("download") + "&id=" + id;
-        XMLData = CalcTunesXMLParser.getFileFromUrl(HTTPRequest, filename);
-    }
-    
-    public void SubsonicDownloadAsync(int id, String filename)
-    {
-        new SubsonicDownloadTask().execute(id, filename);
+        Log.d("SubsonicAPI", HTTPRequest);
+        return(HTTPRequest);
     }
     
     public SubsonicDirectory SubsonicGetMusicDirectory(int id)
@@ -464,51 +431,5 @@ public class SubsonicAPI
             return directory;
         }
         return null;
-    }
-    
-    public class SubsonicDownloadTask extends AsyncTask<Object, Void, Void>
-    {
-        private int id;
-        private String filename;
-        
-        @Override
-        protected Void doInBackground(Object... params)
-        {
-            id       = (Integer)params[0];
-            filename = (String)params[1];
-            SubsonicDownload(id, filename);
-            return null;
-        }
-        
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            callback.onSubsonicDownloadComplete(id, filename);
-        }
-    }
-    
-    public class SubsonicStreamTask extends AsyncTask<Object, Void, Void>
-    {
-        private int id;
-        private int bitrate;
-        private String filename;
-        private String filetype;
-        
-        @Override
-        protected Void doInBackground(Object... params)
-        {
-            id       = (Integer)params[0];
-            filename = (String)params[1];
-            bitrate  = (Integer)params[2];
-            filetype = (String)params[3];
-            SubsonicStream(id, filename, bitrate, filetype);
-            return null;
-        }
-        
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            callback.onSubsonicDownloadComplete(id, filename);
-        }        
     }
 }

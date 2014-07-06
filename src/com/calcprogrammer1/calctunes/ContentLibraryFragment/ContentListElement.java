@@ -21,7 +21,7 @@ public class ContentListElement
     public String  year;
     public int     track;
     public int     time;
-    public long    id;
+    public int     id;
     public String  origExt;
     public String  origPath;
     public String  transExt;

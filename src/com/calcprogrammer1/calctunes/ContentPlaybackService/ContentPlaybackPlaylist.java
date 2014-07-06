@@ -1,5 +1,7 @@
 package com.calcprogrammer1.calctunes.ContentPlaybackService;
 
+import android.content.Context;
+
 import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
 
 import java.util.Random;
@@ -76,6 +78,12 @@ public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPl
     public int getContentType()
     {
         return ContentPlaybackService.CONTENT_TYPE_PLAYLIST;
+    }
+
+    @Override
+    public void setContext(Context con)
+    {
+
     }
 
     @Override

@@ -3,9 +3,14 @@ package com.calcprogrammer1.calctunes.Subsonic;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Bundle;
+
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
-import com.calcprogrammer1.calctunes.Interfaces.SubsonicAPICallback;
 import com.calcprogrammer1.calctunes.Interfaces.SubsonicConnectionCallback;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
 import com.calcprogrammer1.calctunes.SourceTypes.SubsonicSource;
@@ -24,7 +29,6 @@ public class SubsonicConnection
     private int         transbtrt   = 192;
     private boolean     available   = false;
     private boolean     licensed    = false;
-    
     public SubsonicAPI subsonicapi;
     
     private SubsonicConnectionCallback callback;
@@ -36,7 +40,7 @@ public class SubsonicConnection
         url         = ur;
         user        = usr;
         password    = passwd;
-        
+
         subsonicapi = new SubsonicAPI(url, user, password);
     }
     
@@ -54,7 +58,7 @@ public class SubsonicConnection
         transbtrt   = Integer.parseInt(source.streamingBitrate);
 
         subsonicapi = new SubsonicAPI(url, user, password);
-        subsonicapi.SetCallback(subsonic_callback);
+
         updateStatusAsync();
     }
     
@@ -62,20 +66,40 @@ public class SubsonicConnection
     {
         callback = call;
     }
+
+    public void registerDownloadReceiver(Context con)
+    {
+        con.registerReceiver(subsonicDownloadReceiver, new IntentFilter("com.calcprogrammer1.calctunes.SUBSONIC_DOWNLOADED_EVENT"));
+    }
     
-    SubsonicAPICallback subsonic_callback = new SubsonicAPICallback(){
+    private BroadcastReceiver subsonicDownloadReceiver = new BroadcastReceiver()
+    {
         @Override
-        public void onSubsonicDownloadComplete(int id, String filename)
+        public void onReceive(Context context, Intent intent)
         {
-            for(int i = 0; i < listData.size(); i++)
+            Bundle extras = intent.getExtras();
+            int id = extras.getInt("id");
+            boolean transcode = extras.getBoolean("transcode");
+            boolean finished  = extras.getBoolean("finished");
+            for (int i = 0; i < listData.size(); i++)
             {
-                if( listData.get(i).id == id )
+                if (listData.get(i).id == id)
                 {
-                    listData.get(i).cache = ContentListElement.CACHE_SDCARD_TRANSCODED;
+                    if(!finished)
+                    {
+                        listData.get(i).cache = ContentListElement.CACHE_DOWNLOADING;
+                    }
+                    else if(transcode)
+                    {
+                        listData.get(i).cache = ContentListElement.CACHE_SDCARD_TRANSCODED;
+                    }
+                    else
+                    {
+                        listData.get(i).cache = ContentListElement.CACHE_SDCARD_ORIGINAL;
+                    }
                 }
             }
             callback.onListUpdated();
-            callback.onTrackLoaded(id, filename);
         }
     };
     
@@ -315,17 +339,149 @@ public class SubsonicConnection
         return(subsonicapi.SubsonicStreamURL((int)listData.get(position).id, listData.get(position).transExt, transbtrt));
     }
 
-    public void downloadTranscoded(int position)
+    public void downloadTranscoded(int position, Context con)
     {
-        subsonicapi.SubsonicStreamAsync((int)listData.get(position).id, listData.get(position).transPath + "." + listData.get(position).transExt, transbtrt, listData.get(position).transExt);
-        listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
-        callback.onListUpdated();
+        if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_HEADING)
+        {
+            final Context c = con;
+            final int pos = position;
+            new Thread(new Runnable()
+            {
+                public void run()
+                {
+                    ArrayList<SubsonicAPI.SubsonicAlbum> albums = subsonicapi.SubsonicGetArtist(listData.get(pos).id);
+                    for(int x = 0; x < albums.size(); x++)
+                    {
+                        ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(albums.get(x).id);
+                        for(int y = 0; y < songs.size(); y++)
+                        {
+                            Intent i = new Intent(c, SubsonicDownloaderService.class);
+                            i.putExtra("url", url);
+                            i.putExtra("user", user);
+                            i.putExtra("password", password);
+                            i.putExtra("id", songs.get(y).id);
+                            i.putExtra("transcode", true);
+                            i.putExtra("bitRate", transbtrt);
+                            i.putExtra("format", transfrmt);
+                            i.putExtra("downloadPath", transpath + "/" + SourceListOperations.makeFilename(songs.get(y).artist) + "/" + SourceListOperations.makeFilename(songs.get(y).album)
+                                    + "/" + String.format("%02d", songs.get(y).track) + " " + SourceListOperations.makeFilename(songs.get(y).title) + "." + transfrmt);
+                            c.startService(i);
+                        }
+                    }
+                }
+            }).start();
+        }
+        if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM)
+        {
+            final Context c = con;
+            final int pos = position;
+            new Thread(new Runnable()
+            {
+                public void run()
+                {
+                    ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(listData.get(pos).id);
+                    for(int x = 0; x < songs.size(); x++)
+                    {
+                        Intent i = new Intent(c, SubsonicDownloaderService.class);
+                        i.putExtra("url",           url);
+                        i.putExtra("user",          user);
+                        i.putExtra("password",      password);
+                        i.putExtra("id",            songs.get(x).id);
+                        i.putExtra("transcode",     true);
+                        i.putExtra("bitRate",       transbtrt);
+                        i.putExtra("format",        transfrmt);
+                        i.putExtra("downloadPath",  transpath + "/" + SourceListOperations.makeFilename(songs.get(x).artist) + "/" + SourceListOperations.makeFilename(songs.get(x).album)
+                                + "/" + String.format("%02d", songs.get(x).track) + " " + SourceListOperations.makeFilename(songs.get(x).title) + "." + transfrmt);
+                        c.startService(i);
+                    }
+                }
+            }).start();
+        }
+        else if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK)
+        {
+            Intent i = new Intent(con, SubsonicDownloaderService.class);
+            i.putExtra("url",           url);
+            i.putExtra("user",          user);
+            i.putExtra("password",      password);
+            i.putExtra("id",            listData.get(position).id);
+            i.putExtra("transcode",     true);
+            i.putExtra("bitRate",       transbtrt);
+            i.putExtra("format",        listData.get(position).transExt);
+            i.putExtra("downloadPath",  listData.get(position).transPath + "." + listData.get(position).transExt);
+            con.startService(i);
+        }
     }
     
-    public void downloadOriginal(int position)
+    public void downloadOriginal(int position, Context con)
     {
-        subsonicapi.SubsonicDownloadAsync((int)listData.get(position).id, listData.get(position).origPath + "." + listData.get(position).origExt);
-        listData.get(position).cache = ContentListElement.CACHE_DOWNLOADING;
-        callback.onListUpdated();
+        if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_HEADING)
+        {
+            final Context c = con;
+            final int pos = position;
+            new Thread(new Runnable()
+            {
+                public void run()
+                {
+                    ArrayList<SubsonicAPI.SubsonicAlbum> albums = subsonicapi.SubsonicGetArtist(listData.get(pos).id);
+                    for(int x = 0; x < albums.size(); x++)
+                    {
+                        ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(albums.get(x).id);
+                        for(int y = 0; y < songs.size(); y++)
+                        {
+                            Intent i = new Intent(c, SubsonicDownloaderService.class);
+                            i.putExtra("url",           url);
+                            i.putExtra("user",          user);
+                            i.putExtra("password",      password);
+                            i.putExtra("id",            songs.get(y).id);
+                            i.putExtra("transcode",     false);
+                            i.putExtra("bitRate",       0);
+                            i.putExtra("format",        "");
+                            i.putExtra("downloadPath", origpath + "/" + SourceListOperations.makeFilename(songs.get(y).artist) + "/" + SourceListOperations.makeFilename(songs.get(y).album)
+                                    + "/" + String.format("%02d", songs.get(y).track) + " " + SourceListOperations.makeFilename(songs.get(y).title) + "." + songs.get(y).suffix);
+                            c.startService(i);
+                        }
+                    }
+                }
+            }).start();
+        }
+        if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM)
+        {
+            final Context c = con;
+            final int pos = position;
+            new Thread(new Runnable()
+            {
+                public void run()
+                {
+                    ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(listData.get(pos).id);
+                    for(int x = 0; x < songs.size(); x++)
+                    {
+                        Intent i = new Intent(c, SubsonicDownloaderService.class);
+                        i.putExtra("url",            url);
+                        i.putExtra("user",          user);
+                        i.putExtra("password",      password);
+                        i.putExtra("id",            songs.get(x).id);
+                        i.putExtra("transcode",     false);
+                        i.putExtra("bitRate",       0);
+                        i.putExtra("format",        "");
+                        i.putExtra("downloadPath", origpath + "/" + SourceListOperations.makeFilename(songs.get(x).artist) + "/" + SourceListOperations.makeFilename(songs.get(x).album)
+                                + "/" + String.format("%02d", songs.get(x).track) + " " + SourceListOperations.makeFilename(songs.get(x).title) + "." + songs.get(x).suffix);
+                        c.startService(i);
+                    }
+                }
+            }).start();
+        }
+        else if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK)
+        {
+            Intent i = new Intent(con, SubsonicDownloaderService.class);
+            i.putExtra("url",           url);
+            i.putExtra("user",          user);
+            i.putExtra("password",      password);
+            i.putExtra("id",            listData.get(position).id);
+            i.putExtra("transcode",     false);
+            i.putExtra("bitRate",       0);
+            i.putExtra("format",        "");
+            i.putExtra("downloadPath",  listData.get(position).origPath + "." + listData.get(position).origExt);
+            con.startService(i);
+        }
     }
 }

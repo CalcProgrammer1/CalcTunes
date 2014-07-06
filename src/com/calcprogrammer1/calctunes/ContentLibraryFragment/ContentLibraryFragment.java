@@ -340,7 +340,7 @@ public class ContentLibraryFragment extends Fragment
                                 newElement.title    = tmp.getString(tmp.getColumnIndex("TITLE"));
                                 newElement.track    = tmp.getInt(tmp.getColumnIndex("TRACK"));
                                 newElement.time     = tmp.getInt(tmp.getColumnIndex("TIME"));
-                                newElement.id       = tmp.getLong(tmp.getColumnIndex("_id"));
+                                newElement.id       = tmp.getInt(tmp.getColumnIndex("_id"));
                                 newElement.origPath = tmp.getString(tmp.getColumnIndex("PATH"));
                                 
                                 listData.add(position+i++, newElement);

@@ -65,6 +65,9 @@ public class ContentPlaybackService extends Service
         // Get type of content
         public int getContentType();
 
+        // Set context
+        public void setContext(Context con);
+
         // Called before closing the content source
         public void CleanUp();
     }
@@ -260,8 +263,10 @@ public class ContentPlaybackService extends Service
     
     public void StopPlayback()
     {
+        if(content != null)
         content.CleanUp();
-        
+
+        if(mediaplayer != null)
         mediaplayer.stopPlayback();
         
         updateNotification();

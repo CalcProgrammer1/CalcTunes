@@ -1,5 +1,6 @@
 package com.calcprogrammer1.calctunes.ContentPlaybackService;
 
+import android.content.Context;
 import android.os.Build;
 
 import com.calcprogrammer1.calctunes.ContentLibraryFragment.ContentListElement;
@@ -11,6 +12,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
     private int position;
     private String nowPlayingUri;
     private boolean nowPlayingStream;
+    private Context context;
 
     public ContentPlaybackSubsonic(SubsonicConnection sc, int pos)
     {
@@ -34,7 +36,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
             // On API 10 or greater, open the mediaplayer for streaming directly
             if (Build.VERSION.SDK_INT < 10)
             {
-                subcon.downloadTranscoded(position);
+                subcon.downloadTranscoded(position, context);
                 nowPlayingUri = subcon.listData.get(position).transPath + "." + subcon.listData.get(position).transExt;
                 nowPlayingStream = false;
             }
@@ -92,6 +94,12 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
     public int getContentType()
     {
         return ContentPlaybackService.CONTENT_TYPE_SUBSONIC;
+    }
+
+    @Override
+    public void setContext(Context con)
+    {
+        context = con;
     }
 
     @Override
