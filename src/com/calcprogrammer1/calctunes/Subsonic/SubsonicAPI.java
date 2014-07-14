@@ -38,6 +38,7 @@ public class SubsonicAPI
     {
         public int id;
         public String name;
+        public ArrayList<SubsonicAlbum> albums;
     }
     
     //Class to store "album" elements
@@ -49,6 +50,7 @@ public class SubsonicAPI
         public int artistId;
         public int songCount;
         public int duration;
+        public ArrayList<SubsonicSong> songs;
     }
     
     //Class to store "song" elements
@@ -270,7 +272,7 @@ public class SubsonicAPI
     }
 
     //Get artist's albums
-    public ArrayList<SubsonicAlbum> SubsonicGetArtist(int id)
+    public SubsonicArtist SubsonicGetArtist(int id)
     {
         HTTPRequest = buildHTTPRequest("getArtist") + "&id=" + id;
         XMLData = CalcTunesXMLParser.getXmlFromUrl(HTTPRequest);
@@ -278,7 +280,14 @@ public class SubsonicAPI
         NodeData = DocData.getElementsByTagName("subsonic-response");
         if(NodeData.getLength() == 1)
         {
-            ArrayList<SubsonicAlbum> albums = new ArrayList<SubsonicAlbum>();
+            SubsonicArtist artist = new SubsonicArtist();
+
+            NodeData = DocData.getElementsByTagName("artist");
+            artist.name     = getNamedString (NodeData, 0, "name"   );
+            artist.id       = getNamedInteger(NodeData, 0, "id"     );
+
+            artist.albums = new ArrayList<SubsonicAlbum>();
+
             NodeData = DocData.getElementsByTagName("album");
             for(int i = 0; i < NodeData.getLength(); i++)
             {
@@ -289,15 +298,15 @@ public class SubsonicAPI
                 album.artistId  = getNamedInteger(NodeData, i, "artistId"   );
                 album.songCount = getNamedInteger(NodeData, i, "songCount"  );
                 album.duration  = getNamedInteger(NodeData, i, "duration"   );
-                albums.add(album);
+                artist.albums.add(album);
             }
-            return albums;
+            return artist;
         }
         return null;
     }
     
     //Get album's songs
-    public ArrayList<SubsonicSong> SubsonicGetAlbum(int id)
+    public SubsonicAlbum SubsonicGetAlbum(int id)
     {
         HTTPRequest = buildHTTPRequest("getAlbum") + "&id=" + id;
         XMLData = CalcTunesXMLParser.getXmlFromUrl(HTTPRequest);
@@ -305,7 +314,15 @@ public class SubsonicAPI
         NodeData = DocData.getElementsByTagName("subsonic-response");
         if(NodeData.getLength() == 1)
         {
-            ArrayList<SubsonicSong> songs = new ArrayList<SubsonicSong>();
+            SubsonicAlbum album = new SubsonicAlbum();
+
+            NodeData = DocData.getElementsByTagName("album");
+            album.name      = getNamedString (NodeData, 0, "name"       );
+            album.artist    = getNamedString (NodeData, 0, "artist"     );
+            album.artistId  = getNamedInteger(NodeData, 0, "artistId"   );
+            album.id        = getNamedInteger(NodeData, 0, "id"         );
+
+            album.songs = new ArrayList<SubsonicSong>();
             NodeData = DocData.getElementsByTagName("song");
             for(int i = 0; i < NodeData.getLength(); i++)
             {
@@ -330,9 +347,9 @@ public class SubsonicAPI
                 song.albumId    = getNamedInteger(NodeData, i, "albumId"    );
                 song.artistId   = getNamedInteger(NodeData, i, "artistId"   );
                 
-                songs.add(song);
+                album.songs.add(song);
             }
-            return songs;
+            return album;
         }
         return null;
     }

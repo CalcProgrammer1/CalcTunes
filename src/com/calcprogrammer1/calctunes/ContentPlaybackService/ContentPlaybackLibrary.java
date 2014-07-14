@@ -43,15 +43,13 @@ public class ContentPlaybackLibrary implements ContentPlaybackService.ContentPla
     @Override
     public void PrevTrack()
     {
-        String currentAlbum = playbackCursor.getString(playbackCursor.getColumnIndex("ALBUM"));
-        for( ; nowPlayingPos < nowPlayingMax; nowPlayingPos++)
+        if(nowPlayingPos > 0)
         {
-            playbackCursor.moveToPosition(nowPlayingPos);
-            String newAlbum = playbackCursor.getString(playbackCursor.getColumnIndex("ALBUM"));
-            if(!currentAlbum.equals(newAlbum))
-            {
-                break;
-            }
+            nowPlayingPos--;
+        }
+        else
+        {
+            nowPlayingPos = nowPlayingMax;
         }
         playbackCursor.moveToPosition(nowPlayingPos);
         nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));

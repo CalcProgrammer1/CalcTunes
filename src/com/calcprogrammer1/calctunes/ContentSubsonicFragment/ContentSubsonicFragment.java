@@ -276,8 +276,15 @@ public class ContentSubsonicFragment extends Fragment
                         break;
                         
                     case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                        ContentPlaybackSubsonic sub = new ContentPlaybackSubsonic(subcon, position);
-                        playbackservice.SetPlaybackContent(sub);
+                        final int pos = position;
+                        new Thread(new Runnable()
+                        {
+                            public void run()
+                            {
+                                ContentPlaybackSubsonic sub = new ContentPlaybackSubsonic(subcon, pos);
+                                playbackservice.SetPlaybackContent(sub);
+                            }
+                        }).start();
                         break;
                 }
                 libAdapter.notifyDataSetChanged();

@@ -1,5 +1,11 @@
 Release History
 ---------------
+Version 0.56 Alpha (7/2/2014)
+    -Updated Album Art subsystem
+    -Album art now stored in folders such as /Artist/Album.png
+    -Support extended to both .png and .jpg filetypes
+    -Can now manually replace the album art with your own files from the Media Info panel
+
 Version 0.55 Alpha (4/6/2014)
     -Updated README
     -Initial playlist functionality - create playlists, add songs to playlists, remove songs from playlists, and delete playlists supported.

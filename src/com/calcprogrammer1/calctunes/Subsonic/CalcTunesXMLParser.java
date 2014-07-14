@@ -52,7 +52,7 @@ public class CalcTunesXMLParser
             HttpResponse httpResponse = httpClient.execute(httpPost);
             HttpEntity httpEntity = httpResponse.getEntity();
             xml = EntityUtils.toString(httpEntity);
- 
+            Log.d("XMLParser", "XML response: " + xml);
         }catch(Exception e){}
 
         return xml;

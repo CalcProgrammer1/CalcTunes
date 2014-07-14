@@ -181,16 +181,16 @@ public class SubsonicConnection
     
     public void expandArtist(int position)
     {
-        ArrayList<SubsonicAPI.SubsonicAlbum> albums = subsonicapi.SubsonicGetArtist((int)listData.get(position).id);
-        for(int i = 0; i < albums.size(); i++)
+        SubsonicAPI.SubsonicArtist artist = subsonicapi.SubsonicGetArtist((int)listData.get(position).id);
+        for(int i = 0; i < artist.albums.size(); i++)
         {
             ContentListElement newElement = new ContentListElement();
             
             newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_ALBUM;
             newElement.artist = listData.get(position).artist;
-            newElement.album  = albums.get(i).name;
-            //newElement.year   = albums.get(i).year;
-            newElement.id     = albums.get(i).id;
+            newElement.album  = artist.albums.get(i).name;
+            //newElement.year   = artist.albums.get(i).year;
+            newElement.id     = artist.albums.get(i).id;
             
             listData.add(position + (i + 1), newElement);
         }
@@ -258,26 +258,26 @@ public class SubsonicConnection
     
     public void expandAlbum(int position)
     {
-        ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum((int)listData.get(position).id);
-        for(int i = 0; i < songs.size(); i++)
+        SubsonicAPI.SubsonicAlbum album = subsonicapi.SubsonicGetAlbum((int)listData.get(position).id);
+        for(int i = 0; i < album.songs.size(); i++)
         {
             ContentListElement newElement = new ContentListElement();
             
             newElement.type      = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
             newElement.artist    = listData.get(position).artist;
             newElement.year      = listData.get(position).year;
-            newElement.album     = songs.get(i).album;
-            newElement.title     = songs.get(i).title;
-            newElement.track     = songs.get(i).track;
-            newElement.time      = songs.get(i).duration;
-            newElement.id        = songs.get(i).id;
+            newElement.album     = album.songs.get(i).album;
+            newElement.title     = album.songs.get(i).title;
+            newElement.track     = album.songs.get(i).track;
+            newElement.time      = album.songs.get(i).duration;
+            newElement.id        = album.songs.get(i).id;
             newElement.cache     = ContentListElement.CACHE_NONE;
-            newElement.origExt   = songs.get(i).suffix;
-            newElement.origPath  = origpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
-                                  + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title);
+            newElement.origExt   = album.songs.get(i).suffix;
+            newElement.origPath  = origpath + "/" + SourceListOperations.makeFilename(album.songs.get(i).artist) + "/" + SourceListOperations.makeFilename(album.songs.get(i).album)
+                                  + "/" + String.format("%02d", album.songs.get(i).track) + " " + SourceListOperations.makeFilename(album.songs.get(i).title);
             newElement.transExt  = transfrmt;
-            newElement.transPath = transpath + "/" + SourceListOperations.makeFilename(songs.get(i).artist) + "/" + SourceListOperations.makeFilename(songs.get(i).album)
-                                  + "/" + String.format("%02d", songs.get(i).track) + " " + SourceListOperations.makeFilename(songs.get(i).title);
+            newElement.transPath = transpath + "/" + SourceListOperations.makeFilename(album.songs.get(i).artist) + "/" + SourceListOperations.makeFilename(album.songs.get(i).album)
+                                  + "/" + String.format("%02d", album.songs.get(i).track) + " " + SourceListOperations.makeFilename(album.songs.get(i).title);
 
             File testFile = new File( newElement.transPath + "." + newElement.transExt );
 
@@ -339,6 +339,11 @@ public class SubsonicConnection
         return(subsonicapi.SubsonicStreamURL((int)listData.get(position).id, listData.get(position).transExt, transbtrt));
     }
 
+    public String streamUrlTranscodedId(int id)
+    {
+        return(subsonicapi.SubsonicStreamURL(id, transfrmt, transbtrt));
+    }
+
     public void downloadTranscoded(int position, Context con)
     {
         if(listData.get(position).type == ContentListElement.LIBRARY_LIST_TYPE_HEADING)
@@ -349,22 +354,22 @@ public class SubsonicConnection
             {
                 public void run()
                 {
-                    ArrayList<SubsonicAPI.SubsonicAlbum> albums = subsonicapi.SubsonicGetArtist(listData.get(pos).id);
-                    for(int x = 0; x < albums.size(); x++)
+                    SubsonicAPI.SubsonicArtist artist = subsonicapi.SubsonicGetArtist(listData.get(pos).id);
+                    for(int x = 0; x < artist.albums.size(); x++)
                     {
-                        ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(albums.get(x).id);
-                        for(int y = 0; y < songs.size(); y++)
+                        SubsonicAPI.SubsonicAlbum album = subsonicapi.SubsonicGetAlbum(artist.albums.get(x).id);
+                        for(int y = 0; y < album.songs.size(); y++)
                         {
                             Intent i = new Intent(c, SubsonicDownloaderService.class);
                             i.putExtra("url", url);
                             i.putExtra("user", user);
                             i.putExtra("password", password);
-                            i.putExtra("id", songs.get(y).id);
+                            i.putExtra("id", album.songs.get(y).id);
                             i.putExtra("transcode", true);
                             i.putExtra("bitRate", transbtrt);
                             i.putExtra("format", transfrmt);
-                            i.putExtra("downloadPath", transpath + "/" + SourceListOperations.makeFilename(songs.get(y).artist) + "/" + SourceListOperations.makeFilename(songs.get(y).album)
-                                    + "/" + String.format("%02d", songs.get(y).track) + " " + SourceListOperations.makeFilename(songs.get(y).title) + "." + transfrmt);
+                            i.putExtra("downloadPath", transpath + "/" + SourceListOperations.makeFilename(album.songs.get(y).artist) + "/" + SourceListOperations.makeFilename(album.songs.get(y).album)
+                                    + "/" + String.format("%02d", album.songs.get(y).track) + " " + SourceListOperations.makeFilename(album.songs.get(y).title) + "." + transfrmt);
                             c.startService(i);
                         }
                     }
@@ -379,19 +384,19 @@ public class SubsonicConnection
             {
                 public void run()
                 {
-                    ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(listData.get(pos).id);
-                    for(int x = 0; x < songs.size(); x++)
+                    SubsonicAPI.SubsonicAlbum album = subsonicapi.SubsonicGetAlbum(listData.get(pos).id);
+                    for(int x = 0; x < album.songs.size(); x++)
                     {
                         Intent i = new Intent(c, SubsonicDownloaderService.class);
                         i.putExtra("url",           url);
                         i.putExtra("user",          user);
                         i.putExtra("password",      password);
-                        i.putExtra("id",            songs.get(x).id);
+                        i.putExtra("id",            album.songs.get(x).id);
                         i.putExtra("transcode",     true);
                         i.putExtra("bitRate",       transbtrt);
                         i.putExtra("format",        transfrmt);
-                        i.putExtra("downloadPath",  transpath + "/" + SourceListOperations.makeFilename(songs.get(x).artist) + "/" + SourceListOperations.makeFilename(songs.get(x).album)
-                                + "/" + String.format("%02d", songs.get(x).track) + " " + SourceListOperations.makeFilename(songs.get(x).title) + "." + transfrmt);
+                        i.putExtra("downloadPath",  transpath + "/" + SourceListOperations.makeFilename(album.songs.get(x).artist) + "/" + SourceListOperations.makeFilename(album.songs.get(x).album)
+                                + "/" + String.format("%02d", album.songs.get(x).track) + " " + SourceListOperations.makeFilename(album.songs.get(x).title) + "." + transfrmt);
                         c.startService(i);
                     }
                 }
@@ -422,22 +427,22 @@ public class SubsonicConnection
             {
                 public void run()
                 {
-                    ArrayList<SubsonicAPI.SubsonicAlbum> albums = subsonicapi.SubsonicGetArtist(listData.get(pos).id);
-                    for(int x = 0; x < albums.size(); x++)
+                    SubsonicAPI.SubsonicArtist artist = subsonicapi.SubsonicGetArtist(listData.get(pos).id);
+                    for(int x = 0; x < artist.albums.size(); x++)
                     {
-                        ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(albums.get(x).id);
-                        for(int y = 0; y < songs.size(); y++)
+                        SubsonicAPI.SubsonicAlbum album = subsonicapi.SubsonicGetAlbum(artist.albums.get(x).id);
+                        for(int y = 0; y < album.songs.size(); y++)
                         {
                             Intent i = new Intent(c, SubsonicDownloaderService.class);
                             i.putExtra("url",           url);
                             i.putExtra("user",          user);
                             i.putExtra("password",      password);
-                            i.putExtra("id",            songs.get(y).id);
+                            i.putExtra("id",            album.songs.get(y).id);
                             i.putExtra("transcode",     false);
                             i.putExtra("bitRate",       0);
                             i.putExtra("format",        "");
-                            i.putExtra("downloadPath", origpath + "/" + SourceListOperations.makeFilename(songs.get(y).artist) + "/" + SourceListOperations.makeFilename(songs.get(y).album)
-                                    + "/" + String.format("%02d", songs.get(y).track) + " " + SourceListOperations.makeFilename(songs.get(y).title) + "." + songs.get(y).suffix);
+                            i.putExtra("downloadPath", origpath + "/" + SourceListOperations.makeFilename(album.songs.get(y).artist) + "/" + SourceListOperations.makeFilename(album.songs.get(y).album)
+                                    + "/" + String.format("%02d", album.songs.get(y).track) + " " + SourceListOperations.makeFilename(album.songs.get(y).title) + "." + album.songs.get(y).suffix);
                             c.startService(i);
                         }
                     }
@@ -452,19 +457,19 @@ public class SubsonicConnection
             {
                 public void run()
                 {
-                    ArrayList<SubsonicAPI.SubsonicSong> songs = subsonicapi.SubsonicGetAlbum(listData.get(pos).id);
-                    for(int x = 0; x < songs.size(); x++)
+                    SubsonicAPI.SubsonicAlbum album = subsonicapi.SubsonicGetAlbum(listData.get(pos).id);
+                    for(int x = 0; x < album.songs.size(); x++)
                     {
                         Intent i = new Intent(c, SubsonicDownloaderService.class);
                         i.putExtra("url",            url);
                         i.putExtra("user",          user);
                         i.putExtra("password",      password);
-                        i.putExtra("id",            songs.get(x).id);
+                        i.putExtra("id",            album.songs.get(x).id);
                         i.putExtra("transcode",     false);
                         i.putExtra("bitRate",       0);
                         i.putExtra("format",        "");
-                        i.putExtra("downloadPath", origpath + "/" + SourceListOperations.makeFilename(songs.get(x).artist) + "/" + SourceListOperations.makeFilename(songs.get(x).album)
-                                + "/" + String.format("%02d", songs.get(x).track) + " " + SourceListOperations.makeFilename(songs.get(x).title) + "." + songs.get(x).suffix);
+                        i.putExtra("downloadPath", origpath + "/" + SourceListOperations.makeFilename(album.songs.get(x).artist) + "/" + SourceListOperations.makeFilename(album.songs.get(x).album)
+                                + "/" + String.format("%02d", album.songs.get(x).track) + " " + SourceListOperations.makeFilename(album.songs.get(x).title) + "." + album.songs.get(x).suffix);
                         c.startService(i);
                     }
                 }

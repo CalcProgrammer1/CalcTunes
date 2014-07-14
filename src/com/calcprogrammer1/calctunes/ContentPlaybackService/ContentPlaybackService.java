@@ -316,13 +316,19 @@ public class ContentPlaybackService extends Service
 
     public void NextTrack()
     {
-        content.NextTrack();
+        new Thread(new Runnable()
+        {
+            public void run()
+            {
+                content.NextTrack();
 
-        refreshMediaPlayer();
-        mediaplayer.startPlayback();
+                refreshMediaPlayer();
+                mediaplayer.startPlayback();
 
-        updateNotification();
-        notifyMediaInfoUpdated();
+                updateNotification();
+                notifyMediaInfoUpdated();
+            }
+        }).start();
     }
 
     public void PrevTrack()
