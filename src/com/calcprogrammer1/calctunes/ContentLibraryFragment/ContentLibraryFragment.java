@@ -288,7 +288,7 @@ public class ContentLibraryFragment extends Fragment
                         }
                         else
                         {
-                            Cursor tmp = libraryDatabase.rawQuery("SELECT ALBUM, YEAR FROM MYLIBRARY WHERE _id IN (SELECT MIN(_id) FROM (SELECT * FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist + "\") GROUP BY ALBUM) ORDER BY ALBUM;", null);
+                            Cursor tmp = libraryDatabase.rawQuery("SELECT ALBUM, YEAR FROM MYLIBRARY WHERE _id IN (SELECT MIN(_id) FROM (SELECT * FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist.replace("\"", "\"\"") + "\") GROUP BY ALBUM) ORDER BY ALBUM;", null);
                             tmp.moveToFirst();
                             int i = 1;
                             do
@@ -324,8 +324,8 @@ public class ContentLibraryFragment extends Fragment
                         }
                         else
                         {
-                            Cursor tmp = libraryDatabase.rawQuery("SELECT TRACK, TITLE, TIME, PATH, _id, DISC FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist + "\" AND ALBUM = \""
-                                                        + listData.get(position).album + "\" ORDER BY DISC, TRACK;", null);
+                            Cursor tmp = libraryDatabase.rawQuery("SELECT TRACK, TITLE, TIME, PATH, _id, DISC FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist.replace("\"", "\"\"") + "\" AND ALBUM = \""
+                                                        + listData.get(position).album.replace("\"", "\"\"") + "\" ORDER BY DISC, TRACK;", null);
                             
                             tmp.moveToFirst();
                             int i = 1;
