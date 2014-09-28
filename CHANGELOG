@@ -1,5 +1,11 @@
 Release History
 ---------------
+Version 0.57 Alpha (7/13/2014)
+    -Updated Content Playback Service to split out library/filesystem/playlist/subsonic specific code into separate files
+    -Direct streaming from Subsonic sources is now possible without first downloading the file, but only on API 10+
+    -Subsonic download service now queues download requests and processes them sequentially for better performance
+    -Subsonic streaming supports next and previous track navigation, including across albums and artists
+
 Version 0.56 Alpha (7/2/2014)
     -Updated Album Art subsystem
     -Album art now stored in folders such as /Artist/Album.png

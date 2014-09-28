@@ -65,6 +65,24 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="Last.fm Account Settings" >\
+
+        <EditTextPreference
+            android:title="Last.fm Username"
+            android:summary="Your Last.fm account username"
+            android:defaultValue=""
+            android:key="lastfm_username" />
+
+        <EditTextPreference
+            android:title="Last.fm Password"
+            android:summary="Your Last.fm account password"
+            android:defaultValue=""
+            android:inputType="textPassword"
+            android:key="lastfm_password" />
+
+    </PreferenceCategory>
+
 	<PreferenceCategory
 	    android:title="System Settings" >
 	    

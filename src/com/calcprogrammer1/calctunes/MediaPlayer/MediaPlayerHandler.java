@@ -43,7 +43,8 @@ public class MediaPlayerHandler
     public String current_album = "";
     public String current_artist = "";
     public String current_year = "";
-    
+    public long   start_time = 0;
+
     //Shared Preferences
     private SharedPreferences appSettings;
     
@@ -95,7 +96,11 @@ public class MediaPlayerHandler
     {
         stopPlayback();
         mp = new MediaPlayer();
-
+        current_title = "";
+        current_artist = "";
+        current_album = "";
+        current_year = "";
+        start_time = 0;
         try
         {
             if(stream && Build.VERSION.SDK_INT >= 10)
@@ -155,10 +160,6 @@ public class MediaPlayerHandler
                     mp.release();
                     mp = null;
                     current_path = "";
-                    current_title = "";
-                    current_artist = "";
-                    current_album = "";
-                    current_year = "";
                     if(cb != null) cb.onSongFinished();
                 }
             });
@@ -205,6 +206,10 @@ public class MediaPlayerHandler
     
     public void startPlayback()
     {
+        if(start_time == 0)
+        {
+            start_time = System.currentTimeMillis() / 1000L;
+        }
         if(prepared)
         {
             if(mp != null)

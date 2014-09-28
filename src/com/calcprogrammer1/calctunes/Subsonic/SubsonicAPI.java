@@ -7,6 +7,8 @@ import org.w3c.dom.NodeList;
 
 import android.util.Log;
 
+import com.calcprogrammer1.calctunes.CalcTunesXMLParser;
+
 public class SubsonicAPI
 {
     //Class to store "musicFolder" elements

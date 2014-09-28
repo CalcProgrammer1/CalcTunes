@@ -5,7 +5,7 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
-import com.calcprogrammer1.calctunes.Subsonic.CalcTunesXMLParser;
+import com.calcprogrammer1.calctunes.CalcTunesXMLParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -75,9 +75,6 @@ Android Media Database Source
     Android and having the ability to use this source provides a quick and easy alternative when you don't care about customizing
     your own Library or Playlist.
 
-Current Version - Version 0.57 Alpha (7/13/2014)
+Current Version - Version 0.58 Alpha (9/27/2014)
 ---------------
-    -Updated Content Playback Service to split out library/filesystem/playlist/subsonic specific code into separate files
-    -Direct streaming from Subsonic sources is now possible without first downloading the file, but only on API 10+
-    -Subsonic download service now queues download requests and processes them sequentially for better performance
-    -Subsonic streaming supports next and previous track navigation, including across albums and artists
+    -Last.FM scrobbling support, enter username and password in settings

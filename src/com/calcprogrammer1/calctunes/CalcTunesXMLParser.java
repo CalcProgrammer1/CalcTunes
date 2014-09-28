@@ -1,4 +1,4 @@
-package com.calcprogrammer1.calctunes.Subsonic;
+package com.calcprogrammer1.calctunes;
 
 import java.io.BufferedReader;
 import java.io.File;

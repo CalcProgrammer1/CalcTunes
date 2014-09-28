@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
 import com.calcprogrammer1.calctunes.Interfaces.*;
+import com.calcprogrammer1.calctunes.LastFm;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
 import com.calcprogrammer1.calctunes.R;
@@ -108,7 +109,7 @@ public class ContentPlaybackService extends Service
     private Notification notification;
     private NotificationManager notificationManager;
     private static int notificationId = 2;
-
+    private LastFm lastfm;
     private Timer NextTimer;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,8 +268,14 @@ public class ContentPlaybackService extends Service
         content.CleanUp();
 
         if(mediaplayer != null)
-        mediaplayer.stopPlayback();
-        
+        {
+            if(mediaplayer.start_time != 0 && ((System.currentTimeMillis() / 1000L) > (mediaplayer.start_time + 30)))
+            {
+                lastfm.scrobble(mediaplayer.current_artist, mediaplayer.current_album, mediaplayer.current_title, mediaplayer.getDuration(), mediaplayer.start_time);
+            }
+            mediaplayer.stopPlayback();
+        }
+
         updateNotification();
         notifyMediaInfoUpdated();
     }
@@ -355,7 +362,14 @@ public class ContentPlaybackService extends Service
 
     private void refreshMediaPlayer()
     {
-        mediaplayer.stopPlayback();
+        if(mediaplayer != null)
+        {
+            if(mediaplayer.start_time != 0 && ((System.currentTimeMillis() / 1000L) > (mediaplayer.start_time + 30)))
+            {
+                lastfm.scrobble(mediaplayer.current_artist, mediaplayer.current_album, mediaplayer.current_title, mediaplayer.getDuration(), mediaplayer.start_time);
+            }
+            mediaplayer.stopPlayback();
+        }
         if(content.getContentStream())
         {
             mediaplayer.initializeStream(content.getContentUri());
@@ -364,6 +378,7 @@ public class ContentPlaybackService extends Service
         {
             mediaplayer.initializeFile(content.getContentUri());
         }
+        lastfm.updateNowPlaying(mediaplayer.current_artist, mediaplayer.current_album, mediaplayer.current_title, mediaplayer.getDuration());
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -458,6 +473,8 @@ public class ContentPlaybackService extends Service
 
         multi_click_thrshld = Integer.parseInt(appSettings.getString("multi_click_thrshld", "500"));
         SetPlaybackMode(appSettings.getInt("playback_mode", CONTENT_PLAYBACK_MODE_IN_ORDER));
+
+        lastfm = new LastFm(this);
 
         if(appSettings.getBoolean("service_notification", true))
         {
