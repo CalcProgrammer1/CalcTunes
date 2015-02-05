@@ -15,6 +15,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
     private SubsonicConnection subcon;
     private int position;
     private String nowPlayingUri;
+    private String contentString;
     private boolean nowPlayingStream;
     private Context context;
 
@@ -222,15 +223,21 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
     }
 
     @Override
-    public String getContentUri()
+    public String getNowPlayingUri()
     {
         return nowPlayingUri;
     }
 
     @Override
-    public boolean getContentStream()
+    public boolean getNowPlayingStream()
     {
         return nowPlayingStream;
+    }
+
+    @Override
+    public String getContentString()
+    {
+        return contentString;
     }
 
     @Override

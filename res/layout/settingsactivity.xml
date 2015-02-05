@@ -16,13 +16,13 @@
 	    android:title="Automatic Start Settings" >
 	    
 	    <CheckBoxPreference
-	        android:title="Car Mode"
+	        android:title="Bluetooth Auto-Start"
 	        android:summary="Open CalcTunes automatically when a Bluetooth A2DP device connects"
 	        android:defaultValue="false"
-	        android:key="car_mode" />
+	        android:key="bt_mode" />
 	    
 	    <CheckBoxPreference
-	        android:title="Headphones Mode"
+	        android:title="Headphones Auto-Start"
 	        android:summary="Open CalcTunes automatically when a wired headset is connected"
 	        android:defaultValue="false"
 	        android:key="hp_mode" />
@@ -50,7 +50,13 @@
 	        android:summary="The name of the library source to automatically start playback from"
 	        android:defaultValue=""
 	        android:key="auto_play_lib" />
-	    
+
+        <CheckBoxPreference
+            android:title="Automatic Playback Random"
+            android:summary="Enable to force random playback mode when automatically started in the background"
+            android:defaultValue="false"
+            android:key="auto_random" />
+
 	</PreferenceCategory>
 
     <PreferenceCategory

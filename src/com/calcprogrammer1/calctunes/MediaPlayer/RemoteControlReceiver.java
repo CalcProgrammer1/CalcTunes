@@ -40,7 +40,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(context);
 
-        boolean car_mode   = appSettings.getBoolean("car_mode", false);
+        boolean bt_mode    = appSettings.getBoolean("bt_mode", false);
         boolean hp_mode    = appSettings.getBoolean("hp_mode", false);
         boolean auto_close = appSettings.getBoolean("auto_close", false);
         boolean bkgd_only  = appSettings.getBoolean("bkgd_only", false);
@@ -64,7 +64,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
             {
                 //context.startActivity(new Intent(context, com.calcprogrammer1.calctunes.Activities.CalcTunesActivity.class));    
             }
-            abortBroadcast();
+            //abortBroadcast();
         }
         if ("android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED".equals(intent.getAction()))
         {
@@ -75,7 +75,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
                 default:
                 case 0:
                     Log.d("RemoteControlReceiver", "Bluetooth A2DP action: disconnected");
-                    if(car_mode)
+                    if(bt_mode)
                     {
                         if(auto_close)
                         {
@@ -94,7 +94,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
                     
                 case 2:
                     Log.d("RemoteControlReceiver", "Bluetooth A2DP action: connected");
-                    if(car_mode)
+                    if(bt_mode)
                     {
                         openApplication(context, bkgd_only);
                     }

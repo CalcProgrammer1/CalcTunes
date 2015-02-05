@@ -103,6 +103,12 @@ public class SourceListFragment extends Fragment
         adapter.attachSubsonicList(subsonicList);
     }
 
+    public void onDestroy()
+    {
+        super.onDestroy();
+        getActivity().unregisterReceiver(refreshReceiver);
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
     {
         view = new ExpandableListView(getActivity());

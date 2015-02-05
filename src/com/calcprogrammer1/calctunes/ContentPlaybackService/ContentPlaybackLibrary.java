@@ -13,10 +13,12 @@ public class ContentPlaybackLibrary implements ContentPlaybackService.ContentPla
 
     private Cursor playbackCursor;
 
+    private String contentString;
     private String nowPlayingFile;
 
-    public ContentPlaybackLibrary(String contentString, int contentPosition, Context c)
+    public ContentPlaybackLibrary(String contString, int contentPosition, Context c)
     {
+        contentString = contString;
         SQLiteDatabase libraryDatabase = SQLiteDatabase.openOrCreateDatabase(c.getDatabasePath(contentString + ".db"), null);
         playbackCursor = libraryDatabase.rawQuery("SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;", null);
         playbackCursor.moveToPosition(contentPosition);
@@ -59,6 +61,8 @@ public class ContentPlaybackLibrary implements ContentPlaybackService.ContentPla
     public void RandomTrack()
     {
         nowPlayingPos = new Random().nextInt(nowPlayingMax + 1);
+        playbackCursor.moveToPosition(nowPlayingPos);
+        nowPlayingFile = playbackCursor.getString(playbackCursor.getColumnIndex("PATH"));
     }
 
     @Override
@@ -74,15 +78,21 @@ public class ContentPlaybackLibrary implements ContentPlaybackService.ContentPla
     }
 
     @Override
-    public String getContentUri()
+    public String getNowPlayingUri()
     {
         return(nowPlayingFile);
     }
 
     @Override
-    public boolean getContentStream()
+    public boolean getNowPlayingStream()
     {
         return false;
+    }
+
+    @Override
+    public String getContentString()
+    {
+        return contentString;
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.Random;
 public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPlaybackType
 {
     private int nowPlayingPos;
-
+    private String contentString;
     private PlaylistEditor playlist;
 
     public ContentPlaybackPlaylist(PlaylistEditor pl, int contentPosition)
@@ -63,13 +63,19 @@ public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPl
     }
 
     @Override
-    public String getContentUri()
+    public String getNowPlayingUri()
     {
         return(playlist.playlistData.get(nowPlayingPos).filename);
     }
 
     @Override
-    public boolean getContentStream()
+    public String getContentString()
+    {
+        return contentString;
+    }
+
+    @Override
+    public boolean getNowPlayingStream()
     {
         return false;
     }

@@ -47,6 +47,9 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
     //Add to playlist button
     private Button addToPlaylistButton;
 
+    //Deselect All button
+    private Button deselectAllButton;
+
     // Filesystem content adapter for listview
     private ContentFilesystemAdapter fileAdapter;
     
@@ -71,14 +74,14 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
     ///////////////////////////////////////////////////////////////////////////////////////////////
     
     private ContentPlaybackService playbackservice;
-    //private boolean playbackservice_bound = false;
+    private boolean playbackservice_bound = false;
     
     private ServiceConnection playbackserviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
-            //playbackservice_bound = true;
+            playbackservice_bound = true;
             updateList();
         }
 
@@ -86,7 +89,7 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
         public void onServiceDisconnected(ComponentName name)
         {
             playbackservice = null;
-            //playbackservice_bound = false;
+            playbackservice_bound = false;
         }    
     };
 
@@ -114,7 +117,16 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
             {
                 selectedFiles.remove(filename);
             }
+            if(selectedFiles.size() == 0)
+            {
+                rootView.findViewById(R.id.FilesystemSelectionBar).setVisibility(View.GONE);
+            }
+            else
+            {
+                rootView.findViewById(R.id.FilesystemSelectionBar).setVisibility(View.VISIBLE);
+            }
             selectedItemsView.setText(selectedFiles.size() + " files selected");
+
         }
     };
 
@@ -141,7 +153,19 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
         //Create starting file adapter
         fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
     }
-    
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if(playbackservice_bound)
+        {
+            getActivity().unbindService(playbackserviceConnection);
+        }
+
+        getActivity().unregisterReceiver(infoUpdateReceiver);
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
     {
         rootView = inflater.inflate(R.layout.filesystemview, group, false);
@@ -149,7 +173,9 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
         registerForContextMenu(mainView);
         selectedItemsView = (TextView) rootView.findViewById(R.id.textViewFilesystemItemsSelected);
         addToPlaylistButton = (Button) rootView.findViewById(R.id.buttonFilesystemAddToPlaylist);
+        deselectAllButton = (Button) rootView.findViewById(R.id.buttonFilesystemDeselectAll);
         addToPlaylistButton.setOnClickListener(this);
+        deselectAllButton.setOnClickListener(this);
         return rootView;
     }
 
@@ -161,6 +187,13 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
                 AddToPlaylistDialog dialog = new AddToPlaylistDialog(getActivity());
                 dialog.addFileList(selectedFiles);
                 dialog.show();
+                break;
+
+            case R.id.buttonFilesystemDeselectAll:
+                selectedFiles.clear();
+                fileAdapter.setCheckList(selectedFiles);
+                fileAdapter.notifyDataSetChanged();
+                rootView.findViewById(R.id.FilesystemSelectionBar).setVisibility(View.INVISIBLE);
                 break;
         }
     }

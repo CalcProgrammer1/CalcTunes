@@ -108,6 +108,8 @@ public class CalcTunesActivity extends ActionBarActivity
             }
             if(playbackservice.GetPlaybackContentType() != ContentPlaybackService.CONTENT_TYPE_NONE)
             {
+                Log.d("CalcTunesActivity", "Setting content source from playback service");
+                Log.d("CalcTunesActivity", "Content String: " + playbackservice.GetPlaybackContentString() + " Content Type: " + playbackservice.GetPlaybackContentType());
                 setContentSource(playbackservice.GetPlaybackContentString(), playbackservice.GetPlaybackContentType());
                 horizontalpager.setCurrentScreen(1, false);
             }

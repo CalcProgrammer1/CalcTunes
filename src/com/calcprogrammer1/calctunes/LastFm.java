@@ -38,7 +38,8 @@ import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class LastFm {
+public class LastFm
+{
     static String apiKey = "";
     static String apiSecret = "";
     static String sessionKey = "";
@@ -173,19 +174,22 @@ public class LastFm {
 
                 String XMLData    = sendRequest(params);
                 Document DocData  = CalcTunesXMLParser.getDomElement(XMLData);
-                NodeList NodeData = DocData.getElementsByTagName("lfm");
-                String status     = getNamedString(NodeData, 0, "status");
-                String name       = DocData.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
-                String key        = DocData.getElementsByTagName("key").item(0).getFirstChild().getNodeValue();
-                String subscriber = DocData.getElementsByTagName("subscriber").item(0).getFirstChild().getNodeValue();
-
-                Log.d("LastFm", "Authenticate results: status=" + status + " name=" + name + " key=" + key + " subscriber=" + subscriber);
-
-                sessionKey = key;
-
-                if(key != null && !key.equals(""))
+                if( DocData != null )
                 {
+                    NodeList NodeData = DocData.getElementsByTagName("lfm");
+                    String status = getNamedString(NodeData, 0, "status");
+                    String name = DocData.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+                    String key = DocData.getElementsByTagName("key").item(0).getFirstChild().getNodeValue();
+                    String subscriber = DocData.getElementsByTagName("subscriber").item(0).getFirstChild().getNodeValue();
 
+                    Log.d("LastFm", "Authenticate results: status=" + status + " name=" + name + " key=" + key + " subscriber=" + subscriber);
+
+                    sessionKey = key;
+
+                    if (key != null && !key.equals(""))
+                    {
+
+                    }
                 }
             }
         }).start();
@@ -210,7 +214,10 @@ public class LastFm {
                 params.add(new LastFmParameter("sk", sessionKey));
 
                 String XMLData = sendRequest(params);
-                Log.d("LastFm", XMLData);
+                if(XMLData != null)
+                {
+                    Log.d("LastFm", XMLData);
+                }
             }
         }).start();
     }
@@ -235,7 +242,10 @@ public class LastFm {
                 params.add(new LastFmParameter("sk", sessionKey));
 
                 String XMLData = sendRequest(params);
-                Log.d("LastFm", XMLData);
+                if(XMLData != null)
+                {
+                    Log.d("LastFm", XMLData);
+                }
             }
         }).start();
     }

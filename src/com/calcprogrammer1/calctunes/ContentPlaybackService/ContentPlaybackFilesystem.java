@@ -8,10 +8,12 @@ import java.io.File;
 public class ContentPlaybackFilesystem implements ContentPlaybackService.ContentPlaybackType
 {
     private String currentDirectory;
+    private String contentString;
     private String nowPlayingFile;
 
-    public ContentPlaybackFilesystem(String contentString)
+    public ContentPlaybackFilesystem(String contString)
     {
+        contentString = contString;
         nowPlayingFile = contentString;
         File current = new File(nowPlayingFile);
         currentDirectory = current.getParent();
@@ -49,15 +51,21 @@ public class ContentPlaybackFilesystem implements ContentPlaybackService.Content
     }
 
     @Override
-    public String getContentUri()
+    public String getNowPlayingUri()
     {
         return nowPlayingFile;
     }
 
     @Override
-    public boolean getContentStream()
+    public boolean getNowPlayingStream()
     {
         return false;
+    }
+
+    @Override
+    public String getContentString()
+    {
+        return contentString;
     }
 
     @Override

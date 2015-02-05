@@ -126,7 +126,19 @@ public class ContentSubsonicFragment extends Fragment
         libAdapter = new ContentListAdapter(getActivity());
        
     }
-    
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if(playbackservice_bound)
+        {
+            getActivity().unbindService(playbackserviceConnection);
+        }
+
+        getActivity().unregisterReceiver(infoUpdateReceiver);
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
     {
         rootView = new ListView(getActivity());

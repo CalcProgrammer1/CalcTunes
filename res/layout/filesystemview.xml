@@ -14,8 +14,10 @@
 
     <LinearLayout
         android:orientation="horizontal"
+        android:id="@+id/FilesystemSelectionBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="?android:attr/actionModeSplitBackground">
 
         <TextView
@@ -25,6 +27,13 @@
             android:text="0 items selected"
             android:layout_weight="1"
             android:id="@+id/textViewFilesystemItemsSelected"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Deselect All"
+            android:id="@+id/buttonFilesystemDeselectAll"/>
 
         <Button
             android:layout_width="wrap_content"

@@ -58,12 +58,14 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private ContentPlaybackService playbackservice;
+    private boolean playbackservice_bound = false;
 
     private ServiceConnection playbackserviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
+            playbackservice_bound = true;
             updateList();
         }
 
@@ -71,6 +73,7 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
         public void onServiceDisconnected(ComponentName name)
         {
             playbackservice = null;
+            playbackservice_bound = false;
         }
     };
 
@@ -170,7 +173,19 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
         //Register media info update receiver
         getActivity().registerReceiver(infoUpdateReceiver, new IntentFilter("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT"));
     }
-    
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if(playbackservice_bound)
+        {
+            getActivity().unbindService(playbackserviceConnection);
+        }
+
+        getActivity().unregisterReceiver(infoUpdateReceiver);
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
     {
         view = new ListView(getActivity());

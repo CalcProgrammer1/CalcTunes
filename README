@@ -75,6 +75,7 @@ Android Media Database Source
     Android and having the ability to use this source provides a quick and easy alternative when you don't care about customizing
     your own Library or Playlist.
 
-Current Version - Version 0.58 Alpha (9/27/2014)
+Current Version - Version 0.59 Alpha (2/4/2015)
 ---------------
-    -Last.FM scrobbling support, enter username and password in settings
+    -Fix crashes from last.fm, unclean shutdown, and Bluetooth auto-start.
+    -Fix random playback mode not working.

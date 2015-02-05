@@ -62,7 +62,9 @@ public class ContentLibraryFragment extends Fragment
     
     // Current library file
     private String currentLibrary = "";
-    
+
+    private boolean playbackservice_bound = false;
+
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
@@ -82,7 +84,7 @@ public class ContentLibraryFragment extends Fragment
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             playbackservice = ((ContentPlaybackService.ContentPlaybackBinder)service).getService();
-            //playbackservice_bound = true;
+            playbackservice_bound = true;
             updateList();
         }
 
@@ -90,7 +92,7 @@ public class ContentLibraryFragment extends Fragment
         public void onServiceDisconnected(ComponentName name)
         {
             playbackservice = null;
-            //playbackservice_bound = false;
+            playbackservice_bound = false;
         }    
     };
 
@@ -125,7 +127,19 @@ public class ContentLibraryFragment extends Fragment
 
         libAdapter = new ContentListAdapter(getActivity());
     }
-    
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if(playbackservice_bound)
+        {
+            getActivity().unbindService(playbackserviceConnection);
+        }
+
+        getActivity().unregisterReceiver(infoUpdateReceiver);
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle saved)
     {
         rootView = new ListView(getActivity());
@@ -234,142 +248,142 @@ public class ContentLibraryFragment extends Fragment
     
     public void updateList()
     {
-            //Load list of artists
-            libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getActivity().getDatabasePath(currentLibrary + ".db"), null);
+        Log.d("ContentLibraryFragment", "Current library: " + currentLibrary);
+        //Load list of artists
+        libraryDatabase = SQLiteDatabase.openOrCreateDatabase(getActivity().getDatabasePath(currentLibrary + ".db"), null);
+        if(libraryDatabase != null)
+        {
             listData = new ArrayList<ContentListElement>();
             viewCursorQuery = "SELECT * FROM MYLIBRARY ORDER BY ARTIST, ALBUM, DISC, TRACK;";
-            
+
             Cursor tmp = libraryDatabase.rawQuery("SELECT DISTINCT ARTIST FROM MYLIBRARY ORDER BY ARTIST;", null);
-            
+
             tmp.moveToFirst();
             do
             {
                 ContentListElement newElement = new ContentListElement();
-                
-                newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_HEADING;
+
+                newElement.type = ContentListElement.LIBRARY_LIST_TYPE_HEADING;
                 newElement.artist = tmp.getString(tmp.getColumnIndex("ARTIST"));
-                
+
                 listData.add(newElement);
-            } while(tmp.moveToNext());
-            
+            } while (tmp.moveToNext());
+
             libAdapter = new ContentListAdapter(getActivity());
             libAdapter.attachList(listData);
             libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
-            
+
             rootView.setAdapter(libAdapter);
             rootView.setDivider(null);
             rootView.setDividerHeight(0);
-            
+
             registerForContextMenu(rootView);
-            
-        rootView.setOnItemClickListener(new OnItemClickListener()
-        {
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
+
+            rootView.setOnItemClickListener(new OnItemClickListener()
             {
-                switch(listData.get(position).type)
+                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3)
                 {
-                    case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
-                        if(listData.get(position).expanded)
-                        {
-                            while(true)
+                    switch (listData.get(position).type)
+                    {
+                        case ContentListElement.LIBRARY_LIST_TYPE_HEADING:
+                            if (listData.get(position).expanded)
                             {
-                                if((position + 1 < listData.size()) &&
-                                  (listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM
-                                || listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK ))
+                                while (true)
                                 {
-                                    listData.remove(position + 1);
+                                    if ((position + 1 < listData.size()) &&
+                                            (listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_ALBUM
+                                                    || listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK))
+                                    {
+                                        listData.remove(position + 1);
+                                    } else
+                                    {
+                                        break;
+                                    }
                                 }
-                                else
+                                listData.get(position).expanded = false;
+                            } else
+                            {
+                                Cursor tmp = libraryDatabase.rawQuery("SELECT ALBUM, YEAR FROM MYLIBRARY WHERE _id IN (SELECT MIN(_id) FROM (SELECT * FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist.replace("\"", "\"\"") + "\") GROUP BY ALBUM) ORDER BY ALBUM;", null);
+                                tmp.moveToFirst();
+                                int i = 1;
+                                do
+                                {
+                                    ContentListElement newElement = new ContentListElement();
+
+                                    newElement.type = ContentListElement.LIBRARY_LIST_TYPE_ALBUM;
+                                    newElement.artist = listData.get(position).artist;
+                                    newElement.album = tmp.getString(tmp.getColumnIndex("ALBUM"));
+                                    newElement.year = tmp.getString(tmp.getColumnIndex("YEAR"));
+
+                                    listData.add(position + i++, newElement);
+                                } while (tmp.moveToNext());
+                                listData.get(position).expanded = true;
+                            }
+                            break;
+
+                        case ContentListElement.LIBRARY_LIST_TYPE_ALBUM:
+                            if (listData.get(position).expanded)
+                            {
+                                while (true)
+                                {
+                                    if ((position + 1 < listData.size()) && (listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK))
+                                    {
+                                        listData.remove(position + 1);
+                                    } else
+                                    {
+                                        break;
+                                    }
+                                }
+                                listData.get(position).expanded = false;
+                            } else
+                            {
+                                Cursor tmp = libraryDatabase.rawQuery("SELECT TRACK, TITLE, TIME, PATH, _id, DISC FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist.replace("\"", "\"\"") + "\" AND ALBUM = \""
+                                        + listData.get(position).album.replace("\"", "\"\"") + "\" ORDER BY DISC, TRACK;", null);
+
+                                tmp.moveToFirst();
+                                int i = 1;
+                                do
+                                {
+                                    ContentListElement newElement = new ContentListElement();
+
+                                    newElement.type = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
+                                    newElement.artist = listData.get(position).artist;
+                                    newElement.year = listData.get(position).year;
+                                    newElement.album = listData.get(position).album;
+                                    newElement.title = tmp.getString(tmp.getColumnIndex("TITLE"));
+                                    newElement.track = tmp.getInt(tmp.getColumnIndex("TRACK"));
+                                    newElement.time = tmp.getInt(tmp.getColumnIndex("TIME"));
+                                    newElement.id = tmp.getInt(tmp.getColumnIndex("_id"));
+                                    newElement.origPath = tmp.getString(tmp.getColumnIndex("PATH"));
+
+                                    listData.add(position + i++, newElement);
+                                } while (tmp.moveToNext());
+                                listData.get(position).expanded = true;
+                            }
+                            break;
+
+                        case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
+                            Cursor playbackCursor = libraryDatabase.rawQuery(viewCursorQuery, null);
+
+                            //Find position that matches id
+                            playbackCursor.moveToFirst();
+
+                            while (true)
+                            {
+                                if (playbackCursor.getLong(playbackCursor.getColumnIndex("_id")) == listData.get(position).id)
                                 {
                                     break;
                                 }
+                                playbackCursor.moveToNext();
                             }
-                            listData.get(position).expanded = false;
-                        }
-                        else
-                        {
-                            Cursor tmp = libraryDatabase.rawQuery("SELECT ALBUM, YEAR FROM MYLIBRARY WHERE _id IN (SELECT MIN(_id) FROM (SELECT * FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist.replace("\"", "\"\"") + "\") GROUP BY ALBUM) ORDER BY ALBUM;", null);
-                            tmp.moveToFirst();
-                            int i = 1;
-                            do
-                            {
-                                ContentListElement newElement = new ContentListElement();
-                                
-                                newElement.type   = ContentListElement.LIBRARY_LIST_TYPE_ALBUM;
-                                newElement.artist = listData.get(position).artist;
-                                newElement.album  = tmp.getString(tmp.getColumnIndex("ALBUM"));
-                                newElement.year   = tmp.getString(tmp.getColumnIndex("YEAR"));
-                                
-                                listData.add(position+i++, newElement);
-                            } while(tmp.moveToNext());
-                            listData.get(position).expanded = true;
-                        }
-                        break;
-                        
-                    case ContentListElement.LIBRARY_LIST_TYPE_ALBUM:
-                        if(listData.get(position).expanded)
-                        {
-                            while(true)
-                            {
-                                if((position + 1 < listData.size()) && (listData.get(position + 1).type == ContentListElement.LIBRARY_LIST_TYPE_TRACK))
-                                {
-                                    listData.remove(position + 1);
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            listData.get(position).expanded = false; 
-                        }
-                        else
-                        {
-                            Cursor tmp = libraryDatabase.rawQuery("SELECT TRACK, TITLE, TIME, PATH, _id, DISC FROM MYLIBRARY WHERE ARTIST = \"" + listData.get(position).artist.replace("\"", "\"\"") + "\" AND ALBUM = \""
-                                                        + listData.get(position).album.replace("\"", "\"\"") + "\" ORDER BY DISC, TRACK;", null);
-                            
-                            tmp.moveToFirst();
-                            int i = 1;
-                            do
-                            {
-                                ContentListElement newElement = new ContentListElement();
-                                
-                                newElement.type     = ContentListElement.LIBRARY_LIST_TYPE_TRACK;
-                                newElement.artist   = listData.get(position).artist;
-                                newElement.year     = listData.get(position).year;
-                                newElement.album    = listData.get(position).album;
-                                newElement.title    = tmp.getString(tmp.getColumnIndex("TITLE"));
-                                newElement.track    = tmp.getInt(tmp.getColumnIndex("TRACK"));
-                                newElement.time     = tmp.getInt(tmp.getColumnIndex("TIME"));
-                                newElement.id       = tmp.getInt(tmp.getColumnIndex("_id"));
-                                newElement.origPath = tmp.getString(tmp.getColumnIndex("PATH"));
-                                
-                                listData.add(position+i++, newElement);
-                            } while(tmp.moveToNext());
-                            listData.get(position).expanded = true;
-                        }
-                        break;
-                        
-                    case ContentListElement.LIBRARY_LIST_TYPE_TRACK:
-                        Cursor playbackCursor = libraryDatabase.rawQuery(viewCursorQuery, null);
-                        
-                        //Find position that matches id
-                        playbackCursor.moveToFirst();
-                        
-                        while(true)
-                        {
-                            if(playbackCursor.getLong(playbackCursor.getColumnIndex("_id")) == listData.get(position).id)
-                            {
-                                break;
-                            }
-                            playbackCursor.moveToNext();
-                        }
-                        playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_LIBRARY, currentLibrary, playbackCursor.getPosition());
-                        libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
-                        break;
+                            playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_LIBRARY, currentLibrary, playbackCursor.getPosition());
+                            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+                            break;
+                    }
+                    libAdapter.notifyDataSetChanged();
                 }
-                libAdapter.notifyDataSetChanged();
-            }
-        });
+            });
+        }
     }
 
     public void setLibrary(String newLibrary)

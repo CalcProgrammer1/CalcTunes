@@ -95,6 +95,8 @@ public class NowPlayingFragment extends Fragment
         {
             getActivity().unbindService(playbackserviceConnection);
         }
+
+        getActivity().unregisterReceiver(infoUpdateReceiver);
     }
     
     @Override

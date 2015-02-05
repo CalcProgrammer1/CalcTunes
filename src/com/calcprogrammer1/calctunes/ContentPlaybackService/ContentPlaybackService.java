@@ -58,10 +58,13 @@ public class ContentPlaybackService extends Service
         public void PrevArtist();
 
         // Return URI of content to play
-        public String getContentUri();
+        public String getNowPlayingUri();
 
-        // Is content URI a stream?
-        public boolean getContentStream();
+        // Is playing URI a stream?
+        public boolean getNowPlayingStream();
+
+        // Get string of content
+        public String getContentString();
 
         // Get type of content
         public int getContentType();
@@ -99,7 +102,8 @@ public class ContentPlaybackService extends Service
 
     private ContentPlaybackType content = null;
     private int     playbackMode            = CONTENT_PLAYBACK_MODE_IN_ORDER;
-    private int     auto_start              = 0;    
+    private int     auto_start              = 0;
+    private boolean auto_random             = false;
     private MediaPlayerHandler      mediaplayer;
     private SharedPreferences       appSettings;
     private int     multi_click_thrshld;
@@ -248,7 +252,7 @@ public class ContentPlaybackService extends Service
         }
         else
         {
-            return content.getContentUri();
+            return content.getContentString();
         }
     }
     
@@ -282,43 +286,50 @@ public class ContentPlaybackService extends Service
 
     public void NextPressed()
     {
-        if( System.currentTimeMillis() - NextTime < multi_click_thrshld )
+        if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM || auto_random == true )
         {
-            if(NextTimer != null)
-            {
-                NextTimer.cancel();
-            }
-            NextTimer = new Timer("NextTimer", true);
-            NextPressCount++;
-            NextTimer.schedule( new TimerTask(){
-                public void run()
-                {
-                    new ButtonPressTask().execute(2);
-                }
-            }, multi_click_thrshld);
+            RandomTrack();
         }
         else
         {
-            NextTimer = new Timer("NextTimer", true);
-            NextTimer.schedule(new TimerTask()
-            {
-                public void run()
-                {
-                    new ButtonPressTask().execute(1);
+            if (System.currentTimeMillis() - NextTime < multi_click_thrshld) {
+                if (NextTimer != null) {
+                    NextTimer.cancel();
                 }
-            }, multi_click_thrshld);
+                NextTimer = new Timer("NextTimer", true);
+                NextPressCount++;
+                NextTimer.schedule(new TimerTask() {
+                    public void run() {
+                        new ButtonPressTask().execute(3);
+                    }
+                }, multi_click_thrshld);
+            } else {
+                NextTimer = new Timer("NextTimer", true);
+                NextTimer.schedule(new TimerTask() {
+                    public void run() {
+                        new ButtonPressTask().execute(2);
+                    }
+                }, multi_click_thrshld);
+            }
+            NextTime = System.currentTimeMillis();
         }
-        NextTime = System.currentTimeMillis();
     }
 
     public void PrevPressed()
     {
-        if( System.currentTimeMillis() - PrevTime < multi_click_thrshld )
+        if( playbackMode == CONTENT_PLAYBACK_MODE_RANDOM || auto_random == true )
         {
-            Log.d("ContentPlaybackService", "Double clicked Prev Track");
+            RandomTrack();
         }
-        PrevTime = System.currentTimeMillis();
-        new ButtonPressTask().execute(0);
+        else
+        {
+            if (System.currentTimeMillis() - PrevTime < multi_click_thrshld)
+            {
+                Log.d("ContentPlaybackService", "Double clicked Prev Track");
+            }
+            PrevTime = System.currentTimeMillis();
+            new ButtonPressTask().execute(1);
+        }
     }
 
     public void NextTrack()
@@ -349,6 +360,17 @@ public class ContentPlaybackService extends Service
         notifyMediaInfoUpdated();
     }
 
+    public void RandomTrack()
+    {
+        content.RandomTrack();
+
+        refreshMediaPlayer();
+        mediaplayer.startPlayback();
+
+        updateNotification();
+        notifyMediaInfoUpdated();
+    }
+
     public void NextArtist()
     {
         content.NextArtist();
@@ -370,13 +392,13 @@ public class ContentPlaybackService extends Service
             }
             mediaplayer.stopPlayback();
         }
-        if(content.getContentStream())
+        if(content.getNowPlayingStream())
         {
-            mediaplayer.initializeStream(content.getContentUri());
+            mediaplayer.initializeStream(content.getNowPlayingUri());
         }
         else
         {
-            mediaplayer.initializeFile(content.getContentUri());
+            mediaplayer.initializeFile(content.getNowPlayingUri());
         }
         lastfm.updateNowPlaying(mediaplayer.current_artist, mediaplayer.current_album, mediaplayer.current_title, mediaplayer.getDuration());
     }
@@ -401,13 +423,13 @@ public class ContentPlaybackService extends Service
         if(appSettings.getBoolean("service_notification", true))
         {
             notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: " + mediaplayer.current_title, PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
-            notificationManager.notify(notificationId, notification);
+            startForeground(notificationId, notification);
         }
     }
     
     private void endNotification()
     {
-        notificationManager.cancel(notificationId);
+        stopForeground(true);
     }
     
     private void notifyMediaInfoUpdated()
@@ -443,13 +465,21 @@ public class ContentPlaybackService extends Service
         }
         else
         {
-            auto_start = 0;
+            auto_start  = 0;
+            auto_random = false;
         }
         
         if(auto_start == 1)
         {           
             Log.d("ContentPlaybackService", "Automatic playback starting");
-            
+
+            auto_random = false;
+
+            if(appSettings.getBoolean("auto_random", false) == true)
+                {
+                auto_random = true;
+                }
+
             SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, appSettings.getString("auto_play_lib", "Music"), 0);
             StartPlayback();
         }
@@ -512,14 +542,18 @@ public class ContentPlaybackService extends Service
             switch(id)
             {
                 case 0:
-                    PrevTrack();
+                    RandomTrack();
                     break;
 
                 case 1:
-                    NextTrack();
+                    PrevTrack();
                     break;
 
                 case 2:
+                    NextTrack();
+                    break;
+
+                case 3:
                     NextArtist();
                     break;
             }
