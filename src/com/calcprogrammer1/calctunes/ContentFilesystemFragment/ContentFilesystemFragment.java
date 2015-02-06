@@ -239,7 +239,7 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
     
     public void updateList()
     {
-        fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+        fileAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
         fileAdapter.setCallback(adapterCallback);
         fileAdapter.setCheckList(selectedFiles);
         mainView.setAdapter(fileAdapter);
@@ -251,18 +251,18 @@ public class ContentFilesystemFragment extends Fragment implements View.OnClickL
                 {
                     currentDirectory = fileAdapter.currentDirectory.getParent();
                     fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
-                    fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+                    fileAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
                     updateList();
                 } else if (fileAdapter.files.get(position).isDirectory())
                 {
                     currentDirectory = fileAdapter.files.get(position).getPath();
                     fileAdapter = new ContentFilesystemAdapter(getActivity(), currentDirectory);
-                    fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+                    fileAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
                     updateList();
                 } else
                 {
                     playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_FILESYSTEM, fileAdapter.files.get(position).getPath(), 0);
-                    fileAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+                    fileAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
                     fileAdapter.notifyDataSetChanged();
                 }
             }

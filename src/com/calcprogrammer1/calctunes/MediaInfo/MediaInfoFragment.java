@@ -49,15 +49,11 @@ public class MediaInfoFragment extends Fragment
 
     // Shared Preferences
     private SharedPreferences appSettings;
-    
-    // Interface Color
-    //private int interfaceColor;
-    
+
     OnSharedPreferenceChangeListener appSettingsListener = new OnSharedPreferenceChangeListener(){
         public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1)
         {
             appSettings = arg0;
-            //interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
             setTrackInfo();
         }
     };
@@ -77,7 +73,6 @@ public class MediaInfoFragment extends Fragment
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
-        //interfaceColor = appSettings.getInt("InterfaceColor", Color.DKGRAY);
     }
     
     @Override

@@ -96,7 +96,7 @@ public class AlbumArtManager
     }
 
     //Checks cache for album art, if it is not found return default icon
-    static private Bitmap getAlbumArtFromCache(String artist, String album, Context c)
+    static public Bitmap getAlbumArtFromCache(String artist, String album, Context c)
     {
         Bitmap artwork = null;
         String path = getAlbumArtFileName(c, artist, album);
@@ -110,6 +110,7 @@ public class AlbumArtManager
         {
             artPath = path + ".jpg";
         }
+        Log.d("AlbumArtManager", "Loading cached bitmap: " + artPath);
         if(artPath != null)
         {
             artwork = BitmapFactory.decodeFile(artPath);

@@ -100,7 +100,7 @@ public class ContentLibraryFragment extends Fragment
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+            libAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
             libAdapter.notifyDataSetChanged();
         }  
     };
@@ -271,7 +271,7 @@ public class ContentLibraryFragment extends Fragment
 
             libAdapter = new ContentListAdapter(getActivity());
             libAdapter.attachList(listData);
-            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+            libAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
 
             rootView.setAdapter(libAdapter);
             rootView.setDivider(null);
@@ -377,7 +377,7 @@ public class ContentLibraryFragment extends Fragment
                                 playbackCursor.moveToNext();
                             }
                             playbackservice.SetPlaybackContentSource(ContentPlaybackService.CONTENT_TYPE_LIBRARY, currentLibrary, playbackCursor.getPosition());
-                            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+                            libAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
                             break;
                     }
                     libAdapter.notifyDataSetChanged();

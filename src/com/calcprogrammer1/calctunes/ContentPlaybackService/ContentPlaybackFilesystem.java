@@ -83,6 +83,6 @@ public class ContentPlaybackFilesystem implements ContentPlaybackService.Content
     @Override
     public void CleanUp()
     {
-
+        nowPlayingFile = "";
     }
 }

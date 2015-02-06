@@ -4,6 +4,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.calcprogrammer1.calctunes.Activities.CalcTunesActivity;
+import com.calcprogrammer1.calctunes.AlbumArtManager;
 import com.calcprogrammer1.calctunes.ContentPlaylistFragment.PlaylistEditor;
 import com.calcprogrammer1.calctunes.Interfaces.*;
 import com.calcprogrammer1.calctunes.LastFm;
@@ -27,9 +29,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -96,13 +100,18 @@ public class ContentPlaybackService extends Service
     public static final int CONTENT_PLAYBACK_MODE_REPEAT_ALBUM  = 3;
     public static final int CONTENT_PLAYBACK_MODE_REPEAT_ARTIST = 4;
 
+    //Start-up Modes
+    public static final int START_MODE_NOT_STARTED              = 0;
+    public static final int START_MODE_AUTOMATIC_START          = 1;
+    public static final int START_MODE_MANUAL_START             = 2;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Local variables////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private ContentPlaybackType content = null;
     private int     playbackMode            = CONTENT_PLAYBACK_MODE_IN_ORDER;
-    private int     auto_start              = 0;
+    private int     start_mode              = 0;
     private boolean auto_random             = false;
     private MediaPlayerHandler      mediaplayer;
     private SharedPreferences       appSettings;
@@ -226,6 +235,11 @@ public class ContentPlaybackService extends Service
             //content = new ContentPlaybackSubsonic();
         }
 
+        if(playbackMode == CONTENT_PLAYBACK_MODE_RANDOM || auto_random == true)
+        {
+            content.RandomTrack();
+        }
+
         refreshMediaPlayer();
 
         updateNotification();
@@ -255,7 +269,19 @@ public class ContentPlaybackService extends Service
             return content.getContentString();
         }
     }
-    
+
+    public String GetNowPlayingString()
+    {
+        if(content == null)
+        {
+            return "";
+        }
+        else
+        {
+            return content.getNowPlayingUri();
+        }
+    }
+
     public void StartPlayback()
     {
         mediaplayer.startPlayback();
@@ -410,11 +436,7 @@ public class ContentPlaybackService extends Service
     @SuppressWarnings("deprecation")
     private void initializeNotification()
     {
-        notification = new Notification(R.drawable.icon, "CalcTunes Playback Service Started", System.currentTimeMillis());
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: ", PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);
+        updateNotification();
     }
     
     @SuppressWarnings("deprecation")
@@ -422,7 +444,26 @@ public class ContentPlaybackService extends Service
     {
         if(appSettings.getBoolean("service_notification", true))
         {
-            notification.setLatestEventInfo(this, "CalcTunes", "Now Playing: " + mediaplayer.current_title, PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0));
+            Intent notificationIntent = new Intent(getApplicationContext(), CalcTunesActivity.class);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+
+            if( !mediaplayer.current_title.equals("") )
+            notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle(mediaplayer.current_title)
+                    .setContentText(mediaplayer.current_artist)
+                    .setSmallIcon(R.drawable.icon)
+                    .setLargeIcon(AlbumArtManager.getAlbumArtFromCache(mediaplayer.current_artist, mediaplayer.current_album, getApplicationContext()))
+                    .setContentIntent(intent)
+                    .build();
+            else
+            notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("CalcTunes")
+                    .setContentText("Stopped")
+                    .setSmallIcon(R.drawable.icon)
+                    .setContentIntent(intent)
+                    .build();
+
             startForeground(notificationId, notification);
         }
     }
@@ -461,27 +502,32 @@ public class ContentPlaybackService extends Service
         Bundle extras = intent.getExtras();
         if(extras != null)
         {
-            auto_start = extras.getInt("auto_start", 0);
+            if((extras.getInt("auto_start", 0) == 1) && (start_mode == START_MODE_NOT_STARTED))
+            {
+                start_mode = START_MODE_AUTOMATIC_START;
+
+                Log.d("ContentPlaybackService", "Automatic playback starting");
+
+                auto_random = false;
+
+                if(appSettings.getBoolean("auto_random", false) == true)
+                {
+                    auto_random = true;
+                }
+
+                SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, appSettings.getString("auto_play_lib", "Music"), 0);
+                StartPlayback();
+            }
+            else
+            {
+                start_mode = START_MODE_MANUAL_START;
+                auto_random = false;
+            }
         }
         else
         {
-            auto_start  = 0;
+            start_mode  = START_MODE_MANUAL_START;
             auto_random = false;
-        }
-        
-        if(auto_start == 1)
-        {           
-            Log.d("ContentPlaybackService", "Automatic playback starting");
-
-            auto_random = false;
-
-            if(appSettings.getBoolean("auto_random", false) == true)
-                {
-                auto_random = true;
-                }
-
-            SetPlaybackContentSource(CONTENT_TYPE_LIBRARY, appSettings.getString("auto_play_lib", "Music"), 0);
-            StartPlayback();
         }
         
         return START_REDELIVER_INTENT;
@@ -496,7 +542,10 @@ public class ContentPlaybackService extends Service
                
         //Register media buttons receiver
         registerReceiver(remoteReceiver, new IntentFilter("com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT"));
-        
+
+        //Register app close receiver
+        registerReceiver(closeReceiver, new IntentFilter("com.calcprogrammer1.calctunes.CLOSE_APP_EVENT"));
+
         //Get the application preferences
         appSettings = PreferenceManager.getDefaultSharedPreferences(this);
         appSettings.registerOnSharedPreferenceChangeListener(appSettingsListener);
@@ -520,7 +569,10 @@ public class ContentPlaybackService extends Service
         
         //Unregister media buttons receiver
         unregisterReceiver(remoteReceiver);
-        
+
+        //Unregister app close receiver
+        unregisterReceiver(closeReceiver);
+
         //Stop the notification
         endNotification();
     }
@@ -618,6 +670,33 @@ public class ContentPlaybackService extends Service
                         StartPlayback();
                     }
                     break;
+            }
+        }
+    };
+
+    /*---------------------------------------------------------------------*\
+    |                                                                       |
+    |   Remote Control Broadcast Receiver                                   |
+    |                                                                       |
+    |   Receives intent com.calcprogrammer1.calctunes.REMOTE_BUTTON_EVENT   |
+    |                                                                       |
+    |   This intent contains a KeyEvent.KEYCODE_ value indicating which     |
+    |   media button key was pressed.  It is sent from the Media Buttons    |
+    |   event receiver for handling headset/Bluetooth key events.           |
+    |                                                                       |
+    \*---------------------------------------------------------------------*/
+
+    private BroadcastReceiver closeReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+
+            Log.d("CalcTunesActivity", "Exit Intent Received");
+
+            if(start_mode == START_MODE_AUTOMATIC_START)
+            {
+                stopSelf();
             }
         }
     };

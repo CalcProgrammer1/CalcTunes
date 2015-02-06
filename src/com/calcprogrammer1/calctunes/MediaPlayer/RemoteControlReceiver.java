@@ -162,7 +162,7 @@ public class RemoteControlReceiver extends BroadcastReceiver
     {
         //if(bkgd_only)
         //{
-            context.stopService(new Intent(context, ContentPlaybackService.class));   
+        //    context.stopService(new Intent(context, ContentPlaybackService.class));
         //}
         //else
         //{

@@ -255,6 +255,6 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
     @Override
     public void CleanUp()
     {
-
+        nowPlayingUri = "";
     }
 }

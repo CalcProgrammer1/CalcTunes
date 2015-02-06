@@ -9,13 +9,14 @@ import java.util.Random;
 public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPlaybackType
 {
     private int nowPlayingPos;
-    private String contentString;
+    private String nowPlayingFile;
     private PlaylistEditor playlist;
 
     public ContentPlaybackPlaylist(PlaylistEditor pl, int contentPosition)
     {
         playlist = pl;
         nowPlayingPos = contentPosition;
+        nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
     }
 
     @Override
@@ -29,6 +30,7 @@ public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPl
         {
             nowPlayingPos++;
         }
+        nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
     }
 
     @Override
@@ -42,12 +44,14 @@ public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPl
         {
             nowPlayingPos++;
         }
+        nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
     }
 
     @Override
     public void RandomTrack()
     {
         nowPlayingPos = new Random().nextInt(playlist.maxIndex() + 1);
+        nowPlayingFile = playlist.playlistData.get(nowPlayingPos).filename;
     }
 
     @Override
@@ -65,13 +69,13 @@ public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPl
     @Override
     public String getNowPlayingUri()
     {
-        return(playlist.playlistData.get(nowPlayingPos).filename);
+        return(nowPlayingFile);
     }
 
     @Override
     public String getContentString()
     {
-        return contentString;
+        return nowPlayingFile;
     }
 
     @Override
@@ -95,6 +99,6 @@ public class ContentPlaybackPlaylist implements ContentPlaybackService.ContentPl
     @Override
     public void CleanUp()
     {
-
+        nowPlayingFile = "";
     }
 }

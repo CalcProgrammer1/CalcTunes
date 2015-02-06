@@ -115,5 +115,6 @@ public class ContentPlaybackLibrary implements ContentPlaybackService.ContentPla
             playbackCursor.close();
             playbackCursor = null;
         }
+        nowPlayingFile = "";
     }
 }

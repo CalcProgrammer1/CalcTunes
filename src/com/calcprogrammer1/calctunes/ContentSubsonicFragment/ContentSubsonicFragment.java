@@ -98,7 +98,7 @@ public class ContentSubsonicFragment extends Fragment
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+            libAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
             libAdapter.notifyDataSetChanged();
         }  
     };
@@ -251,7 +251,7 @@ public class ContentSubsonicFragment extends Fragment
             
             libAdapter = new ContentListAdapter(getActivity());
             libAdapter.attachList(subcon.listData);
-            libAdapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+            libAdapter.setNowPlaying(playbackservice.GetNowPlayingString());
             
             rootView.setAdapter(libAdapter);
             rootView.setDivider(null);

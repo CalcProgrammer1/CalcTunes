@@ -1,5 +1,9 @@
 Release History
 ---------------
+Version 0.59 Alpha (2/4/2015)
+    -Fix crashes from last.fm, unclean shutdown, and Bluetooth auto-start.
+    -Fix random playback mode not working.
+
 Version 0.58 Alpha (9/27/2014)
     -Last.FM scrobbling support, enter username and password in settings
 

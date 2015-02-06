@@ -112,6 +112,7 @@ public class CalcTunesActivity extends ActionBarActivity
                 Log.d("CalcTunesActivity", "Content String: " + playbackservice.GetPlaybackContentString() + " Content Type: " + playbackservice.GetPlaybackContentType());
                 setContentSource(playbackservice.GetPlaybackContentString(), playbackservice.GetPlaybackContentType());
                 horizontalpager.setCurrentScreen(1, false);
+                notifyMediaInfoUpdated();
             }
         }
 
@@ -153,7 +154,7 @@ public class CalcTunesActivity extends ActionBarActivity
     NowPlayingFragmentInterface nowPlayingFragmentCallback = new NowPlayingFragmentInterface(){
         public void onInfoButtonPressed()
         {
-            mediainfofragment.setTrackInfoFromFile(playbackservice.GetPlaybackContentString());
+            mediainfofragment.setTrackInfoFromFile(playbackservice.GetNowPlayingString());
             horizontalpager.setCurrentScreen(2, true);
         }
     };
@@ -176,7 +177,14 @@ public class CalcTunesActivity extends ActionBarActivity
             UpdatePlaybackModeIcon();
         }
     };
-    
+
+    private void notifyMediaInfoUpdated()
+    {
+        Intent broadcast = new Intent();
+        broadcast.setAction("com.calcprogrammer1.calctunes.PLAYBACK_INFO_UPDATED_EVENT");
+        sendBroadcast(broadcast);
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Class Overrides////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -483,8 +491,8 @@ public class CalcTunesActivity extends ActionBarActivity
         public void onReceive(Context context, Intent intent)
         {
             
-            Log.d("CalcTunesActivity", "Exit Intent Received");
-            Exit();
+            //Log.d("CalcTunesActivity", "Exit Intent Received");
+            //Exit();
         }
     };
 }

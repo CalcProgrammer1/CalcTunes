@@ -81,7 +81,7 @@ public class ContentPlaylistFragment extends Fragment implements ListView.OnItem
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            adapter.setNowPlaying(playbackservice.GetPlaybackContentString());
+            adapter.setNowPlaying(playbackservice.GetNowPlayingString());
             adapter.notifyDataSetChanged();
         }
     };
