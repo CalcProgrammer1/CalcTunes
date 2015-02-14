@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import java.io.File;
@@ -32,6 +33,7 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
     Button   buttonDone;
     Button   buttonTrans;
     Button   buttonOrig;
+    CheckBox checkTrans;
 
     String editFilename = null;
 
@@ -65,6 +67,7 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
         buttonDone    = (Button)   findViewById(R.id.buttonSubsonicDone);
         buttonTrans   = (Button)   findViewById(R.id.buttonSubsonicTrans);
         buttonOrig    = (Button)   findViewById(R.id.buttonSubsonicOrig);
+        checkTrans    = (CheckBox) findViewById(R.id.srvTranscodeStream);
 
         buttonDone.setOnClickListener(this);
         buttonTrans.setOnClickListener(this);
@@ -83,6 +86,7 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             srvBtrtInput.setText(EditSub.streamingBitrate);
             srvTransInput.setText(EditSub.transPath);
             srvOrigInput.setText(EditSub.origPath);
+            checkTrans.setChecked(EditSub.transcodeStream);
         }
 
     }
@@ -163,6 +167,104 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             });
             ad.show();
         }
+        else if(srvPortInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a server port to continue.  The default Subsonic port is 4040.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
+        else if(srvUserInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a username to continue.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
+        else if(srvPassInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a password to continue.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
+        else if(srvFrmtInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a transcoding format to continue.  The default Subsonic format is mp3.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
+        else if(srvBtrtInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a transcoding bit rate to continue.  If unsure, set to 160.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
+        else if(srvTransInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a path for transcoded files.  If unsure, /sdcard/Music should work for most Android versions.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
+        else if(srvOrigInput.getText().toString().equals(""))
+        {
+            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+            ad.setCancelable(false);
+            ad.setMessage("Please input a path for original files.  If unsure, /sdcard/Music should work for most Android versions.");
+            ad.setButton("OK", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            });
+            ad.show();
+        }
         else
         {
             SubsonicSource sub = new SubsonicSource();
@@ -175,6 +277,7 @@ public class SubsonicBuilderDialog extends Dialog implements View.OnClickListene
             sub.streamingBitrate = srvBtrtInput.getText().toString();
             sub.transPath = srvTransInput.getText().toString();
             sub.origPath  = srvOrigInput.getText().toString();
+            sub.transcodeStream = checkTrans.isChecked();
 
             if(!sub.transPath.endsWith("/")) sub.transPath += "/";
             if(!sub.origPath.endsWith("/")) sub.origPath += "/";

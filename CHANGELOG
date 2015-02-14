@@ -1,5 +1,10 @@
 Release History
 ---------------
+Version 0.61 Alpha (2/14/2015)
+    - Fix media info view not working (and crashing) when opened while playing a Subsonic stream source
+    - Don't send Last.FM requests if username and password aren't configured or if session key is invalid
+    - Highlight playing track in Subsonic mode
+
 Version 0.60 Alpha (2/5/2015)
     -Fix media info view not working on 0.59
     -Fix service restart when already opened from activity and auto-start device connects

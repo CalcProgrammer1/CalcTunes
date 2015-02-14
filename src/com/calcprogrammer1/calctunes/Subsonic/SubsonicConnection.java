@@ -29,6 +29,8 @@ public class SubsonicConnection
     private int         transbtrt   = 192;
     private boolean     available   = false;
     private boolean     licensed    = false;
+    private boolean     transStream = false;
+
     public SubsonicAPI subsonicapi;
     
     private SubsonicConnectionCallback callback;
@@ -53,7 +55,7 @@ public class SubsonicConnection
         password    = source.password;
         transpath   = source.transPath;
         origpath    = source.origPath;
-
+        transStream = source.transcodeStream;
         transfrmt   = source.streamingFormat;
         transbtrt   = Integer.parseInt(source.streamingBitrate);
 
@@ -342,6 +344,40 @@ public class SubsonicConnection
     public String streamUrlTranscodedId(int id)
     {
         return(subsonicapi.SubsonicStreamURL(id, transfrmt, transbtrt));
+    }
+
+    public String streamUrlOriginal(int position)
+    {
+        return(subsonicapi.SubsonicDownloadURL((int)listData.get(position).id));
+    }
+
+    public String streamUrlOriginalId(int id)
+    {
+        return(subsonicapi.SubsonicDownloadURL(id));
+    }
+
+    public String streamUrl(int position)
+    {
+        if(transStream)
+        {
+            return streamUrlTranscoded(position);
+        }
+        else
+        {
+            return streamUrlOriginal(position);
+        }
+    }
+
+    public String streamUrlId(int id)
+    {
+        if(transStream)
+        {
+            return streamUrlTranscodedId(id);
+        }
+        else
+        {
+            return streamUrlOriginalId(id);
+        }
     }
 
     public void downloadTranscoded(int position, Context con)

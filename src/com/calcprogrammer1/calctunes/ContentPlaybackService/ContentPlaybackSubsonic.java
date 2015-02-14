@@ -59,7 +59,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                 nowPlayingArtist = subcon.subsonicapi.SubsonicGetArtist(nowPlayingAlbum.artistId);
                 artistList       = subcon.subsonicapi.SubsonicGetArtists();
 
-                nowPlayingUri = subcon.streamUrlTranscodedId(nowPlayingId);
+                nowPlayingUri = subcon.streamUrlId(nowPlayingId);
                 nowPlayingStream = true;
             }
         }
@@ -96,7 +96,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                                                 nowPlayingArtist = subcon.subsonicapi.SubsonicGetArtist(artistList.get(0).id);
                                                 nowPlayingAlbum  = subcon.subsonicapi.SubsonicGetAlbum(nowPlayingArtist.albums.get(0).id);
                                                 nowPlayingId     = nowPlayingAlbum.songs.get(0).id;
-                                                nowPlayingUri    = subcon.streamUrlTranscodedId(nowPlayingId);
+                                                nowPlayingUri    = subcon.streamUrlId(nowPlayingId);
                                                 nowPlayingStream = true;
                                             }
                                             else
@@ -104,7 +104,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                                                 nowPlayingArtist = subcon.subsonicapi.SubsonicGetArtist(artistList.get(k + 1).id);
                                                 nowPlayingAlbum  = subcon.subsonicapi.SubsonicGetAlbum(nowPlayingArtist.albums.get(0).id);
                                                 nowPlayingId     = nowPlayingAlbum.songs.get(0).id;
-                                                nowPlayingUri    = subcon.streamUrlTranscodedId(nowPlayingId);
+                                                nowPlayingUri    = subcon.streamUrlId(nowPlayingId);
                                                 nowPlayingStream = true;
                                             }
                                             break;
@@ -115,7 +115,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                                 {
                                     nowPlayingAlbum = subcon.subsonicapi.SubsonicGetAlbum(nowPlayingArtist.albums.get(j + 1).id);
                                     nowPlayingId    = nowPlayingAlbum.songs.get(0).id;
-                                    nowPlayingUri   = subcon.streamUrlTranscodedId(nowPlayingId);
+                                    nowPlayingUri   = subcon.streamUrlId(nowPlayingId);
                                     nowPlayingStream = true;
                                 }
                                 break;
@@ -125,7 +125,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                     else
                     {
                         nowPlayingId = nowPlayingAlbum.songs.get(i + 1).id;
-                        nowPlayingUri = subcon.streamUrlTranscodedId(nowPlayingId);
+                        nowPlayingUri = subcon.streamUrlId(nowPlayingId);
                         nowPlayingStream = true;
                     }
                     break;
@@ -165,7 +165,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                                                 nowPlayingArtist = subcon.subsonicapi.SubsonicGetArtist(artistList.get(artistList.size() - 1).id);
                                                 nowPlayingAlbum  = subcon.subsonicapi.SubsonicGetAlbum(nowPlayingArtist.albums.get(nowPlayingArtist.albums.size() - 1).id);
                                                 nowPlayingId     = nowPlayingAlbum.songs.get(nowPlayingAlbum.songs.size() - 1).id;
-                                                nowPlayingUri    = subcon.streamUrlTranscodedId(nowPlayingId);
+                                                nowPlayingUri    = subcon.streamUrlId(nowPlayingId);
                                                 nowPlayingStream = true;
                                             }
                                             else
@@ -173,7 +173,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                                                 nowPlayingArtist = subcon.subsonicapi.SubsonicGetArtist(artistList.get(k - 1).id);
                                                 nowPlayingAlbum  = subcon.subsonicapi.SubsonicGetAlbum(nowPlayingArtist.albums.get(nowPlayingArtist.albums.size() - 1).id);
                                                 nowPlayingId     = nowPlayingAlbum.songs.get(nowPlayingAlbum.songs.size() - 1).id;
-                                                nowPlayingUri    = subcon.streamUrlTranscodedId(nowPlayingId);
+                                                nowPlayingUri    = subcon.streamUrlId(nowPlayingId);
                                                 nowPlayingStream = true;
                                             }
                                             break;
@@ -184,7 +184,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                                 {
                                     nowPlayingAlbum = subcon.subsonicapi.SubsonicGetAlbum(nowPlayingArtist.albums.get(j - 1).id);
                                     nowPlayingId    = nowPlayingAlbum.songs.get(nowPlayingAlbum.songs.size() - 1).id;
-                                    nowPlayingUri   = subcon.streamUrlTranscodedId(nowPlayingId);
+                                    nowPlayingUri   = subcon.streamUrlId(nowPlayingId);
                                     nowPlayingStream = true;
                                 }
                                 break;
@@ -194,7 +194,7 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
                     else
                     {
                         nowPlayingId = nowPlayingAlbum.songs.get(i - 1).id;
-                        nowPlayingUri = subcon.streamUrlTranscodedId(nowPlayingId);
+                        nowPlayingUri = subcon.streamUrlId(nowPlayingId);
                         nowPlayingStream = true;
                     }
                     break;

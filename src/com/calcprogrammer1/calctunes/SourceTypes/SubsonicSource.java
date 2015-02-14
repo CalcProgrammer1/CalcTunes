@@ -37,4 +37,7 @@ public class SubsonicSource
     
     //Server Streaming Bitrate
     public String streamingBitrate = new String();
+
+    //Transcode Streaming Files
+    public boolean transcodeStream;
 }

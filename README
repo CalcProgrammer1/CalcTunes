@@ -75,8 +75,8 @@ Android Media Database Source
     Android and having the ability to use this source provides a quick and easy alternative when you don't care about customizing
     your own Library or Playlist.
 
-Current Version - Version 0.61 Alpha (2/14/2015)
+Current Version - Version 0.62 Alpha (2/14/2015)
 ---------------
-    - Fix media info view not working (and crashing) when opened while playing a Subsonic stream source
-    - Don't send Last.FM requests if username and password aren't configured or if session key is invalid
-    - Highlight playing track in Subsonic mode
+    - Add a setting to enable or disable transcoding for Subsonic streaming, allowing you to stream the original format files
+    - Mask the password field in the Subsonic settings dialog
+    - Provide more sanity checking messages for un-set fields in the Subsonic settings dialog

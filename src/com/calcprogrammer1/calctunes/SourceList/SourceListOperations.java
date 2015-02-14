@@ -202,7 +202,12 @@ public class SourceListOperations
             serializer.startTag("", "streamingbitrate");
             serializer.text(sub.streamingBitrate);
             serializer.endTag("", "streamingbitrate");
-            
+
+            //Transcode Streaming Files
+            serializer.startTag("", "transcodestreaming");
+            serializer.text(Boolean.toString(sub.transcodeStream));
+            serializer.endTag("", "transcodestreaming");
+
             //End document
             serializer.endTag("", "CalcTunesSubsonicServer");
             serializer.endDocument();
@@ -210,7 +215,7 @@ public class SourceListOperations
             //Make sure library directory exists before writing
             File outdir = new File(sub.filename);
             outdir.getParentFile().mkdirs();
-            
+
             PrintWriter out = new PrintWriter(sub.filename);
             out.println(writer.toString());
             out.close();
@@ -295,6 +300,13 @@ public class SourceListOperations
             if(NodeData.item(0).getChildNodes().getLength() > 0)
             {
                 sub.streamingBitrate = NodeData.item(0).getChildNodes().item(0).getNodeValue();
+            }
+
+            //Get Transcode Streaming Files
+            NodeData            = DocData.getElementsByTagName("transcodestreaming");
+            if(NodeData.item(0).getChildNodes().getLength() > 0)
+            {
+                sub.transcodeStream = Boolean.parseBoolean(NodeData.item(0).getChildNodes().item(0).getNodeValue());
             }
         }
         return sub;

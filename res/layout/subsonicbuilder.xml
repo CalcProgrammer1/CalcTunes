@@ -31,7 +31,7 @@
                 android:id="@+id/srvPortInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="number"
                 android:hint="Port" />
 
             <EditText
@@ -45,7 +45,7 @@
                 android:id="@+id/srvPassInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="textPassword"
                 android:hint="Password" />
 
             <EditText
@@ -101,6 +101,14 @@
                     android:text="..." />
 
             </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/srvTranscodeStream"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Transcode Streaming Files"
+                android:checked="true"
+                />
 
             <Button
                 android:id="@+id/buttonSubsonicDone"
