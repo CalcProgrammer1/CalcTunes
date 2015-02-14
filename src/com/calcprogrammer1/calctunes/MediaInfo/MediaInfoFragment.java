@@ -14,6 +14,8 @@ import com.calcprogrammer1.calctunes.Dialogs.FolderSelectionDialog;
 import com.calcprogrammer1.calctunes.R;
 import com.calcprogrammer1.calctunes.Interfaces.MediaInfoViewInterface;
 import com.calcprogrammer1.calctunes.SourceList.SourceListOperations;
+import com.calcprogrammer1.calctunes.Subsonic.SubsonicAPI;
+import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -130,7 +132,10 @@ public class MediaInfoFragment extends Fragment
         
         //Track Year
         adapter_data.add(new MediaInfoListType( "Year",         tag.getFirst(FieldKey.YEAR)         ));
-        
+
+        //Genre
+        adapter_data.add(new MediaInfoListType( "Genre",        tag.getFirst(FieldKey.GENRE)        ));
+
         //Album Artist
         adapter_data.add(new MediaInfoListType( "Album Artist", tag.getFirst(FieldKey.ALBUM_ARTIST) ));
         
@@ -161,7 +166,48 @@ public class MediaInfoFragment extends Fragment
         adapter.setData(adapter_data);
         setTrackInfo();
     }
-    
+
+    public void setTrackInfoFromSubsonic(final SubsonicConnection sc, final int id)
+    {
+        //Create new adapter and adapter data
+        adapter         = new MediaInfoAdapter(getActivity());
+        adapter_data    = new ArrayList<MediaInfoListType>();
+
+        Thread thread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                SubsonicAPI.SubsonicSong song = sc.subsonicapi.SubsonicGetSong(id);
+
+                artwork_image = AlbumArtManager.getAlbumArt(song.artist, song.album, getActivity(), false, true, true);
+
+                adapter_data.add(new MediaInfoListType("Title", song.title));
+                adapter_data.add(new MediaInfoListType("Artist", song.artist));
+                adapter_data.add(new MediaInfoListType("Album", song.album));
+                adapter_data.add(new MediaInfoListType("Track Number", Integer.toString(song.track)));
+                adapter_data.add(new MediaInfoListType("Year", Integer.toString(song.year)));
+                adapter_data.add(new MediaInfoListType("Genre", song.genre));
+                adapter_data.add(new MediaInfoListType("Track Length", Integer.toString(song.duration)));
+                adapter_data.add(new MediaInfoListType("File Size", Integer.toString(song.size)));
+                adapter_data.add(new MediaInfoListType("File Type", song.suffix));
+                adapter_data.add(new MediaInfoListType("File Bit Rate", Integer.toString(song.bitRate)));
+                adapter_data.add(new MediaInfoListType("Subsonic ID", Integer.toString(song.id)));
+                adapter_data.add(new MediaInfoListType("Subsonic Album ID", Integer.toString(song.albumId)));
+                adapter_data.add(new MediaInfoListType("Subsonic Artist ID", Integer.toString(song.artistId)));
+            }
+        });
+
+        thread.start();
+        try
+        {
+            thread.join();
+        }
+        catch(Exception e){}
+
+        adapter.setData(adapter_data);
+        setTrackInfo();
+    }
+
     public void setTrackInfo()
     {
         track_artwork   = (ImageView) view.findViewById(R.id.track_artwork);

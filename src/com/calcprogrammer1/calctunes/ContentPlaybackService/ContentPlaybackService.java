@@ -12,6 +12,7 @@ import com.calcprogrammer1.calctunes.LastFm;
 import com.calcprogrammer1.calctunes.MediaPlayer.MediaPlayerHandler;
 import com.calcprogrammer1.calctunes.MediaPlayer.RemoteControlReceiver;
 import com.calcprogrammer1.calctunes.R;
+import com.calcprogrammer1.calctunes.Subsonic.SubsonicConnection;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -257,7 +258,18 @@ public class ContentPlaybackService extends Service
             return content.getContentType();
         }
     }
-    
+
+    public SubsonicConnection GetPlaybackSubsonicConnection()
+    {
+        if(content != null && content.getContentType() == CONTENT_TYPE_SUBSONIC)
+        {
+            return ((ContentPlaybackSubsonic) content).getSubsonicConnection();
+        }
+        else
+        {
+            return null;
+        }
+    }
     public String GetPlaybackContentString()
     {
         if(content == null)
@@ -279,6 +291,18 @@ public class ContentPlaybackService extends Service
         else
         {
             return content.getNowPlayingUri();
+        }
+    }
+
+    public int GetNowPlayingSubsonicId()
+    {
+        if(content != null && content.getContentType() == CONTENT_TYPE_SUBSONIC)
+        {
+            return ((ContentPlaybackSubsonic) content).getNowPlayingId();
+        }
+        else
+        {
+            return 0;
         }
     }
 

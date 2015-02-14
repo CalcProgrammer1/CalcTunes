@@ -154,7 +154,14 @@ public class CalcTunesActivity extends ActionBarActivity
     NowPlayingFragmentInterface nowPlayingFragmentCallback = new NowPlayingFragmentInterface(){
         public void onInfoButtonPressed()
         {
-            mediainfofragment.setTrackInfoFromFile(playbackservice.GetNowPlayingString());
+            if(playbackservice.GetPlaybackContentType() == ContentPlaybackService.CONTENT_TYPE_SUBSONIC)
+            {
+                mediainfofragment.setTrackInfoFromSubsonic(playbackservice.GetPlaybackSubsonicConnection(), playbackservice.GetNowPlayingSubsonicId());
+            }
+            else
+            {
+                mediainfofragment.setTrackInfoFromFile(playbackservice.GetNowPlayingString());
+            }
             horizontalpager.setCurrentScreen(2, true);
         }
     };

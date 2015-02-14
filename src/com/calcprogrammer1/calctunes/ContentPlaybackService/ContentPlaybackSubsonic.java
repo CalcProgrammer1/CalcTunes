@@ -222,10 +222,20 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
 
     }
 
+    public SubsonicConnection getSubsonicConnection()
+    {
+        return subcon;
+    }
+
     @Override
     public String getNowPlayingUri()
     {
         return nowPlayingUri;
+    }
+
+    public int getNowPlayingId()
+    {
+        return nowPlayingId;
     }
 
     @Override
@@ -256,5 +266,6 @@ public class ContentPlaybackSubsonic implements ContentPlaybackService.ContentPl
     public void CleanUp()
     {
         nowPlayingUri = "";
+        nowPlayingId = 0;
     }
 }

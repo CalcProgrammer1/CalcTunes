@@ -75,10 +75,8 @@ Android Media Database Source
     Android and having the ability to use this source provides a quick and easy alternative when you don't care about customizing
     your own Library or Playlist.
 
-Current Version - Version 0.60 Alpha (2/5/2015)
+Current Version - Version 0.61 Alpha (2/14/2015)
 ---------------
-    -Fix media info view not working on 0.59
-    -Fix service restart when already opened from activity and auto-start device connects
-    -Fix notification not opening main activity
-    -Added album art and artist name to notification
-    -Fix highlight not going away after stop button is pressed
+    - Fix media info view not working (and crashing) when opened while playing a Subsonic stream source
+    - Don't send Last.FM requests if username and password aren't configured or if session key is invalid
+    - Highlight playing track in Subsonic mode

@@ -24,7 +24,8 @@ public class ContentListAdapter extends BaseAdapter
     Context c;
     
     String now_playing = new String();
-    
+    int now_playing_id = -1;
+
     public ContentListAdapter(Context con)
     {
         c = con;
@@ -102,7 +103,8 @@ public class ContentListAdapter extends BaseAdapter
                 songIcon.setImageResource(R.drawable.cached_to_sdcard_icon);
             }
             if( (listData.get(position).origPath != null && listData.get(position).origPath.equals(now_playing))
-             || (listData.get(position).transPath != null && listData.get(position).transPath.equals(now_playing)))
+             || (listData.get(position).transPath != null && listData.get(position).transPath.equals(now_playing))
+             || (listData.get(position).id == now_playing_id))
             {
                 TypedValue typedvalue = new TypedValue();
                 try{ c.getTheme().resolveAttribute(R.attr.highlight_color, typedvalue, true); } catch(Exception e){}
@@ -121,5 +123,10 @@ public class ContentListAdapter extends BaseAdapter
     public void setNowPlaying(String nowPlayingFile)
     {
         now_playing = nowPlayingFile;
+    }
+
+    public void setNowPlayingId(int id)
+    {
+        now_playing_id = id;
     }
 }

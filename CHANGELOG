@@ -1,5 +1,12 @@
 Release History
 ---------------
+Version 0.60 Alpha (2/5/2015)
+    -Fix media info view not working on 0.59
+    -Fix service restart when already opened from activity and auto-start device connects
+    -Fix notification not opening main activity
+    -Added album art and artist name to notification
+    -Fix highlight not going away after stop button is pressed
+
 Version 0.59 Alpha (2/4/2015)
     -Fix crashes from last.fm, unclean shutdown, and Bluetooth auto-start.
     -Fix random playback mode not working.

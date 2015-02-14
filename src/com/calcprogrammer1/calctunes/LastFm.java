@@ -162,92 +162,101 @@ public class LastFm
     
     public void authenticate()
     {
-        new Thread(new Runnable()
+        if(!userName.equals("") && !userPass.equals(""))
         {
-            public void run()
+            new Thread(new Runnable()
             {
-                ArrayList<LastFmParameter> params = new ArrayList<LastFmParameter>();
-                params.add(new LastFmParameter("method", "auth.getMobileSession"));
-                params.add(new LastFmParameter("username", userName));
-                params.add(new LastFmParameter("password", userPass));
-                params.add(new LastFmParameter("api_key", apiKey));
-
-                String XMLData    = sendRequest(params);
-                Document DocData  = CalcTunesXMLParser.getDomElement(XMLData);
-                if( DocData != null )
+                public void run()
                 {
-                    NodeList NodeData = DocData.getElementsByTagName("lfm");
-                    String status = getNamedString(NodeData, 0, "status");
-                    String name = DocData.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
-                    String key = DocData.getElementsByTagName("key").item(0).getFirstChild().getNodeValue();
-                    String subscriber = DocData.getElementsByTagName("subscriber").item(0).getFirstChild().getNodeValue();
+                    ArrayList<LastFmParameter> params = new ArrayList<LastFmParameter>();
+                    params.add(new LastFmParameter("method", "auth.getMobileSession"));
+                    params.add(new LastFmParameter("username", userName));
+                    params.add(new LastFmParameter("password", userPass));
+                    params.add(new LastFmParameter("api_key", apiKey));
 
-                    Log.d("LastFm", "Authenticate results: status=" + status + " name=" + name + " key=" + key + " subscriber=" + subscriber);
-
-                    sessionKey = key;
-
-                    if (key != null && !key.equals(""))
+                    String XMLData = sendRequest(params);
+                    Document DocData = CalcTunesXMLParser.getDomElement(XMLData);
+                    if (DocData != null)
                     {
+                        NodeList NodeData = DocData.getElementsByTagName("lfm");
+                        String status = getNamedString(NodeData, 0, "status");
+                        String name = DocData.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+                        String key = DocData.getElementsByTagName("key").item(0).getFirstChild().getNodeValue();
+                        String subscriber = DocData.getElementsByTagName("subscriber").item(0).getFirstChild().getNodeValue();
 
+                        Log.d("LastFm", "Authenticate results: status=" + status + " name=" + name + " key=" + key + " subscriber=" + subscriber);
+
+                        sessionKey = key;
+
+                        if (key != null && !key.equals(""))
+                        {
+
+                        }
                     }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     public void updateNowPlaying(final String artist, final String album, final String track, final int duration)
     {
-        new Thread(new Runnable()
+        if(!sessionKey.equals(""))
         {
-            public void run()
+            new Thread(new Runnable()
             {
-                ArrayList<LastFmParameter> params = new ArrayList<LastFmParameter>();
-                params.add(new LastFmParameter("method", "track.updateNowPlaying"));
-                params.add(new LastFmParameter("artist", artist));
-                params.add(new LastFmParameter("track",  track));
-                params.add(new LastFmParameter("duration", ""+duration));
-                if(album != null)
+                public void run()
                 {
-                    params.add(new LastFmParameter("album", album));
-                }
-                params.add(new LastFmParameter("api_key", apiKey));
-                params.add(new LastFmParameter("sk", sessionKey));
+                    ArrayList<LastFmParameter> params = new ArrayList<LastFmParameter>();
+                    params.add(new LastFmParameter("method", "track.updateNowPlaying"));
+                    params.add(new LastFmParameter("artist", artist));
+                    params.add(new LastFmParameter("track", track));
+                    params.add(new LastFmParameter("duration", "" + duration));
+                    if (album != null)
+                    {
+                        params.add(new LastFmParameter("album", album));
+                    }
+                    params.add(new LastFmParameter("api_key", apiKey));
+                    params.add(new LastFmParameter("sk", sessionKey));
 
-                String XMLData = sendRequest(params);
-                if(XMLData != null)
-                {
-                    Log.d("LastFm", XMLData);
+                    String XMLData = sendRequest(params);
+                    if (XMLData != null)
+                    {
+                        Log.d("LastFm", XMLData);
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     public void scrobble(final String artist, final String album, final String track, final int duration, final long timestamp)
     {
-        new Thread(new Runnable()
+        if (!sessionKey.equals(""))
         {
-            public void run()
+            new Thread(new Runnable()
             {
-                ArrayList<LastFmParameter> params = new ArrayList<LastFmParameter>();
-                params.add(new LastFmParameter("method", "track.scrobble"));
-                params.add(new LastFmParameter("artist", artist));
-                params.add(new LastFmParameter("track",  track));
-                params.add(new LastFmParameter("duration", ""+duration));
-                params.add(new LastFmParameter("timestamp", ""+timestamp));
-                if(album != null)
+                public void run()
                 {
-                    params.add(new LastFmParameter("album", album));
-                }
-                params.add(new LastFmParameter("api_key", apiKey));
-                params.add(new LastFmParameter("sk", sessionKey));
+                    ArrayList<LastFmParameter> params = new ArrayList<LastFmParameter>();
+                    params.add(new LastFmParameter("method", "track.scrobble"));
+                    params.add(new LastFmParameter("artist", artist));
+                    params.add(new LastFmParameter("track", track));
+                    params.add(new LastFmParameter("duration", "" + duration));
+                    params.add(new LastFmParameter("timestamp", "" + timestamp));
+                    if (album != null)
+                    {
+                        params.add(new LastFmParameter("album", album));
+                    }
+                    params.add(new LastFmParameter("api_key", apiKey));
+                    params.add(new LastFmParameter("sk", sessionKey));
 
-                String XMLData = sendRequest(params);
-                if(XMLData != null)
-                {
-                    Log.d("LastFm", XMLData);
+                    String XMLData = sendRequest(params);
+                    if (XMLData != null)
+                    {
+                        Log.d("LastFm", XMLData);
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     private HttpClient createHttpClient()
