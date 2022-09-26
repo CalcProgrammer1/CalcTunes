@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg2985"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="icon_album.svg"
+   inkscape:export-filename="/home/adam/adt-bundle-linux/apps/CalcTunes/res/drawable/cached_to_sdcard_icon.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs2987" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="15.556349"
+     inkscape:cx="23.422287"
+     inkscape:cy="31.075877"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3771"
+       empspacing="1"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata2990">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:#666666;fill-rule:evenodd;stroke:none"
+       d="m 56,8 c 0,16.280748 0,31.208484 0,48 L 8,56 C 8,41.979408 8,21.36872 8,8 24,8 40,8 56,8 z"
+       id="rect2993"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="fill:#999999;stroke:none"
+       d="m 24,37 c 0,-2.761424 3.581722,-5 8,-5 4.418278,0 8,2.642977 8,5"
+       id="path3781"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#999999;stroke:none"
+       id="path3777"
+       sodipodi:cx="24"
+       sodipodi:cy="18"
+       sodipodi:rx="4"
+       sodipodi:ry="4"
+       d="m 28,18 a 4,4 0 1 1 -8,0 4,4 0 1 1 8,0 z"
+       transform="translate(8,11)" />
+    <path
+       sodipodi:nodetypes="csc"
+       inkscape:connector-curvature="0"
+       id="path3784"
+       d="m 38,31 c 0,-2.761424 3.581722,-5 8,-5 4.418278,0 8,2.642977 8,5"
+       style="fill:#999999;stroke:none" />
+    <path
+       transform="translate(22,5)"
+       d="m 28,18 a 4,4 0 1 1 -8,0 4,4 0 1 1 8,0 z"
+       sodipodi:ry="4"
+       sodipodi:rx="4"
+       sodipodi:cy="18"
+       sodipodi:cx="24"
+       id="path3786"
+       style="fill:#999999;stroke:none"
+       sodipodi:type="arc" />
+    <path
+       style="fill:#999999;stroke:none"
+       d="m 10,31 c 0,-2.761424 3.581722,-5 8,-5 4.418278,0 8,2.642977 8,5"
+       id="path3788"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#999999;stroke:none"
+       id="path3790"
+       sodipodi:cx="24"
+       sodipodi:cy="18"
+       sodipodi:rx="4"
+       sodipodi:ry="4"
+       d="m 28,18 a 4,4 0 1 1 -8,0 4,4 0 1 1 8,0 z"
+       transform="translate(-6,5)" />
+  </g>
+</svg>
